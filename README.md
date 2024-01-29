@@ -19,7 +19,7 @@ Before running the script, make sure you have the following installed:
 
    ```bash
    git clone https://github.com/ser516asu/SER516-Team-Miami.git
-   cd SER516-Team-Atlanta
+   cd SER516-Team-Miami
    ```
 
 2. Install dependencies:
