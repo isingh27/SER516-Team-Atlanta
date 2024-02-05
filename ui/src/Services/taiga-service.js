@@ -4,16 +4,14 @@ import axios from "axios";
 const API_URL = "http://127.0.0.1:5000/";
 
 class TaigaService {
-    // TODO: Delete this function after testing
-    test(){
-        return axios.get(API_URL);
-    }
-
+    
     taigaAuthenticate(username, password) {
-        return axios.post(API_URL + "login", {
+        return axios.post(API_URL + "authenticate", {
             username,
             password
         });
     }
 
 }
+
+export default new TaigaService();

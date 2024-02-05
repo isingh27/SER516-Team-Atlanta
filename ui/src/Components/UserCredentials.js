@@ -1,21 +1,60 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Spinner, Toast } from 'react-bootstrap';
+import TaigaService from '../Services/taiga-service';
 
 const UserCredentials = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [show, setShow] = useState(false);
+    const [message, setMessage] = useState('');
+    const [variant, setVariant] = useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // TODO: Handle form submission logic
-        console.log('Email:', email, 'Password:', password);
+        setLoading(true);
+        if (!email || !password) {
+            setMessage('Please enter your email and password');
+            setVariant('danger');
+            setShow(true);
+            setLoading(false);
+            return;
+        }
+        TaigaService.taigaAuthenticate(email, password).then((response) => {
+            console.log(response.data);
+            if(response.data.status === 'success' && !response.data.token){
+                setMessage('Invalid Credentials');
+                setVariant('danger');
+                setShow(true);
+                setLoading(false);
+                return;
+            }
+            if (response.data.status === 'success') {
+                console.log('Authenticated');
+                setMessage('Taiga Authentication Success!');
+                setVariant('success');
+                setShow(true);
+                setLoading(false);
+                // TODO: Redirect to the next page
+            }
+        }).catch((error) => {
+            console.log(error);
+            setMessage('Taiga Authentication Failed!');
+            setVariant('danger');
+            setShow(true);
+            setLoading(false);
+
+        });
     };
 
     return (
         <Container className="mt-5">
             <Row>
                 <Col md={{ span: 6, offset: 3 }}>
-                    <h2 className="mb-5">Enter your Taiga Username and Password</h2>
+                    <h2 className="mb-3">Enter your Taiga Username and Password</h2>
+                    <Toast className='mb-5' onClose={() => setShow(false)} show={show} delay={3000} autohide bg={variant} style={{marginRight:"auto",marginLeft:"auto"}}>
+                        <Toast.Body>{message}</Toast.Body>
+                    </Toast>
                     <Form onSubmit={handleSubmit}>
                         <Row className="mb-3 align-items-center">
                             <Col sm={3} className="text-left">
@@ -46,11 +85,13 @@ const UserCredentials = () => {
                         </Row>
 
                         <Button variant="primary" type="submit">
+                            {loading && <Spinner animation="border" role="status" />}
                             Submit
                         </Button>
                     </Form>
                 </Col>
             </Row>
+          
         </Container>
     );
 };
