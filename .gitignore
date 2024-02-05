@@ -26,3 +26,4 @@ replay_pid*
 # pychache files
 ./taigaProject/__pycache__/server.cpython-311.pyc
 *.pyc
+ui/package-lock.json
