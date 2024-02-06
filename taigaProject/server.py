@@ -41,9 +41,9 @@ def auth():
 
 @app.route("/projectDetails", methods=["POST", "OPTIONS"])
 def projectDetails():
-    # Extract the token from the Authorization header
     if request.method == "OPTIONS": # CORS preflight
         return _build_cors_preflight_response()
+    # Extract the token from the Authorization header
     auth_header = request.headers.get('Authorization')
     token=''
     if auth_header and auth_header.startswith('Bearer '):
