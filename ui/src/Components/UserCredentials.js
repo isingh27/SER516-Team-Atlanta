@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col, Spinner, Toast } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import TaigaService from '../Services/taiga-service';
 
 const UserCredentials = () => {
@@ -9,6 +10,8 @@ const UserCredentials = () => {
     const [show, setShow] = useState(false);
     const [message, setMessage] = useState('');
     const [variant, setVariant] = useState('');
+    
+    const navigation = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -35,7 +38,8 @@ const UserCredentials = () => {
                 setVariant('success');
                 setShow(true);
                 setLoading(false);
-                // TODO: Redirect to the next page
+                localStorage.setItem('taigaToken', response.data.token);
+                navigation('/project-slug');                
             }
         }).catch((error) => {
             console.log(error);
