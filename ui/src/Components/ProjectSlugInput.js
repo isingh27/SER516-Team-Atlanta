@@ -40,7 +40,8 @@ const ProjectSlugInput = () => {
                 console.log('Project Details:', response.data);
                 setMessage(`Project Details for ${response.data.data.name} Retrieved Successfully`);
                 //TODO: Store the project details in local storage & redirect the user to the project details page
-
+                localStorage.setItem('projectId',JSON.stringify(response.data.data.id))
+                navigation('/metric-input')
             }
             else{
                 setLoading(false);

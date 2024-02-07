@@ -6,6 +6,7 @@ import {
   Routes, 
   Route,
 } from "react-router-dom";
+import MetricInput from './Components/MetricInput';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Routes> 
             <Route exact path="/" element={<UserCredentials />} /> 
             <Route path="/project-slug" element={<ProjectSlugInput />} /> 
+            <Route path="/metric-input" element={<MetricInput />} /> 
           </Routes>
         </header>
       </div>
