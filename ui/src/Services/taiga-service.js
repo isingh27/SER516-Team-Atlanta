@@ -22,6 +22,15 @@ class TaigaService {
             });
     }
 
+    taigaProjectCycleTime(token, project_id) {
+        return axios.post(API_URL + "projectCycleTime",
+            { "projectId": project_id },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    }
 }
 
 export default new TaigaService();
