@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request, make_response
 from taigaApi.authenticate import authenticate
 from taigaApi.project.getProjectBySlug import get_project_by_slug
+from taigaApi.task.getTaskHistory import get_task_history
+from taigaApi.task.getTasks import get_closed_tasks, get_all_tasks
 
 
 
@@ -57,5 +59,28 @@ def projectDetails():
         return _corsify_actual_response(jsonify({"status": "error", "message": "Project not found"}))
     return _corsify_actual_response(jsonify({"data":project_info, "status": "success"}))
 
-if __name__ == '__main__':
+
+@app.route("/cycleTime", methods=["POST", "OPTIONS"])
+def cycle_time():
+    if request.method == "OPTIONS":  # CORS preflight
+        return _build_cors_preflight_response()
+
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+    # Send project Id as a parameter in JSON format.
+    project_id = request.json['projectId']
+    tasks = get_closed_tasks(project_id, token)
+    cycle_time, closed_task = get_task_history(tasks, token)
+    if closed_task == 0:
+        return jsonify({"message": "No closed tasks found in the project"}), 404
+    avg_cycle_time = round((cycle_time / closed_task), 2)
+    return _corsify_actual_response(jsonify({"avg_cycle_time": avg_cycle_time, "status": "success"}))
+
+
+
+if __name__ == '_main_':
     app.run(debug=True, port=5000)
