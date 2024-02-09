@@ -1,27 +1,45 @@
-import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
 import taigaService from '../Services/taiga-service';
 
 const MetricInput = () => {
+    const navigation = useNavigate();
     const [metricInput, setMetricInput] = useState('cycleTime');
+    const [cycleTime, setCycleTime] = useState('');
+    const [loading, setLoading] = useState(false);
+    const projectName = localStorage.getItem('projectName')
+
+    useEffect(() => {
+        const taigaToken = localStorage.getItem('taigaToken');
+        if (!taigaToken) {
+            navigation('/');
+        }
+    }
+    , [navigation]);
+
     const metricOptions = [{
         title:"Cycle Time",
         name:"cycleTime"
     }];
 
     const handleSubmit = () => {
-        // TODO: Handle form submission logic
         console.log('Selected option:', metricInput);
-        let payload={
-            projectId:JSON.parse(localStorage.getItem('projectId')),
-        }
+        setLoading(true);
+        setCycleTime('');
+        let projectId= localStorage.getItem('projectId')
         if(metricInput=="cycleTime"){
-            taigaService.taigaProjectCycleTime(localStorage.getItem('taigaToken'),payload)
+            taigaService.taigaProjectCycleTime(localStorage.getItem('taigaToken'),projectId)
             .then((res)=>{
                 console.log(res)
+                localStorage.setItem('cycleTime',JSON.stringify(res.data.avg_cycle_time))
+                setCycleTime(res.data.avg_cycle_time)
+                setLoading(false);
             })
             .catch((err)=>{
                 console.log(err)
+                setLoading(false);
             })
         }
     };
@@ -30,7 +48,8 @@ const MetricInput = () => {
         <Container className="mt-5">
             <Row>
                 <Col md={{ span: 6, offset: 3 }}>
-                    <h2 className="mb-5">Select Metric Parameter</h2>
+                    <h2 className="mb-3">Select Metric Parameter</h2>
+                    {projectName && <h2 className="mb-5">Project: {projectName}</h2>}
                         <Row className="mb-3 align-items-center">
                             <Col sm={3} className="text-left">
                                 <Form.Label className="small">Metric Parameter</Form.Label>
@@ -51,10 +70,15 @@ const MetricInput = () => {
                         </Row>
 
                         <Button variant="primary" type="submit" onClick={handleSubmit}>
-                            Submit
+                        {loading && <Spinner animation="border" role="status" />} Submit
                         </Button>
                 </Col>
             </Row>
+            {cycleTime && <Row>
+                <Col md={{ span: 6, offset: 3 }}>
+                    <h2 className="mt-5">Cycle Time: {cycleTime}</h2>
+                </Col>
+            </Row>}
         </Container>
     );
 };
