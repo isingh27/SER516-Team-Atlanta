@@ -1,9 +1,18 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
-import { Doughnut } from "react-chartjs-2";
+import { Chart } from "react-google-charts";
 
 const MetricInput = () => {
+  // sample data
+  const data = [
+    ["Year", "Sales", "Expenses"],
+    ["2013", 1000, 400],
+    ["2014", 1170, 460],
+    ["2015", 660, 1120],
+    ["2016", 1030, 540],
+  ];
+
   const [metricInput, setMetricInput] = useState("cycleTime");
   const metricOptions = [
     {
@@ -59,6 +68,27 @@ const MetricInput = () => {
           </Button>
         </Col>
       </Row>
+      <div style={{ width: "100%", maxWidth: 800 }}>
+        <Chart
+          width={"100%"}
+          height={"400px"}
+          chartType="LineChart"
+          loader={<div>Loading Chart</div>}
+          data={data}
+          options={{
+            title: "Company Performance",
+            hAxis: { title: "Year", titleTextStyle: { color: "#333" } },
+            vAxis: { minValue: 0 },
+            // For the legend to display properly, we must specify series type.
+            // In this case, we use 'line' since the chart type is LineChart.
+            series: {
+              0: { type: "line" },
+              1: { type: "line" },
+            },
+          }}
+          rootProps={{ "data-testid": "1" }}
+        />
+      </div>
     </Container>
   );
 };
