@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { GlobalContext } from '../GlobalContext'; 
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Spinner } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { Chart } from "react-google-charts";
-
+import { useNavigate } from 'react-router-dom';
 
 const MetricInput = () => {
   // sample data
@@ -14,6 +14,10 @@ const MetricInput = () => {
     ["2015", 660, 1120],
     ["2016", 1030, 540],
   ];
+  const navigation = useNavigate();
+  const [cycleTime, setCycleTime] = useState('');
+  const [loading, setLoading] = useState(false);
+  const projectName = localStorage.getItem('projectName')
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
 
@@ -49,6 +53,14 @@ const MetricInput = () => {
 
   ];
 
+  useEffect(() => {
+    const taigaToken = localStorage.getItem('taigaToken');
+    if (!taigaToken) {
+        navigation('/');
+    }
+  }
+  , [navigation]);
+
   const handleSubmit = () => {
     console.log("Selected option:", metricInput);
     let projectId = localStorage.getItem("projectId");
@@ -58,9 +70,6 @@ const MetricInput = () => {
         .then((res) => {
           console.log(res);
         })
-        .catch((err) => {
-          console.log(err);
-        });
     }
   };
 
@@ -69,6 +78,7 @@ const MetricInput = () => {
       <Row>
         <Col md={{ span: 6, offset: 3 }}>
           <h2 className="mb-5">Select Metric Parameter</h2>
+          {projectName && <h2 className="mb-5">Project: {projectName}</h2>}
           <Row className="mb-3 align-items-center">
             <Col sm={3} className="text-left">
               <Form.Label className="small">Metric Parameter</Form.Label>
@@ -91,7 +101,7 @@ const MetricInput = () => {
           </Row>
 
           <Button variant="primary" type="submit" onClick={handleSubmit}>
-            Submit
+              {loading && <Spinner animation="border" role="status" />} Submit
           </Button>
         </Col>
       </Row>
@@ -116,6 +126,11 @@ const MetricInput = () => {
           rootProps={{ "data-testid": "1" }}
         />
       </div>
+      {cycleTime && <Row>
+          <Col md={{ span: 6, offset: 3 }}>
+              <h2 className="mt-5">Cycle Time: {cycleTime}</h2>
+          </Col>
+      </Row>}
     </Container>
   );
 };

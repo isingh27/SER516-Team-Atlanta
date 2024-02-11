@@ -23,7 +23,7 @@ class TaigaService {
     }
 
     taigaProjectCycleTime(token, project_id) {
-        return axios.post(API_URL + "projectCycleTime",
+        return axios.post(API_URL + "cycleTime",
             { "projectId": project_id },
             {
                 headers: {
