@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Form, Button, Container, Row, Col, Spinner } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { Chart } from "react-google-charts";
+import { useNavigate } from 'react-router-dom';
 
 const MetricInput = () => {
   // sample data
@@ -12,8 +13,12 @@ const MetricInput = () => {
     ["2015", 660, 1120],
     ["2016", 1030, 540],
   ];
+  const navigation = useNavigate();
+  const [metricInput, setMetricInput] = useState('cycleTime');
+  const [cycleTime, setCycleTime] = useState('');
+  const [loading, setLoading] = useState(false);
+  const projectName = localStorage.getItem('projectName')
 
-  const [metricInput, setMetricInput] = useState("cycleTime");
   const metricOptions = [
     {
       title: "Cycle Time",
@@ -21,19 +26,31 @@ const MetricInput = () => {
     },
   ];
 
+  useEffect(() => {
+    const taigaToken = localStorage.getItem('taigaToken');
+    if (!taigaToken) {
+        navigation('/');
+    }
+  }
+  , [navigation]);
+
   const handleSubmit = () => {
-    // TODO: Handle form submission logic
-    console.log("Selected option:", metricInput);
-    let projectId = localStorage.getItem("projectId");
-    if (metricInput == "cycleTime") {
-      taigaService
-        .taigaProjectCycleTime(localStorage.getItem("taigaToken"), projectId)
-        .then((res) => {
-          console.log(res);
+    console.log('Selected option:', metricInput);
+    setLoading(true);
+    setCycleTime('');
+    let projectId= localStorage.getItem('projectId')
+    if(metricInput=="cycleTime"){
+        taigaService.taigaProjectCycleTime(localStorage.getItem('taigaToken'),projectId)
+        .then((res)=>{
+            console.log(res)
+            localStorage.setItem('cycleTime',JSON.stringify(res.data.avg_cycle_time))
+            setCycleTime(res.data.avg_cycle_time)
+            setLoading(false);
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err)=>{
+            console.log(err)
+            setLoading(false);
+        })
     }
   };
 
@@ -42,6 +59,7 @@ const MetricInput = () => {
       <Row>
         <Col md={{ span: 6, offset: 3 }}>
           <h2 className="mb-5">Select Metric Parameter</h2>
+          {projectName && <h2 className="mb-5">Project: {projectName}</h2>}
           <Row className="mb-3 align-items-center">
             <Col sm={3} className="text-left">
               <Form.Label className="small">Metric Parameter</Form.Label>
@@ -64,7 +82,7 @@ const MetricInput = () => {
           </Row>
 
           <Button variant="primary" type="submit" onClick={handleSubmit}>
-            Submit
+              {loading && <Spinner animation="border" role="status" />} Submit
           </Button>
         </Col>
       </Row>
@@ -89,6 +107,11 @@ const MetricInput = () => {
           rootProps={{ "data-testid": "1" }}
         />
       </div>
+      {cycleTime && <Row>
+          <Col md={{ span: 6, offset: 3 }}>
+              <h2 className="mt-5">Cycle Time: {cycleTime}</h2>
+          </Col>
+      </Row>}
     </Container>
   );
 };
