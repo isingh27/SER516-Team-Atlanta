@@ -1,19 +1,47 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
+import { GlobalContext } from '../GlobalContext'; 
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { Doughnut } from "react-chartjs-2";
 
+
 const MetricInput = () => {
-  const [metricInput, setMetricInput] = useState("cycleTime");
+
+  const { metricInput, setMetricInput } = useContext(GlobalContext);
+
   const metricOptions = [
+    {
+      title: "Burndown Chart",
+      name: "burndown",
+    },
+    {
+      title: "Cumulative Flow Diagram",
+      name: "cfd",
+    },
     {
       title: "Cycle Time",
       name: "cycleTime",
     },
+    {
+      title: "Lead Time",
+      name: "leadTime",
+    },
+    {
+      title: "Throughput",
+      name: "throughput",
+    },
+    {
+      title: "Work in Progress",
+      name: "wip",
+    },
+    {
+      title: "Impediment Tracker",
+      name: "impediment",
+    }
+
   ];
 
   const handleSubmit = () => {
-    // TODO: Handle form submission logic
     console.log("Selected option:", metricInput);
     let projectId = localStorage.getItem("projectId");
     if (metricInput == "cycleTime") {

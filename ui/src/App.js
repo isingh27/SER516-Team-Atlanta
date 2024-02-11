@@ -7,20 +7,23 @@ import {
   Route,
 } from "react-router-dom";
 import MetricInput from './Components/MetricInput';
+import { GlobalProvider } from './GlobalContext';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <header className="App-header">
-          <Routes> 
-            <Route exact path="/" element={<UserCredentials />} /> 
-            <Route path="/project-slug" element={<ProjectSlugInput />} /> 
-            <Route path="/metric-input" element={<MetricInput />} /> 
-          </Routes>
-        </header>
-      </div>
-    </Router>
+    <GlobalProvider>
+      <Router>
+        <div className="App">
+          <header className="App-header">
+            <Routes> 
+              <Route exact path="/" element={<UserCredentials />} /> 
+              <Route path="/project-slug" element={<ProjectSlugInput />} /> 
+              <Route path="/metric-input" element={<MetricInput />} /> 
+            </Routes>
+          </header>
+        </div>
+      </Router>
+    </GlobalProvider>
   );
 }
 
