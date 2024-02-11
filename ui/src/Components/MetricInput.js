@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { GlobalContext } from '../GlobalContext'; 
 import { Form, Button, Container, Row, Col, Spinner } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { Chart } from "react-google-charts";
@@ -14,16 +15,42 @@ const MetricInput = () => {
     ["2016", 1030, 540],
   ];
   const navigation = useNavigate();
-  const [metricInput, setMetricInput] = useState('cycleTime');
   const [cycleTime, setCycleTime] = useState('');
   const [loading, setLoading] = useState(false);
   const projectName = localStorage.getItem('projectName')
 
+  const { metricInput, setMetricInput } = useContext(GlobalContext);
+
   const metricOptions = [
+    {
+      title: "Burndown Chart",
+      name: "burndown",
+    },
+    {
+      title: "Cumulative Flow Diagram",
+      name: "cfd",
+    },
     {
       title: "Cycle Time",
       name: "cycleTime",
     },
+    {
+      title: "Lead Time",
+      name: "leadTime",
+    },
+    {
+      title: "Throughput",
+      name: "throughput",
+    },
+    {
+      title: "Work in Progress",
+      name: "wip",
+    },
+    {
+      title: "Impediment Tracker",
+      name: "impediment",
+    }
+
   ];
 
   useEffect(() => {
@@ -35,21 +62,13 @@ const MetricInput = () => {
   , [navigation]);
 
   const handleSubmit = () => {
-    console.log('Selected option:', metricInput);
-    setLoading(true);
-    setCycleTime('');
-    let projectId= localStorage.getItem('projectId')
-    if(metricInput=="cycleTime"){
-        taigaService.taigaProjectCycleTime(localStorage.getItem('taigaToken'),projectId)
-        .then((res)=>{
-            console.log(res)
-            localStorage.setItem('cycleTime',JSON.stringify(res.data.avg_cycle_time))
-            setCycleTime(res.data.avg_cycle_time)
-            setLoading(false);
-        })
-        .catch((err)=>{
-            console.log(err)
-            setLoading(false);
+    console.log("Selected option:", metricInput);
+    let projectId = localStorage.getItem("projectId");
+    if (metricInput == "cycleTime") {
+      taigaService
+        .taigaProjectCycleTime(localStorage.getItem("taigaToken"), projectId)
+        .then((res) => {
+          console.log(res);
         })
     }
   };
