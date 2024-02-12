@@ -13,14 +13,6 @@ const ProjectSlugInput = () => {
 
     const navigation = useNavigate();
 
-    useEffect(() => {
-        const taigaToken = localStorage.getItem('taigaToken');
-        if (!taigaToken) {
-            navigation('/');
-        }
-    }, [navigation]);
-
-
     const handleSubmit = (event) => {
         event.preventDefault();
         if (!projectSlug) {
