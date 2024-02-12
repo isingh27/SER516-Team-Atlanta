@@ -53,13 +53,6 @@ const MetricInput = () => {
 
   ];
 
-  useEffect(() => {
-    const taigaToken = localStorage.getItem('taigaToken');
-    if (!taigaToken) {
-        navigation('/');
-    }
-  }
-  , [navigation]);
 
   const handleSubmit = () => {
     console.log("Selected option:", metricInput);
@@ -104,13 +97,13 @@ const MetricInput = () => {
               {loading && <Spinner animation="border" role="status" />} Submit
           </Button>
         </Col>
-      </Row>
-      <div style={{ width: "100%", maxWidth: 800 }}>
+      </Row><br /><br />
+      <div style={{ textAlign:"center",justifyContent:"center"}}>
         <Chart
           width={"100%"}
           height={"400px"}
           chartType="LineChart"
-          loader={<div>Loading Chart</div>}
+          loader={<p>Loading Chart...</p>}
           data={data}
           options={{
             title: "Company Performance",

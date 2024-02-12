@@ -7,7 +7,7 @@ export default function NavBar() {
   return (
     <Navbar collapseOnSelect expand="lg" bg="primary" data-bs-theme="dark">
     <Container>
-      <Navbar.Brand href="#home">Team-Atlanta</Navbar.Brand>
+      <Navbar.Brand>Team-Atlanta</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="me-auto">
