@@ -1,24 +1,46 @@
-import React from 'react'
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 export default function NavBar() {
+  const navigate = useNavigate();
+
+  const [triggerRerender, setTriggerRerender] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem('taigaToken');
+    localStorage.removeItem('projectId');
+    localStorage.removeItem('projectName');
+    // Trigger a re-render after logout
+    setTriggerRerender(!triggerRerender);
+    navigate('/');
+  };
+
+  // Simplified check for authentication status
+  const isAuthenticated = !!localStorage.getItem('taigaToken');
+
   return (
-    <Navbar collapseOnSelect expand="lg" bg="primary" data-bs-theme="dark">
-    <Container>
-      <Navbar.Brand href="#home">Team-Atlanta</Navbar.Brand>
-      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-      <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="me-auto">
-          <Nav.Link href="/project-slug">Taiga Project</Nav.Link>
-          <Nav.Link href="/metric-input">Metrics</Nav.Link>
-        </Nav>
-        <Nav>
-        <Nav.Link href="/">Login</Nav.Link>
-        </Nav>
-      </Navbar.Collapse>
-    </Container>
-  </Navbar>
-  )
+    <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
+      <Container>
+        <Navbar.Brand href="/">Team-Atlanta</Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="/project-slug">Taiga Project</Nav.Link>
+            <Nav.Link href="/metric-input">Metrics</Nav.Link>
+          </Nav>
+          <Nav>
+            {!isAuthenticated ? (
+              <Button onClick={() => navigate('/')}>Login</Button>
+            ) : (
+              <Button onClick={handleLogout}>Logout</Button>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
 }
