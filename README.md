@@ -1,15 +1,15 @@
 # SER516-Team-Atlanta
 
-# Taiga API Integration
-
-This project is a Python script for interacting with the Taiga API to perform various task and calculating metrics.
+# Description
+  
+WebApp built using React that uses Flask as backend for interacting with the Taiga API to perform various task and calculating metrics.
 
 ## Prerequisites
 
 Before running the script, make sure you have the following installed:
 
 - Python 3
-- Required Python packages (install using `pip install -r requirements.txt`)
+- NodeJS
 - Taiga account with API access
 - Taiga project slug
 
@@ -18,27 +18,50 @@ Before running the script, make sure you have the following installed:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/ser516asu/SER516-Team-Atlanta.git
+   git clone https://github.com/isingh27/SER516-Team-Atlanta.git
    cd SER516-Team-Atlanta
    ```
 
 2. Install dependencies:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+	a. NodeJS packages:
+	```bash
+	cd ui
+	npm i
+	```
 
-3. Create a .env file in the project root and add the following:
+	b. Python packages:
+	Note:- Make sure you are in the root directory of the project
+
+	```bash
+	cd taigaProject
+	pip install -r requirements.txt
+	```
+
+3. Create a .env file in the **taigaProject** directory and add the following:
 
    ```bash
    TAIGA_URL=https://api.taiga.io/api/v1
    ```
 
-4. Run the script:
+4. Running the project:-
 
-   ```bash
-   python3 app.py
-   ```
+	a. React
+
+	```bash
+	cd ui
+	npm start
+	```
+
+	b. Flask Backend
+	Note:- Make sure you are in the root directory of the project
+
+	```bash
+	cd taigaProject
+	python3 server.py
+	```
+
+   c. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ## Getting Taiga Project Slug
 
@@ -48,4 +71,4 @@ To interact with the Taiga API using the provided Python script, you will need t
 
 2. **Select the Project**: Navigate to the project for which you want to obtain the project slug.
 
-3. **Project URL**: Look at the URL in your browser's address bar while you are inside the project. The project slug is the part of the URL that comes after the last slash ("/"). For example:
+3. **Project URL**: Look at the URL in your browser's address bar while you are inside the project. The project slug is the part of the URL that comes after the last slash ("/"). For example: **ser516asu-ser516-team-atlanta**
