@@ -8,8 +8,8 @@ WebApp built using React that uses Flask as backend for interacting with the Tai
 
 Before running the script, make sure you have the following installed:
 
-- Python 3
-- NodeJS
+- Python v3.11
+- NodeJS v20.11
 - Taiga account with API access
 - Taiga project slug
 
