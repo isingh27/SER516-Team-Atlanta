@@ -3,10 +3,11 @@ import { Button } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function NavBar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [triggerRerender, setTriggerRerender] = useState(false);
 
@@ -28,9 +29,13 @@ export default function NavBar() {
         <Navbar.Brand href="/">Team-Atlanta</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="me-auto">
+          <Nav className="me-auto" activeKey={location.pathname}>
+          {isAuthenticated &&
+            <>
             <Nav.Link href="/project-slug">Taiga Project</Nav.Link>
             <Nav.Link href="/metric-input">Metrics</Nav.Link>
+            </>  
+          }         
           </Nav>
           <Nav>
             {!isAuthenticated ? (
