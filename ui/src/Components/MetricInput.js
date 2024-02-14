@@ -51,6 +51,10 @@ const MetricInput = () => {
             console.log(err)
             setLoading(false);
         })
+        taigaService.taigaProjectCycleTimesPerTask(localStorage.getItem('taigaToken'),projectId)
+        .then((res)=>{
+            console.log(res)
+        })
     }
   };
 
