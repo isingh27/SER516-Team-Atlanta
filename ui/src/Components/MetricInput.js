@@ -63,12 +63,20 @@ const MetricInput = () => {
         .taigaProjectCycleTime(localStorage.getItem("taigaToken"), projectId)
         .then((res) => {
           console.log(res);
-          setMetricData(res.data.avg_cycle_time);
+          setCycleTime(res.data.avg_cycle_time);
           setLoading(false);
         });
       taigaService.taigaProjectCycleTimesPerTask(localStorage.getItem('taigaToken'),projectId)
         .then((res)=>{
           console.log(res)
+          const cycleTimeData = res.data.data.map((task, index) => {
+            return [`US #${index}`, task.cycle_time];
+          }
+          );
+          console.log(cycleTimeData);
+          cycleTimeData.unshift(["# User Story", "Cycle Time"]);
+          setMetricData(cycleTimeData);
+
         });
     }
   };
@@ -107,7 +115,7 @@ const MetricInput = () => {
       </Row>
       <br />
       <br />
-      <VisualizeMetric metricInput={metricInput} metricData={metricData} />
+      {metricData&& <VisualizeMetric metricInput={metricInput} avgMetricData={cycleTime} metricData={metricData} />}
       {cycleTime && (
         <Row>
           <Col md={{ span: 6, offset: 3 }}>
