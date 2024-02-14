@@ -52,6 +52,49 @@ def get_task_history(tasks, auth_token):
     # Return a list containing cycle_time and closed_tasks count
     return [cycle_time, closed_tasks]
 
+def get_task_cycle_times(tasks, auth_token):
+    """Retrieves task history and calculates cycle time, start, and end dates.
+
+    Args:
+        tasks: A list of task dictionaries with 'id' and 'finished_date' keys.
+        auth_token: The Taiga API authorization token.
+
+    Returns:
+        A list of tuples, where each tuple contains:
+            (cycle_time, start_date, end_date)
+    """
+
+    taiga_url = os.getenv('TAIGA_URL')
+    headers = {
+        'authorization': f'Bearer {auth_token}', 
+        'content-type': 'application/json'
+    }
+
+    task_data = []
+
+    for task in tasks:
+        task_history_url = f"{taiga_url}/history/task/{task['id']}"
+        finished_date = task["finished_date"]
+
+        try:
+            response = requests.get(task_history_url, headers=headers)
+            response.raise_for_status()
+            history_data = response.json()
+
+            in_progress_date = extract_new_to_in_progress_date(history_data)
+
+            if in_progress_date:
+                finished_date = datetime.fromisoformat(finished_date[:-1])
+                in_progress_date = datetime.fromisoformat(str(in_progress_date)[:-6])
+                cycle_time = (finished_date - in_progress_date).days
+
+                task_data.append((cycle_time, in_progress_date, finished_date))
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching task history: {e}")
+
+    return task_data
+
 
 # Function to extract the date when a task transitioned from 'New' to 'In progress'
 def extract_new_to_in_progress_date(history_data):

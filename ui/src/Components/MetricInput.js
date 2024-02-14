@@ -66,6 +66,10 @@ const MetricInput = () => {
           setMetricData(res.data.avg_cycle_time);
           setLoading(false);
         });
+      taigaService.taigaProjectCycleTimesPerTask(localStorage.getItem('taigaToken'),projectId)
+        .then((res)=>{
+          console.log(res)
+        });
     }
   };
 
