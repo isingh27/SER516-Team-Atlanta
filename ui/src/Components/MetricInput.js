@@ -66,6 +66,19 @@ const MetricInput = () => {
           setMetricData(res.data.avg_cycle_time);
           setLoading(false);
         });
+    } else if (metricInput == "leadTime") {
+      taigaService
+        .taigaProjectLeadTime(localStorage.getItem("taigaToken"), projectId)
+        .then((res) => {
+          console.log(res.data.plotData);
+          const leadTimeTempdata = res.data.plotData.map((data) => {
+            return [data.finished_date.slice(5, 17), data.lead_time];
+          });
+          console.log(leadTimeTempdata);
+          leadTimeTempdata.unshift(["Date", "Lead Time"]);
+          setMetricData(leadTimeTempdata);
+          setLoading(false);
+        });
     }
   };
 
