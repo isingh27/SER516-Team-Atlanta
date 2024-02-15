@@ -1,8 +1,8 @@
 from flask import Flask, jsonify, request, make_response
 from taigaApi.authenticate import authenticate
 from taigaApi.project.getProjectBySlug import get_project_by_slug
-from taigaApi.task.getTaskHistory import get_task_history, get_task_cycle_times
-from taigaApi.task.getTasks import get_closed_tasks, get_all_tasks
+from taigaApi.task.getTaskHistory import get_task_history, get_task_cycle_times, get_user_story_cycle_times
+from taigaApi.task.getTasks import get_closed_tasks, get_closed_user_stories
 from flask_cors import CORS
 
 
@@ -87,6 +87,33 @@ def cycle_time_per_task():
             "end_date": end_date
         })
     
+    return jsonify({"data": response_data, "status": "success"})
+
+@app.route("/cycleTimesPerUserStory", methods=["POST"])
+def cycle_time_per_user_story():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    project_id = request.json['projectId']
+    closed_user_stories = get_closed_user_stories(project_id, token)
+
+    if not closed_user_stories:  # Check if the list of closed user stories is empty
+        return jsonify({"message": "No closed user stories found in the project"}), 404
+    
+    cycle_times = get_user_story_cycle_times(closed_user_stories, token)
+
+    response_data = []
+    for cycle_time, start_date, end_date in cycle_times:
+        response_data.append({
+            "cycle_time": cycle_time,
+            "start_date": start_date,
+            "end_date": end_date
+        })
+
     return jsonify({"data": response_data, "status": "success"})
 
 

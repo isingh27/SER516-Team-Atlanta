@@ -96,11 +96,67 @@ def get_task_cycle_times(tasks, auth_token):
     return task_data
 
 
+# Function to retrieve user stories and calculate cycle times
+def get_user_story_cycle_times(user_stories, auth_token):
+    """Retrieves user story history and calculates cycle time, start, and end dates.
+
+    Args:
+        user_stories: A list of user story dictionaries with 'id' and 'finished_date' keys.
+        auth_token: The Taiga API authorization token.
+
+    Returns:
+        A list of tuples, where each tuple contains:
+            (cycle_time, start_date, end_date)
+    """
+
+    taiga_url = os.getenv('TAIGA_URL')
+    headers = {
+        'authorization': f'Bearer {auth_token}', 
+        'content-type': 'application/json'
+    }
+
+    user_story_data = []
+
+    for user_story in user_stories:
+        user_story_history_url = f"{taiga_url}/history/userstory/{user_story['id']}"
+        finished_date = user_story["finish_date"]
+
+        try:
+            response = requests.get(user_story_history_url, headers=headers)
+            response.raise_for_status()
+            history_data = response.json()
+
+            sprint_ready_date = extract_new_to_sprint_ready_date(history_data)
+            print("sprint_ready_date", sprint_ready_date)
+            
+
+            if sprint_ready_date:
+                finished_date = datetime.fromisoformat(finished_date[:-1])
+                sprint_ready_date = datetime.fromisoformat(str(sprint_ready_date)[:-6])
+                cycle_time = (finished_date - sprint_ready_date).days
+
+                user_story_data.append((cycle_time, sprint_ready_date, finished_date))
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching user story history: {e}")
+
+    return user_story_data
+
+
 # Function to extract the date when a task transitioned from 'New' to 'In progress'
 def extract_new_to_in_progress_date(history_data):
     for event in history_data:
         values_diff = event.get("values_diff", {})
         if "status" in values_diff and values_diff["status"] == ["New", "In progress"]:
+            created_at = datetime.fromisoformat(event["created_at"])
+            return created_at
+    return None
+
+# Function to extract the date when a user story transitioned from 'New' to 'Sprint Ready'
+def extract_new_to_sprint_ready_date(history_data):
+    for event in history_data:
+        values_diff = event.get("values_diff", {})
+        if "status" in values_diff and values_diff["status"] == ["New", "Sprint-ready"]:
             created_at = datetime.fromisoformat(event["created_at"])
             return created_at
     return None
