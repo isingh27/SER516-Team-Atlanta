@@ -7,21 +7,16 @@ import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
 
 const MetricInput = () => {
-  // sample data
-  const data = [
-    ["Year", "Sales", "Expenses"],
-    ["2013", 1000, 400],
-    ["2014", 1170, 460],
-    ["2015", 660, 1120],
-    ["2016", 1030, 540],
-  ];
   const navigation = useNavigate();
   const [cycleTime, setCycleTime] = useState("");
+  const [cycleTimeUS, setCycleTimeUS] = useState("");
+
   const [loading, setLoading] = useState(false);
   const projectName = localStorage.getItem("projectName");
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
   const [metricData, setMetricData] = useState();
+  const [metricDataUS, setMetricDataUS] = useState();
 
   const metricOptions = [
     {
@@ -70,17 +65,24 @@ const MetricInput = () => {
         .then((res)=>{
           console.log(res)
           const cycleTimeData = res.data.data.map((task, index) => {
-            return [`US #${index}`, task.cycle_time];
+            return [`Task #${index}`, task.cycle_time];
           }
           );
           console.log(cycleTimeData);
-          cycleTimeData.unshift(["# User Story", "Cycle Time"]);
+          cycleTimeData.unshift(["# Task", "Cycle Time"]);
           setMetricData(cycleTimeData);
 
         });
       taigaService.taigaProjectCycleTimesPerUserStory(localStorage.getItem('taigaToken'),projectId)
         .then((res)=>{
           console.log(res)
+          const cycleTimeDataUS = res.data.data.map((task, index) => {
+            return [`US #${index}`, task.cycle_time];
+          }
+          );
+          console.log(cycleTimeDataUS);
+          cycleTimeDataUS.unshift(["# User Story", "Cycle Time"]);
+          setMetricDataUS(cycleTimeDataUS);
         });
     }
   };
@@ -111,7 +113,6 @@ const MetricInput = () => {
               </Form.Select>
             </Col>
           </Row>
-
           <Button variant="primary" type="submit" onClick={handleSubmit}>
             {loading && <Spinner animation="border" role="status" />} Submit
           </Button>
@@ -119,7 +120,8 @@ const MetricInput = () => {
       </Row>
       <br />
       <br />
-      {metricData&& <VisualizeMetric metricInput={metricInput} avgMetricData={cycleTime} metricData={metricData} />}
+      {metricDataUS && <VisualizeMetric metricInput={`${metricInput}US`} avgMetricData={cycleTime} metricData={metricDataUS} />}
+      {metricData && <VisualizeMetric metricInput={metricInput} avgMetricData={cycleTime} metricData={metricData} />}
       {cycleTime && (
         <Row>
           <Col md={{ span: 6, offset: 3 }}>
