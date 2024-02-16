@@ -72,8 +72,9 @@ const MetricInput = () => {
         .then((res) => {
           console.log(res.data.plotData);
           const leadTimeTempdata = res.data.plotData.map((data) => {
-            return [data.finished_date.slice(5, 17), data.lead_time];
+            return [data.finished_date.slice(5, 16), data.lead_time];
           });
+          leadTimeTempdata.sort((a, b) => a[0].localeCompare(b[0]));
           console.log(leadTimeTempdata);
           leadTimeTempdata.unshift(["Date", "Lead Time"]);
           setMetricData(leadTimeTempdata);
