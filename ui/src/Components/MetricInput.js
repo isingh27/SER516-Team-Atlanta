@@ -78,6 +78,10 @@ const MetricInput = () => {
           setMetricData(cycleTimeData);
 
         });
+      taigaService.taigaProjectCycleTimesPerUserStory(localStorage.getItem('taigaToken'),projectId)
+        .then((res)=>{
+          console.log(res)
+        });
     }
   };
 
