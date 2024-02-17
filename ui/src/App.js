@@ -10,9 +10,10 @@ import {
   useLocation,
   useNavigate
 } from "react-router-dom";
-import MetricInput from './Components/MetricInput';
+// import MetricInput from './Components/MetricInput';
 import NavBar from './Components/NavBar';
 import { GlobalProvider } from './GlobalContext';
+import Dashboard from './Components/Dashboard';
 
 function App() {
 
@@ -32,8 +33,8 @@ function App() {
               <Route path="/project-slug" element={
                 <ConditionalRoute component={ProjectSlugInput} />
               } />
-              <Route path="/metric-input" element={
-                <ConditionalRoute component={MetricInput} />}
+              <Route path="/dashboard" element={
+                <ConditionalRoute component={Dashboard} />}
               />
               </Routes>
           </header>

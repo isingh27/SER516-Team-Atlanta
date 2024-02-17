@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import MetricInput from "./MetricInput";
+import Dashboard from "./Dashboard";
 
 function VisualizeMetric({ metricInput, metricData }) {
   //TODO: Implement State Management for getting the metricInput
@@ -9,10 +9,7 @@ function VisualizeMetric({ metricInput, metricData }) {
     <Container>
       <Row>
         <Col md={12}>
-          {metricInput === "cycleTime" && (
-            // Placeholder - Integrate charting library compatible with React-Bootstrap
-            <h3>{metricData}</h3>
-          )}
+        <h3>{metricInput}</h3>
         </Col>
       </Row>
     </Container>

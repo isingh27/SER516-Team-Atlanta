@@ -34,7 +34,7 @@ const ProjectSlugInput = () => {
                 //TODO: Store the project details in local storage & redirect the user to the project details page
                 localStorage.setItem('projectId',JSON.stringify(response.data.data.id))
                 localStorage.setItem('projectName',JSON.stringify(response.data.data.name))
-                navigation('/metric-input')
+                navigation('/dashboard')
             }
             else{
                 setLoading(false);
