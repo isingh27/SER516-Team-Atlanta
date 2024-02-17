@@ -15,16 +15,24 @@ function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
     vAxis: { title: "Cycle Time" },
     legend: { position: "bottom" },
   };
+  const optionsUS = {
+    chart: {
+      title: "Cycle Time",
+      subtitle: "in days",
+    },
+    hAxis: { title: "# Task" },
+    vAxis: { title: "Cycle Time" },
+    legend: { position: "bottom" },
+  };
 
   return (
-    <Container>
-      <Row>
-        <Col md={12}>
+    <Container fluid>
           {metricInput === "cycleTime" && (
             <>
             <Chart
               width="100%"
               height="300px"
+              className="mt-5"
               chartType="Scatter"
               loader={<div>Loading Chart</div>}
               data={metricData}
@@ -33,8 +41,19 @@ function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
             {/* <h3>{avgMetricData} Days</h3> */}
             </>
           )}
-        </Col>
-      </Row>
+          {metricInput === "cycleTimeUS" && (
+            <>
+            <Chart
+              width="100%"
+              height="300px"
+              chartType="Scatter"
+              loader={<div>Loading Chart</div>}
+              data={metricData}
+              options={optionsUS}
+              />
+            {/* <h3>{avgMetricData} Days</h3> */}
+            </>
+          )}
     </Container>
   );
 }
