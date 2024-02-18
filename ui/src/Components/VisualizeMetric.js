@@ -1,8 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { Chart } from "react-google-charts";
-
-import MetricInput from "./MetricInput";
+import Dashboard from "./Dashboard";
 
 
 function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
@@ -36,47 +34,12 @@ function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
   };
 
   return (
-    <Container fluid>
-          {metricInput === "cycleTime" && (
-            <>
-            <Chart
-              width="100%"
-              height="300px"
-              className="mt-5"
-              chartType="Scatter"
-              loader={<div>Loading Chart</div>}
-              data={metricData}
-              options={options}
-              />
-            {/* <h3>{avgMetricData} Days</h3> */}
-            </>
-          )}
-          {metricInput === "cycleTimeUS" && (
-            <>
-            <Chart
-              width="100%"
-              height="300px"
-              chartType="Scatter"
-              loader={<div>Loading Chart</div>}
-              data={metricData}
-              options={optionsUS}
-              />
-            {/* <h3>{avgMetricData} Days</h3> */}
-            </>
-          )}
-          {metricInput === "leadTime" && (
-            <>
-            <Chart
-              width="100%"
-              height="300px"
-              chartType="Scatter"
-              loader={<div>Loading Chart</div>}
-              data={metricData}
-              options={optionsLeadTime}
-              />
-            </>
-          )}
-
+    <Container>
+      <Row>
+        <Col md={12}>
+        <h3>{metricInput}</h3>
+        </Col>
+      </Row>
     </Container>
   );
 }
