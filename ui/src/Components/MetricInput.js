@@ -61,7 +61,8 @@ const MetricInput = () => {
           setCycleTime(res.data.avg_cycle_time);
           setLoading(false);
         });
-      taigaService.taigaProjectCycleTimesPerTask(localStorage.getItem('taigaToken'),projectId)
+        
+        taigaService.taigaProjectCycleTimesPerTask(localStorage.getItem('taigaToken'),projectId)
         .then((res)=>{
           console.log(res)
           const cycleTimeData = res.data.data.map((task, index) => {
@@ -83,7 +84,24 @@ const MetricInput = () => {
           console.log(cycleTimeDataUS);
           cycleTimeDataUS.unshift(["# User Story", "Cycle Time"]);
           setMetricDataUS(cycleTimeDataUS);
-        });
+    })}
+
+     else if (metricInput == "leadTime") {
+      taigaService
+        .taigaProjectLeadTime(localStorage.getItem("taigaToken"), projectId)
+        .then((res) => {
+          console.log(res.data.plotData);
+          const leadTimeTempdata = res.data.plotData.map((data) => {
+            return [data.finished_date.slice(5, 16), data.lead_time];
+          });
+          leadTimeTempdata.sort((a, b) => a[0].localeCompare(b[0]));
+          console.log(leadTimeTempdata);
+          leadTimeTempdata.unshift(["Date", "Lead Time"]);
+          setMetricData(leadTimeTempdata);
+          setLoading(false);
+        }
+      );
+
     }
   };
 

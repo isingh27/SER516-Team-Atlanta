@@ -1,11 +1,21 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import {Chart} from "react-google-charts";
+import { Chart } from "react-google-charts";
 
 import MetricInput from "./MetricInput";
 
+
 function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
   //TODO: Implement State Management for getting the metricInput
+  const optionsLeadTime = {
+    chart: {
+      title: "Lead Time",
+      subtitle: "in days",
+    },
+    hAxis: { title: "Date" },
+    vAxis: { title: "Lead Time" },
+    legend: { position: "bottom" },
+  };
   const options = {
     chart: {
       title: "Cycle Time",
@@ -54,6 +64,19 @@ function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
             {/* <h3>{avgMetricData} Days</h3> */}
             </>
           )}
+          {metricInput === "leadTime" && (
+            <>
+            <Chart
+              width="100%"
+              height="300px"
+              chartType="Scatter"
+              loader={<div>Loading Chart</div>}
+              data={metricData}
+              options={optionsLeadTime}
+              />
+            </>
+          )}
+
     </Container>
   );
 }
