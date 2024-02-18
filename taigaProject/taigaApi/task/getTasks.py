@@ -59,6 +59,64 @@ def get_closed_tasks(project_id, auth_token):
         return closed_tasks
     else:
         return None
+    
+
+# Function to retrieve user stories for a specific project from the Taiga API
+def get_user_stories(project_id, auth_token):
+
+    # Get Taiga API URL from environment variables
+    taiga_url = os.getenv('TAIGA_URL')
+
+    # Construct the URL for the user stories API endpoint for the specified project
+    user_story_api_url = f"{taiga_url}/userstories?project={project_id}"
+
+    # Define headers including the authorization token and content type
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type': 'application/json',
+    }
+
+    try:
+
+        # Make a GET request to Taiga API to retrieve user stories
+        response = requests.get(user_story_api_url, headers=headers)
+        response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
+
+        # Extract and return the user stories information from the response
+        user_stories = response.json()
+        return user_stories
+
+    except requests.exceptions.RequestException as e:
+
+        # Handle errors during the API request and print an error message
+        print(f"Error fetching user stories: {e}")
+        return None
+    
+
+# Function to retrieve closed user stories for a specific project from the Taiga API
+def get_closed_user_stories(project_id, auth_token):
+
+    # Call the get_user_story function to retrieve all user stories for the project
+    user_stories = get_user_stories(project_id, auth_token)
+    if user_stories:
+
+        # Filter user stories to include only closed user stories and format the result
+        closed_user_stories = [
+            {
+                "id": story["id"],
+                "subject": story["subject"],
+                "created_date": story["created_date"],
+                "finish_date": story["finish_date"]
+            }
+            for story in user_stories if story.get("is_closed")
+        ]
+
+        return closed_user_stories
+    else:
+        return None
+    
+
+
 
 
 # Function to retrieve all tasks for a specific project from the Taiga API

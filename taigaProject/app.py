@@ -5,7 +5,7 @@ from taigaApi.authenticate import authenticate
 from taigaApi.project.getProjectBySlug import get_project_by_slug
 from taigaApi.project.getProjectTaskStatusName import get_project_task_status_name
 from taigaApi.userStory.getUserStory import get_user_story
-from taigaApi.task.getTaskHistory import get_task_history
+from taigaApi.task.getTaskHistory import get_task_history, get_task_cycle_times
 from taigaApi.task.getTasks import get_closed_tasks, get_all_tasks
 
 
@@ -111,6 +111,27 @@ def get_cycle_time(project_id, auth_token):
     print("\n***********************************\n")
 
 
+def get_cycle_times(project_id, auth_token):
+    """Calculates and prints average cycle time for each task with start and end dates.
+
+    Args:
+        project_id: The ID of the project.
+        auth_token: The Taiga API authorization token.
+    """
+
+    tasks = get_closed_tasks(project_id, auth_token)
+    task_data = get_task_cycle_times(tasks, auth_token)
+
+    print("\n***********************************\n")
+
+    for cycle_time, start_date, end_date in task_data:
+        print(f"Task Cycle Time: {cycle_time} days")
+        print(f"Start Date: {start_date.strftime('%Y-%m-%d %H:%M')}")
+        print(f"End Date: {end_date.strftime('%Y-%m-%d %H:%M')}\n")
+
+    print("\n***********************************\n")
+
+
 # Function to handle user actions and provide options
 def handle_user_action(project_id, auth_token):
     while True:
@@ -120,7 +141,8 @@ def handle_user_action(project_id, auth_token):
             "(2) Calculate number of task closed per week metric\n"
             "(3) Calculate average lead time\n"
             "(4) Calculate average cycle time\n"
-            "(5) Exit\n"
+            "(5) Calculate cycle time for each task\n"
+            "(6) Exit\n"
             "Enter action: "
         )
         if action == "1":
@@ -138,8 +160,12 @@ def handle_user_action(project_id, auth_token):
         elif action == "4":
             print("\nCalculating average cycle time...")
             get_cycle_time(project_id, auth_token)
-
+        
         elif action == "5":
+            print("\nCalculating cycle time for each task...")
+            get_cycle_times(project_id, auth_token)
+
+        elif action == "6":
             print("\nExiting...")
             break
         else:

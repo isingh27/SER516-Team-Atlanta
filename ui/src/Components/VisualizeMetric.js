@@ -2,9 +2,12 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Chart } from "react-google-charts";
 
-function VisualizeMetric({ metricInput, metricData }) {
+import MetricInput from "./MetricInput";
+
+
+function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
   //TODO: Implement State Management for getting the metricInput
-  const options = {
+  const optionsLeadTime = {
     chart: {
       title: "Lead Time",
       subtitle: "in days",
@@ -13,28 +16,67 @@ function VisualizeMetric({ metricInput, metricData }) {
     vAxis: { title: "Lead Time" },
     legend: { position: "bottom" },
   };
+  const options = {
+    chart: {
+      title: "Cycle Time",
+      subtitle: "in days",
+    },
+    hAxis: { title: "# User Story" },
+    vAxis: { title: "Cycle Time" },
+    legend: { position: "bottom" },
+  };
+  const optionsUS = {
+    chart: {
+      title: "Cycle Time",
+      subtitle: "in days",
+    },
+    hAxis: { title: "# Task" },
+    vAxis: { title: "Cycle Time" },
+    legend: { position: "bottom" },
+  };
+
   return (
-    <Container>
-      <Row>
-        <Col md={12}>
+    <Container fluid>
           {metricInput === "cycleTime" && (
-            // Placeholder - Integrate charting library compatible with React-Bootstrap
-            <h3>{metricData}</h3>
-          )}
-        </Col>
-        {metricInput === "leadTime" && (
-          <Col md={12}>
+            <>
             <Chart
-              chartType="Scatter"
               width="100%"
               height="300px"
+              className="mt-5"
+              chartType="Scatter"
               loader={<div>Loading Chart</div>}
               data={metricData}
               options={options}
-            />
-          </Col>
-        )}
-      </Row>
+              />
+            {/* <h3>{avgMetricData} Days</h3> */}
+            </>
+          )}
+          {metricInput === "cycleTimeUS" && (
+            <>
+            <Chart
+              width="100%"
+              height="300px"
+              chartType="Scatter"
+              loader={<div>Loading Chart</div>}
+              data={metricData}
+              options={optionsUS}
+              />
+            {/* <h3>{avgMetricData} Days</h3> */}
+            </>
+          )}
+          {metricInput === "leadTime" && (
+            <>
+            <Chart
+              width="100%"
+              height="300px"
+              chartType="Scatter"
+              loader={<div>Loading Chart</div>}
+              data={metricData}
+              options={optionsLeadTime}
+              />
+            </>
+          )}
+
     </Container>
   );
 }

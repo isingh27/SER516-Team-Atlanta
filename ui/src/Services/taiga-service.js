@@ -46,6 +46,36 @@ class TaigaService {
       }
     );
   }
+
+    taigaProjectCycleTime(token, project_id) {
+        return axios.post(API_URL + "cycleTime",
+            { "projectId": project_id },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    }
+
+    taigaProjectCycleTimesPerTask(token, project_id) {
+        return axios.post(API_URL + "cycleTimesPerTask",
+            { "projectId": project_id },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    }
+
+    taigaProjectCycleTimesPerUserStory(token, project_id) {
+        return axios.post(API_URL + "cycleTimesPerUserStory",
+            { "projectId": project_id },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    }
 }
 
 export default new TaigaService();
