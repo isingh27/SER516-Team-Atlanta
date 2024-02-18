@@ -5,6 +5,7 @@ from taigaApi.task.getTaskHistory import get_task_history, get_task_cycle_times,
 from taigaApi.task.getTasks import get_closed_tasks, get_closed_user_stories
 from taigaApi.sprint.getCurrentSprintID import get_current_sprint_id
 from taigaApi.sprint.getMilestoneStats import get_milestone_stats
+from taigaApi.sprint.getAllSprintIDs import get_all_sprint_ids
 from flask_cors import CORS
 from datetime import datetime, timedelta
 
@@ -148,23 +149,19 @@ def burndown_chart():
 
     project_id = request.json['projectId']
 
-    # Call the function to get the current sprint ID
     sprint_id = get_current_sprint_id(project_id, token)
 
     if sprint_id is None:
         return jsonify({"message": "No current sprint found"}), 404
 
-    # Call the function to get milestone stats using the sprint ID
     milestone_stats = get_milestone_stats(sprint_id, token)
 
     if milestone_stats is None:
         return jsonify({"message": "Error fetching milestone stats"}), 500
 
-    # Add an "id" field to each item in the "days" list starting with 1
     for index, day_data in enumerate(milestone_stats["days"], start=1):
         day_data["id"] = index
 
-    # Modify the response to only include the necessary fields
     response_data = {
         "days": milestone_stats["days"],
         "name": milestone_stats["name"],
@@ -172,6 +169,25 @@ def burndown_chart():
     }
 
     return jsonify({"burndown_chart_data": response_data, "status": "success"})
+
+
+@app.route("/sprints", methods=["POST"])
+def all_sprints():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    project_id = request.json['projectId']
+
+    sprint_ids = get_all_sprint_ids(project_id, token)
+
+    if sprint_ids is None:
+        return jsonify({"message": "Error fetching sprint IDs"}), 500
+
+    return jsonify({"sprint_ids": sprint_ids, "status": "success"})
 
 
 
