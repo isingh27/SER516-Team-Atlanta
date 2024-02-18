@@ -13,6 +13,8 @@ const Dashboard = () => {
 
   const navigation = useNavigate();
   const [cycleTime, setCycleTime] = useState("");
+  const [cycleTimeUS, setCycleTimeUS] = useState("");
+
   const [loading, setLoading] = useState(false);
   const projectName = localStorage.getItem("projectName");
 
@@ -74,9 +76,50 @@ const Dashboard = () => {
         .taigaProjectCycleTime(localStorage.getItem("taigaToken"), projectId)
         .then((res) => {
           console.log(res);
-          setMetricData(res.data.avg_cycle_time);
+          setCycleTime(res.data.avg_cycle_time);
           setLoading(false);
         });
+        
+        taigaService.taigaProjectCycleTimesPerTask(localStorage.getItem('taigaToken'),projectId)
+        .then((res)=>{
+          console.log(res)
+          const cycleTimeData = res.data.data.map((task, index) => {
+            return [`Task #${index}`, task.cycle_time];
+          }
+          );
+          console.log(cycleTimeData);
+          cycleTimeData.unshift(["# Task", "Cycle Time"]);
+          setMetricData(cycleTimeData);
+
+        });
+      taigaService.taigaProjectCycleTimesPerUserStory(localStorage.getItem('taigaToken'),projectId)
+        .then((res)=>{
+          console.log(res)
+          const cycleTimeDataUS = res.data.data.map((task, index) => {
+            return [`US #${index}`, task.cycle_time];
+          }
+          );
+          console.log(cycleTimeDataUS);
+          cycleTimeDataUS.unshift(["# User Story", "Cycle Time"]);
+          setMetricDataUS(cycleTimeDataUS);
+    })}
+
+     else if (metricInput == "leadTime") {
+      taigaService
+        .taigaProjectLeadTime(localStorage.getItem("taigaToken"), projectId)
+        .then((res) => {
+          console.log(res.data.plotData);
+          const leadTimeTempdata = res.data.plotData.map((data) => {
+            return [data.finished_date.slice(5, 16), data.lead_time];
+          });
+          leadTimeTempdata.sort((a, b) => a[0].localeCompare(b[0]));
+          console.log(leadTimeTempdata);
+          leadTimeTempdata.unshift(["Date", "Lead Time"]);
+          setMetricData(leadTimeTempdata);
+          setLoading(false);
+        }
+      );
+
     }
   };
 
