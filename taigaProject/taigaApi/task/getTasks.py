@@ -51,7 +51,8 @@ def get_closed_tasks(project_id, auth_token):
                 "id": task["id"],
                 "subject": task["subject"],
                 "created_date": task["created_date"],
-                "finished_date": task["finished_date"]
+                "finished_date": task["finished_date"],
+                "ref": task["ref"]
             }
             for task in tasks if task.get("is_closed")
         ]
@@ -106,7 +107,8 @@ def get_closed_user_stories(project_id, auth_token):
                 "id": story["id"],
                 "subject": story["subject"],
                 "created_date": story["created_date"],
-                "finish_date": story["finish_date"]
+                "finish_date": story["finish_date"],
+                "ref": story["ref"]
             }
             for story in user_stories if story.get("is_closed")
         ]
