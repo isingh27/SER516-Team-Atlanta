@@ -118,11 +118,12 @@ def cycle_time_per_task():
     cycle_times = get_task_cycle_times(closed_tasks, token)
 
     response_data = []
-    for cycle_time, start_date, end_date in cycle_times:
+    for cycle_time, start_date, end_date, ref in cycle_times:
         response_data.append({
             "cycle_time": cycle_time,
             "start_date": start_date,
-            "end_date": end_date
+            "end_date": end_date,
+            "refId": ref   # refId is the task id
         })
     
     return jsonify({"data": response_data, "status": "success"})
@@ -145,11 +146,12 @@ def cycle_time_per_user_story():
     cycle_times = get_user_story_cycle_times(closed_user_stories, token)
 
     response_data = []
-    for cycle_time, start_date, end_date in cycle_times:
+    for cycle_time, start_date, end_date, ref in cycle_times:
         response_data.append({
             "cycle_time": cycle_time,
             "start_date": start_date,
-            "end_date": end_date
+            "end_date": end_date,
+            "refId": ref  # refId is the user story id
         })
 
     return jsonify({"data": response_data, "status": "success"})
