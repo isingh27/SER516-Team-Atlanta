@@ -19,7 +19,9 @@ const Dashboard = () => {
   const projectName = localStorage.getItem("projectName");
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
+  const [sprintInput, setSprintInput] = useState("Sprint1");
   const [metricData, setMetricData] = useState();
+  const [metricDataUS, setMetricDataUS] = useState();
   const [isLoading, setIsLoading] = useState({ graph1: false, graph2: false, graph3: false });
 
   // Simulate graph data loading
@@ -62,6 +64,29 @@ const Dashboard = () => {
     {
       title: "Impediment Tracker",
       name: "impediment",
+    },
+  ];
+
+  const sprintOptions = [
+    {
+      title: "Sprint 1",
+      name: "Sprint1",
+    },
+    {
+      title: "Sprint 2",
+      name: "Sprint2",
+    },
+    {
+      title: "Sprint 3",
+      name: "Sprint3",
+    },
+    {
+      title: "Sprint 4",
+      name: "Sprint4",
+    },
+    {
+      title: "Sprint 5",
+      name: "Sprint5",
     },
   ];
 
@@ -119,7 +144,34 @@ const Dashboard = () => {
           setLoading(false);
         }
       );
-
+    }
+    else if (metricInput == "burndown") {
+      taigaService
+        .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
+        .then((sprintsRes) => {
+          console.log(sprintsRes);
+          if (sprintsRes && sprintsRes.data && sprintsRes.data.sprint_ids && sprintsRes.data.sprint_ids.length > 0) {
+            // Find the sprint ID that matches the selected sprint name
+            const selectedSprint = sprintsRes.data.sprint_ids.find(sprint => sprint[0] === sprintInput);
+            if (!selectedSprint) {
+              throw new Error(`Sprint "${sprintInput}" not found`);
+            }
+            let sprintId = selectedSprint[1];
+            console.log(sprintId);
+            return taigaService.taigaProjectBurnDownChart(localStorage.getItem("taigaToken"), sprintId);
+          } else {
+            throw new Error("No sprints found for this project");
+          }
+        })
+        .then((burndownRes) => {
+          console.log(burndownRes);
+        })
+        .catch((error) => {
+          console.error(error.message);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   };
 
@@ -136,6 +188,11 @@ const Dashboard = () => {
       <Row className="justify-content-md-center" style={{height:"400px"}}>
       <Col md={6} className="mb-4">
           {isLoading.graph3 ? <Loader /> : <VisualizeMetric metricInput="leadTime" />}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{height:"400px"}}>
+        <Col md={6} className="mb-4">
+          {isLoading.graph4 ? <Loader /> : <VisualizeMetric metricInput="burndown" />}
         </Col>
       </Row>
     </Container>
