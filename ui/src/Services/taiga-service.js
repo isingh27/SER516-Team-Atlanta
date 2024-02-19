@@ -76,6 +76,24 @@ class TaigaService {
                 }
             });
     }
+    taigaProjectSprints(token, project_id) {
+      return axios.post(API_URL + "sprints",
+          { "projectId": project_id },
+          {
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          });
+  }
+  taigaProjectBurnDownChart(token, sprint_id) {
+      return axios.post(API_URL + "burndownChart",
+          { "sprintId": sprint_id },
+          {
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          });
+  }
 }
 
 export default new TaigaService();
