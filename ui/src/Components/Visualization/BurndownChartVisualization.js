@@ -11,15 +11,15 @@ function BurndownChartVisualization({ metricData }) {
       "Optimal Points",
       { role: "tooltip", type: "string", p: { html: true } },
     ],
-    ...metricData.days.map((day) => [
-      day.id,
-      day.open_points,
-      `<div>${day.day}<br/>Open Points: ${Math.round(day.open_points)}</div>`,
-      day.optimal_points,
-      `<div>${day.day}<br/>Optimal Points: ${Math.round(
-        day.optimal_points
-      )}</div>`,
-    ]),
+    // ...metricData.days.map((day) => [
+    //   day.id,
+    //   day.open_points,
+    //   `<div>${day.day}<br/>Open Points: ${Math.round(day.open_points)}</div>`,
+    //   day.optimal_points,
+    //   `<div>${day.day}<br/>Optimal Points: ${Math.round(
+    //     day.optimal_points
+    //   )}</div>`,
+    // ]),
   ];
 
   return (
@@ -49,4 +49,4 @@ function BurndownChartVisualization({ metricData }) {
   );
 }
 
-export default VisualizeMetric;
+export default BurndownChartVisualization;

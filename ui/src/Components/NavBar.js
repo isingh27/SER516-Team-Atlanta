@@ -33,7 +33,7 @@ export default function NavBar() {
           {isAuthenticated &&
             <>
             <Nav.Link href="/project-slug">Taiga Project</Nav.Link>
-            <Nav.Link href="/metric-input">Metrics</Nav.Link>
+            <Nav.Link href="/dashboard">Dashboard</Nav.Link>
             </>  
           }         
           </Nav>
