@@ -23,18 +23,6 @@ class TaigaService {
     );
   }
 
-  taigaProjectCycleTime(token, project_id) {
-    return axios.post(
-      API_URL + "cycleTime",
-      { projectId: project_id },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  }
-
   taigaProjectLeadTime(token, project_id) {
     return axios.post(
       API_URL + "leadTime",
@@ -72,7 +60,7 @@ class TaigaService {
             { "projectId": project_id },
             {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 }
             });
     }
