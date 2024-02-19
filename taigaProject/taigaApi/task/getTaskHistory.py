@@ -75,6 +75,7 @@ def get_task_cycle_times(tasks, auth_token):
     for task in tasks:
         task_history_url = f"{taiga_url}/history/task/{task['id']}"
         finished_date = task["finished_date"]
+        ref = task["ref"]
 
         try:
             response = requests.get(task_history_url, headers=headers)
@@ -88,7 +89,7 @@ def get_task_cycle_times(tasks, auth_token):
                 in_progress_date = datetime.fromisoformat(str(in_progress_date)[:-6])
                 cycle_time = (finished_date - in_progress_date).days
 
-                task_data.append((cycle_time, in_progress_date, finished_date))
+                task_data.append((cycle_time, in_progress_date, finished_date, ref))
 
         except requests.exceptions.RequestException as e:
             print(f"Error fetching task history: {e}")
@@ -120,6 +121,7 @@ def get_user_story_cycle_times(user_stories, auth_token):
     for user_story in user_stories:
         user_story_history_url = f"{taiga_url}/history/userstory/{user_story['id']}"
         finished_date = user_story["finish_date"]
+        ref = user_story["ref"]
 
         try:
             response = requests.get(user_story_history_url, headers=headers)
@@ -135,7 +137,7 @@ def get_user_story_cycle_times(user_stories, auth_token):
                 sprint_ready_date = datetime.fromisoformat(str(sprint_ready_date)[:-6])
                 cycle_time = (finished_date - sprint_ready_date).days
 
-                user_story_data.append((cycle_time, sprint_ready_date, finished_date))
+                user_story_data.append((cycle_time, sprint_ready_date, finished_date, ref))
 
         except requests.exceptions.RequestException as e:
             print(f"Error fetching user story history: {e}")
