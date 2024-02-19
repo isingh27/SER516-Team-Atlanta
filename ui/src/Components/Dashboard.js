@@ -38,7 +38,12 @@ const Dashboard = () => {
     taigaService.taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
       .then((sprintsRes) => {
         if (sprintsRes && sprintsRes.data && sprintsRes.data.sprint_ids && sprintsRes.data.sprint_ids.length > 0) {
-          setSprints(sprintsRes.data.sprint_ids.map(sprint => ({ title: sprint[0], name: sprint[1].toString() })));
+          const sprintOptions = sprintsRes.data.sprint_ids.map(sprint => ({ title: sprint[0], name: sprint[1].toString() }));
+          setSprints(sprintOptions);
+          
+          // Set initial sprintInput to the first sprint or to "Sprint1" explicitly
+          const initialSprint = sprintOptions.find(option => option.title === "Sprint1") || sprintOptions[0];
+          setSprintInput(initialSprint.name);
         } else {
           throw new Error("No sprints found for this project");
         }
