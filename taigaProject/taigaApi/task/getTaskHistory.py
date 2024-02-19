@@ -17,6 +17,7 @@ def get_task_history(tasks, auth_token):
     headers = {
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
+        'x-disable-pagination': 'True'
     }
 
     # Initialize variables to store cycle time and count of closed tasks
@@ -67,7 +68,8 @@ def get_task_cycle_times(tasks, auth_token):
     taiga_url = os.getenv('TAIGA_URL')
     headers = {
         'authorization': f'Bearer {auth_token}', 
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+        'x-disable-pagination': 'True'
     }
 
     task_data = []
@@ -113,7 +115,8 @@ def get_user_story_cycle_times(user_stories, auth_token):
     taiga_url = os.getenv('TAIGA_URL')
     headers = {
         'authorization': f'Bearer {auth_token}', 
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+        'x-disable-pagination': 'True'
     }
 
     user_story_data = []
