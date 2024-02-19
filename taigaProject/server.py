@@ -97,7 +97,7 @@ def lead_time():
         created_date = datetime.fromisoformat(task["created_date"])
         finished_date = datetime.fromisoformat(task['finished_date'])
         lead_time = (finished_date - created_date).days
-        output.append({"task":task,"finished_date":finished_date,"lead_time":lead_time})
+        output.append({"task":task,"finished_date":finished_date,"lead_time":lead_time, "refId":task['ref']})
     return jsonify({"plotData":output, "status":"success"})
 
 @app.route("/cycleTimesPerTask", methods=["POST"])
