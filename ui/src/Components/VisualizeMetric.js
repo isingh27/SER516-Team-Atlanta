@@ -1,8 +1,8 @@
 import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Form} from "react-bootstrap";
 import {Chart} from "react-google-charts";
 
-function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
+function VisualizeMetric({ metricInput, metricData, sprintInput,handleChangeDropDown }) {
   //TODO: Implement State Management for getting the metricInput
   const options = {
     chart: {
@@ -33,6 +33,39 @@ function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
     vAxis: { title: "Lead Time" },
     legend: { position: "right" },
   };
+
+  const optionsBD = {
+    chart: {
+      title: "Burndown",
+      subtitle: "in days",
+    },
+    hAxis: { title: "Date" },
+    vAxis: { title: "Story points" },
+    legend: { position: "right" },
+  };
+
+  const sprintOptions = [
+    {
+      title: "Sprint 1",
+      name: "Sprint1",
+    },
+    {
+      title: "Sprint 2",
+      name: "Sprint2",
+    },
+    {
+      title: "Sprint 3",
+      name: "Sprint3",
+    },
+    {
+      title: "Sprint 4",
+      name: "Sprint4",
+    },
+    {
+      title: "Sprint 5",
+      name: "Sprint5",
+    },
+  ];
 
   return (
     <Container fluid>
@@ -67,6 +100,7 @@ function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
           {metricInput === "leadTime" && (
             <>
             <b>Lead Time</b>
+            {console.log("lead time",metricData)}
             <Chart
               width="100%"
               height="300px"
@@ -78,6 +112,35 @@ function VisualizeMetric({ metricInput, metricData, avgMetricData }) {
             {/* <h3>{avgMetricData} Days</h3> */}
             </>
           )}
+          {metricInput === "burndown" && (
+            <>
+              <b>Burndown Chart</b>
+                  <Form.Select
+                    value={sprintInput}
+                    onChange={handleChangeDropDown}
+                    required
+                    style={{width:"10%"}}
+                  >
+                    <option value="" disabled hidden>
+                      Select Sprint
+                    </option>
+                    {sprintOptions.map((option, index) => (
+                      <option key={index} value={option.name}>
+                        {option.title}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  {console.log("metricData bd",metricData)}
+                  <Chart
+                    width="100%"
+                    height="300px"
+                    chartType="LineChart"
+                    loader={<div>Loading Chart</div>}
+                    data={metricData}
+                    options={optionsBD}
+                  />
+                  </>
+            )}
     </Container>
   );
 }
