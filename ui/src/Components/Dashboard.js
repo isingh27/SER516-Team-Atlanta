@@ -4,9 +4,6 @@ import { Container, Row, Col, Spinner } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
-// import BurndownChartVisualization from "./Visualization/BurndownChartVisualization"
-
-
 
 const Dashboard = () => {
 
@@ -27,6 +24,7 @@ const Dashboard = () => {
   const [leadTime,setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([])
   const [sprintInput, setSprintInput] = useState("Sprint1");
+  const [sprints, setSprints] = useState([]);
   let projectId = localStorage.getItem("projectId");
 
 
@@ -35,6 +33,21 @@ const Dashboard = () => {
     setSprintInput(e.target.value)
     callBDData()
   }
+
+  const fetchSprints = () => {
+    taigaService.taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
+      .then((sprintsRes) => {
+        if (sprintsRes && sprintsRes.data && sprintsRes.data.sprint_ids && sprintsRes.data.sprint_ids.length > 0) {
+          setSprints(sprintsRes.data.sprint_ids.map(sprint => ({ title: sprint[0], name: sprint[1].toString() })));
+        } else {
+          throw new Error("No sprints found for this project");
+        }
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  };
+  
   
   useEffect(() => {
 
@@ -51,7 +64,7 @@ const Dashboard = () => {
         .then((res)=>{
           console.log(res)
           const cycleTimeData = res.data.data.map((task, index) => {
-            return [`Task #${task.refId}`, task.cycle_time];
+            return [`T-${task.refId}`, task.cycle_time];
           }
           );
           console.log(cycleTimeData);
@@ -77,7 +90,7 @@ const Dashboard = () => {
         .then((res) => {
           console.log(res.data.plotData);
           const leadTimeTempdata = res.data.plotData.map((data) => {
-            return [`Task #${data.refId}`, data.lead_time];
+            return [`T-${data.refId}`, data.lead_time];
           });
           // leadTimeTempdata.sort((a, b) => a[0].localeCompare(b[0]));
           console.log(leadTimeTempdata);
@@ -85,12 +98,9 @@ const Dashboard = () => {
           setLeadTime(leadTimeTempdata);
           setLoadingLT(false)
         })
-
-        
-
   }, []);
-
   useEffect(()=>{
+    fetchSprints()
     callBDData()
   },[sprintInput])
   const callBDData = () =>{
@@ -100,7 +110,7 @@ const Dashboard = () => {
       console.log(sprintsRes);
       if (sprintsRes && sprintsRes.data && sprintsRes.data.sprint_ids && sprintsRes.data.sprint_ids.length > 0) {
         // Find the sprint ID that matches the selected sprint name
-        const selectedSprint = sprintsRes.data.sprint_ids.find(sprint => sprint[0] === sprintInput);
+        const selectedSprint = sprintsRes.data.sprint_ids.find(sprint => sprint[1].toString() === sprintInput);
         if (!selectedSprint) {
           throw new Error(`Sprint "${sprintInput}" not found`);
         }
@@ -129,38 +139,6 @@ const Dashboard = () => {
 
   }
 
-  // const metricOptions = [
-  //   {
-  //     title: "Burndown Chart",
-  //     name: "burndown",
-  //   },
-  //   {
-  //     title: "Cumulative Flow Diagram",
-  //     name: "cfd",
-  //   },
-  //   {
-  //     title: "Cycle Time",
-  //     name: "cycleTime",
-  //   },
-  //   {
-  //     title: "Lead Time",
-  //     name: "leadTime",
-  //   },
-  //   {
-  //     title: "Throughput",
-  //     name: "throughput",
-  //   },
-  //   {
-  //     title: "Work in Progress",
-  //     name: "wip",
-  //   },
-  //   {
-  //     title: "Impediment Tracker",
-  //     name: "impediment",
-  //   },
-  // ];
-
-
   const Loader = () => (<Spinner animation="border" role="status" />);
     
 
@@ -183,7 +161,7 @@ const Dashboard = () => {
       </Row>
       <Row className="justify-content-md-center" style={{height:"400px"}}>
         <Col md={12} className="mb-4" style={{borderBottom:"1px solid black"}}>
-          {!loadingBD ? <VisualizeMetric metricInput="burndown" sprintInput={sprintInput} setSprintInput={setSprintInput} metricData={burndownData} handleChangeDropDown={handleChangeDropDown}/>: <Loader />}
+          {!loadingBD ? <VisualizeMetric metricInput="burndown" sprintInput={sprintInput} setSprintInput={setSprintInput} metricData={burndownData} handleChangeDropDown={handleChangeDropDown} sprintOptions={sprints}/>: <Loader />}
         </Col>
       </Row>
     </Container>
