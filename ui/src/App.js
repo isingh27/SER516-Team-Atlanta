@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import UserCredentials from './Components/UserCredentials';
 import ProjectSlugInput from './Components/ProjectSlugInput';
 import {
@@ -7,12 +7,10 @@ import {
   Routes, 
   Route,
   Navigate, 
-  useLocation,
-  useNavigate
 } from "react-router-dom";
-import MetricInput from './Components/MetricInput';
 import NavBar from './Components/NavBar';
 import { GlobalProvider } from './GlobalContext';
+import Dashboard from './Components/Dashboard';
 
 function App() {
 
@@ -32,8 +30,8 @@ function App() {
               <Route path="/project-slug" element={
                 <ConditionalRoute component={ProjectSlugInput} />
               } />
-              <Route path="/metric-input" element={
-                <ConditionalRoute component={MetricInput} />}
+              <Route path="/dashboard" element={
+                <ConditionalRoute component={Dashboard} />}
               />
               </Routes>
           </header>

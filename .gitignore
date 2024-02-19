@@ -24,6 +24,6 @@ hs_err_pid*
 replay_pid*
 
 # pychache files
-./taigaProject/__pycache__/server.cpython-311.pyc
+taigaProject/__pycache__/*
 *.pyc
 ui/package-lock.json

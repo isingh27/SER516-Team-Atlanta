@@ -19,6 +19,7 @@ def get_user_story(project_id, auth_token):
     headers = {
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
+        'x-disable-pagination': 'True'
     }
 
     try:

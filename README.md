@@ -8,10 +8,25 @@ WebApp built using React that uses Flask as backend for interacting with the Tai
 
 Before running the script, make sure you have the following installed:
 
-- Python 3
-- NodeJS
+- Python v3.11
+- NodeJS v20.11
 - Taiga account with API access
 - Taiga project slug
+
+## Setup (using Shell Script)
+
+1. Make the shell executable
+	```bash
+	chmod +x setup.sh
+	```
+
+2. Run the script
+	```bash
+	./setup.sh
+	```
+
+3. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
 
 ## Setup
 
