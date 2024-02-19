@@ -44,6 +44,23 @@ def projectDetails():
         return jsonify({"status": "error", "message": "Project not found"})
     return jsonify({"data":project_info, "status": "success"})
 
+@app.route("/sprints", methods=["POST"])
+def all_sprints():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    project_id = request.json['projectId']
+
+    sprint_ids = get_all_sprint_ids(project_id, token)
+
+    if sprint_ids is None:
+        return jsonify({"message": "Error fetching sprint IDs"}), 500
+
+    return jsonify({"sprint_ids": sprint_ids, "status": "success"})
 
 @app.route("/cycleTime", methods=["POST"])
 def cycle_time():
@@ -137,7 +154,6 @@ def cycle_time_per_user_story():
 
     return jsonify({"data": response_data, "status": "success"})
 
-
 @app.route("/burndownChart", methods=["POST"])
 def burndown_chart():
     auth_header = request.headers.get('Authorization')
@@ -147,9 +163,7 @@ def burndown_chart():
     else:
         return jsonify({"message": "Token is missing or invalid"}), 401
 
-    project_id = request.json['projectId']
-
-    sprint_id = get_current_sprint_id(project_id, token)
+    sprint_id = request.json['sprintId']
 
     if sprint_id is None:
         return jsonify({"message": "No current sprint found"}), 404
@@ -169,29 +183,6 @@ def burndown_chart():
     }
 
     return jsonify({"burndown_chart_data": response_data, "status": "success"})
-
-
-@app.route("/sprints", methods=["POST"])
-def all_sprints():
-    auth_header = request.headers.get('Authorization')
-    token = ''
-    if auth_header and auth_header.startswith('Bearer '):
-        token = auth_header.split(" ")[1]
-    else:
-        return jsonify({"message": "Token is missing or invalid"}), 401
-
-    project_id = request.json['projectId']
-
-    sprint_ids = get_all_sprint_ids(project_id, token)
-
-    if sprint_ids is None:
-        return jsonify({"message": "Error fetching sprint IDs"}), 500
-
-    return jsonify({"sprint_ids": sprint_ids, "status": "success"})
-
-
-
-
 
 
 if __name__ == '__main__':
