@@ -2,7 +2,7 @@ import React from "react";
 import { Container, Row, Col, Form} from "react-bootstrap";
 import {Chart} from "react-google-charts";
 
-function VisualizeMetric({ metricInput, metricData, sprintInput,handleChangeDropDown }) {
+function VisualizeMetric({ metricInput, metricData, sprintInput,handleChangeDropDown,sprintOptions }) {
   //TODO: Implement State Management for getting the metricInput
   const options = {
     chart: {
@@ -44,28 +44,28 @@ function VisualizeMetric({ metricInput, metricData, sprintInput,handleChangeDrop
     legend: { position: "right" },
   };
 
-  const sprintOptions = [
-    {
-      title: "Sprint 1",
-      name: "Sprint1",
-    },
-    {
-      title: "Sprint 2",
-      name: "Sprint2",
-    },
-    {
-      title: "Sprint 3",
-      name: "Sprint3",
-    },
-    {
-      title: "Sprint 4",
-      name: "Sprint4",
-    },
-    {
-      title: "Sprint 5",
-      name: "Sprint5",
-    },
-  ];
+  // const sprintOptions = [
+  //   {
+  //     title: "Sprint 1",
+  //     name: "Sprint1",
+  //   },
+  //   {
+  //     title: "Sprint 2",
+  //     name: "Sprint2",
+  //   },
+  //   {
+  //     title: "Sprint 3",
+  //     name: "Sprint3",
+  //   },
+  //   {
+  //     title: "Sprint 4",
+  //     name: "Sprint4",
+  //   },
+  //   {
+  //     title: "Sprint 5",
+  //     name: "Sprint5",
+  //   },
+  // ];
 
   return (
     <Container fluid>
@@ -131,6 +131,7 @@ function VisualizeMetric({ metricInput, metricData, sprintInput,handleChangeDrop
                     ))}
                   </Form.Select>
                   {console.log("metricData bd",metricData)}
+                  {metricData ? 
                   <Chart
                     width="100%"
                     height="300px"
@@ -138,7 +139,7 @@ function VisualizeMetric({ metricInput, metricData, sprintInput,handleChangeDrop
                     loader={<div>Loading Chart</div>}
                     data={metricData}
                     options={optionsBD}
-                  />
+                  />: <>Loading...</>}
                   </>
             )}
     </Container>

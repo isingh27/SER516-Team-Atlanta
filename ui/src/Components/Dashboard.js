@@ -27,6 +27,7 @@ const Dashboard = () => {
   const [leadTime,setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([])
   const [sprintInput, setSprintInput] = useState("Sprint1");
+  const [sprintOptions, setSprintOptions] = useState([])
   let projectId = localStorage.getItem("projectId");
 
 
@@ -100,6 +101,15 @@ const Dashboard = () => {
       console.log(sprintsRes);
       if (sprintsRes && sprintsRes.data && sprintsRes.data.sprint_ids && sprintsRes.data.sprint_ids.length > 0) {
         // Find the sprint ID that matches the selected sprint name
+        let sprintOptionsArr =[]
+        sprintsRes.data.sprint_ids.map((data)=>{
+          sprintOptionsArr.push({
+            name:data[1],
+            title:data[0]
+          })
+        })
+        setSprintOptions(sprintOptionsArr)
+        setSprintInput(sprintOptionsArr[0].name)
         const selectedSprint = sprintsRes.data.sprint_ids.find(sprint => sprint[0] === sprintInput);
         if (!selectedSprint) {
           throw new Error(`Sprint "${sprintInput}" not found`);
@@ -183,7 +193,15 @@ const Dashboard = () => {
       </Row>
       <Row className="justify-content-md-center" style={{height:"400px"}}>
         <Col md={12} className="mb-4" style={{borderBottom:"1px solid black"}}>
-          {!loadingBD ? <VisualizeMetric metricInput="burndown" sprintInput={sprintInput} setSprintInput={setSprintInput} metricData={burndownData} handleChangeDropDown={handleChangeDropDown}/>: <Loader />}
+          {!loadingBD ? 
+          <VisualizeMetric 
+            metricInput="burndown" 
+            sprintInput={sprintInput} 
+            setSprintInput={setSprintInput} 
+            metricData={burndownData} 
+            handleChangeDropDown={handleChangeDropDown}
+            sprintOptions={sprintOptions}
+          />: <Loader />}
         </Col>
       </Row>
     </Container>
