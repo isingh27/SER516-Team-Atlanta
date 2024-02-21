@@ -44,6 +44,17 @@ function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDro
     legend: { position: "right" },
   };
 
+  const optionsWIP = {
+    chart: {
+      title: "Work In Progress",
+      subtitle: "in percentage",
+    },
+    hAxis: { title: "Sprints" },
+    vAxis: { title: "Work In Progress" },
+    legend: { position: "right" },
+  };
+
+
   // const sprintOptions = [
   //   {
   //     title: "Sprint 1",
@@ -139,6 +150,21 @@ function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDro
             data={metricData}
             options={optionsBD}
           />
+        </>
+      )}
+      {metricInput === "workInProgress" && (
+        <>
+          <b>WIP: Work In Progress</b>
+          {console.log("Wip", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="BarChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsWIP}
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
         </>
       )}
     </Container>
