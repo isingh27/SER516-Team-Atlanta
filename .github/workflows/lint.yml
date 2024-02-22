@@ -1,0 +1,21 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: "Change to the directory"
+        run: "cd ./ui"
+      - name: Generate package-lock.json in sync with the node version
+        run: npm install --package-lock-only
+      - name: Install
+        run: npm ci --prefer-offline
+      - name: Eslint
+        run: npm run eslint -- --max-warnings 0
