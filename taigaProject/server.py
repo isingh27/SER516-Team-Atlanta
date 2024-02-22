@@ -171,7 +171,7 @@ def burndown_chart():
         return jsonify({"message": "No current sprint found"}), 404
 
     milestone_stats = get_milestone_stats(sprint_id, token)
-
+    print(milestone_stats)
     if milestone_stats is None:
         return jsonify({"message": "Error fetching milestone stats"}), 500
 
@@ -186,6 +186,59 @@ def burndown_chart():
 
     return jsonify({"burndown_chart_data": response_data, "status": "success"})
 
+@app.route("/sprintDetails/<id>", methods=["GET"])
+def getSprintDetails(id):
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    if id is None:
+        return jsonify({"message": "No current sprint found"}), 404
+
+    return get_milestone_stats(id, token)
+
+@app.route("/throughputHistogram", methods=["POST"])
+def throughput_histogram():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    sprint_id = request.json['sprintId']
+    project_id = request.json['projectId']
+
+    if sprint_id is None:
+        return jsonify({"message": "No current sprint found"}), 404
+
+    closed_tasks = get_closed_tasks(project_id,token)
+    milestone_stats = get_milestone_stats(sprint_id, token)
+    date_format = "%Y-%m-%d"
+    st_date = datetime.strptime(milestone_stats['estimated_start'],date_format).date() #sprint start
+    fin_date = datetime.strptime(milestone_stats['estimated_finish'], date_format).date() #sprint fin
+
+    tasks_completed_per_day = {}
+    for task in closed_tasks:
+        finished_date_str = task.get('finished_date', '').split('T')[0]
+        if finished_date_str:
+            finished_date = datetime.strptime(finished_date_str, date_format).date()
+            tasks_completed_per_day[finished_date] = tasks_completed_per_day.get(finished_date, 0) + 1
+
+    response_data = []
+    current_date = st_date
+    while current_date <= fin_date:
+        tasks_done = tasks_completed_per_day.get(current_date, 0)
+        response_data.append({
+            "date": current_date.strftime("%m-%d-%y"),
+            "tasks_done": tasks_done
+        })
+        current_date += timedelta(days=1)
+
+    return jsonify({"throughput_data": response_data, "status": "success"})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
