@@ -240,5 +240,25 @@ def throughput_histogram():
 
     return jsonify({"throughput_data": response_data, "status": "success"})
 
+
+@app.route("/workInProgress", methods=["POST"])
+def work_in_progress_per_user_story():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    project_id = request.json['projectId']
+
+    # Response from Task Status
+    response_data = []
+
+    # Extract "Work in Progress" and Ready to Test task from task status response
+
+    return jsonify({"data": response_data, "status": "success"})
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
