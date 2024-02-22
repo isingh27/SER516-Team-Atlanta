@@ -30,6 +30,15 @@ const Dashboard = () => {
     setSprintInput(e.target.value);
     // callBDData();
   };
+// TODO: Implement the workInProgress state (Dummy Data for now)
+  const workInProgress = [
+    ["Sprint", "Work In Progress", "Completed"],
+    ["Sprint 1", 20, 80,], 
+    ["Sprint 2", 40, 60,],
+    ["Sprint 3", 60, 40,],
+    ["Sprint 4", 80, 20,],
+    ["Sprint 5", 100, 0,],
+  ];
 
   const fetchSprints = () => {
     taigaService
@@ -234,6 +243,19 @@ const Dashboard = () => {
               handleChangeDropDown={handleChangeDropDown}
               sprintOptions={sprints}
             />
+          ) : (
+            <Loader />
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          {!loadingLT ? (
+            <VisualizeMetric metricInput={"workInProgress"} metricData={workInProgress} />
           ) : (
             <Loader />
           )}
