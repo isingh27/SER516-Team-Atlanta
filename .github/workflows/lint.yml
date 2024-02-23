@@ -11,6 +11,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: './ui/package-lock.json'
       - name: "Change to the directory"
         run: "cd ./ui"
       - name: Generate package-lock.json in sync with the node version
