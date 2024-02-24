@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [loadingCTUS, setLoadingCTUS] = useState(true);
   const [loadingLT, setLoadingLT] = useState(true);
   const [loadingBD, setLoadingBD] = useState(true);
+  const [loadingWip, setLoadingWip] = useState(true);
 
   const projectName = localStorage.getItem("projectName");
 
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
+  const [wipData, setWipData] = useState([])
   const [sprintInput, setSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   let projectId = localStorage.getItem("projectId");
@@ -33,7 +35,7 @@ const Dashboard = () => {
 // TODO: Implement the workInProgress state (Dummy Data for now)
   const workInProgress = [
     ["Sprint", "Work In Progress", "Completed"],
-    ["Sprint 1", 20, 80,], 
+    ["Sprint 1", 20, 80.22,], 
     ["Sprint 2", 40, 60,],
     ["Sprint 3", 60, 40,],
     ["Sprint 4", 80, 20,],
@@ -128,6 +130,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (sprintInput === "") fetchSprints();
     callBDData();
+    callWipData()
   }, [sprintInput]);
 
   const callBDData = () => {
@@ -177,6 +180,25 @@ const Dashboard = () => {
       });
   };
 
+  const callWipData = () =>{
+
+    taigaService
+    .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
+    .then((res)=>{
+      let wipChartData = []
+      res.data && res.data.data.map((item)=>{
+        wipChartData.push([item.sprint_name, item['In Progress'],item['Done']])
+      })
+      wipChartData.unshift(["Sprint", "Work In Progress", "Completed"]);
+      setWipData(wipChartData)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+    .finally(()=>{
+      setLoadingWip(false)
+    })
+  }
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
@@ -254,8 +276,8 @@ const Dashboard = () => {
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
-          {!loadingLT ? (
-            <VisualizeMetric metricInput={"workInProgress"} metricData={workInProgress} />
+          {!loadingWip ? (
+            <VisualizeMetric metricInput={"workInProgress"} metricData={wipData} />
           ) : (
             <Loader />
           )}

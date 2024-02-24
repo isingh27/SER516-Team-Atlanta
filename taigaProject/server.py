@@ -255,7 +255,7 @@ def work_in_progress():
     project_id = request.json['projectId']
     sprint_ids = get_all_sprint_ids(project_id, token)
 
-    response_data = {}
+    response_data = []
 
     for sprint in sprint_ids:
         sprint_name = sprint[0]
@@ -273,14 +273,15 @@ def work_in_progress():
 
         sprint_data = {
             "sprint_id": sprint_id,
+            "sprint_name":sprint_name,
             "New": percentages.get("new", 0),
             "In Progress": percentages.get("in progress", 0),
             "Ready to test": percentages.get("ready for test", 0),
             "Done": percentages.get("done", 0),
-            "Blocked": percentages.get("blocked", 0),
+            "Blocked": percentages.get("blocked", 0)
         }
 
-        response_data[sprint_name] = {"sprint_id": sprint_id, **sprint_data}
+        response_data.append(sprint_data)
 
     return jsonify({"data": response_data, "status": "success"})
 

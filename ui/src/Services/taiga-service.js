@@ -82,6 +82,16 @@ class TaigaService {
               }
           });
   }
+
+  taigaProjectWorkInProgress(token,project_id) {
+    return axios.post(API_URL + "workInProgress",
+        {"projectId":project_id},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+}
 }
 
 export default new TaigaService();
