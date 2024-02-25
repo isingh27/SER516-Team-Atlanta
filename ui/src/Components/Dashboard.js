@@ -30,7 +30,25 @@ const Dashboard = () => {
     setSprintInput(e.target.value);
     // callBDData();
   };
+  // TODO: Implement the workInProgress state (Dummy Data for now)
+  const workInProgress = [
+    ["Sprint", "Work In Progress", "Completed"],
+    ["Sprint 1", 20, 80],
+    ["Sprint 2", 40, 60],
+    ["Sprint 3", 60, 40],
+    ["Sprint 4", 80, 20],
+    ["Sprint 5", 100, 0],
+  ];
 
+  // Dummy Data for throughput
+  const throughput = [
+    ["Date", "Throughput"],
+    ["2021-01-01", 10],
+    ["2021-01-02", 20],
+    ["2021-01-03", 30],
+    ["2021-01-04", 40],
+    ["2021-01-05", 50],
+  ];
   const fetchSprints = () => {
     taigaService
       .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
@@ -233,6 +251,38 @@ const Dashboard = () => {
               metricData={burndownData}
               handleChangeDropDown={handleChangeDropDown}
               sprintOptions={sprints}
+            />
+          ) : (
+            <Loader />
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          {!loadingLT ? (
+            <VisualizeMetric
+              metricInput={"workInProgress"}
+              metricData={workInProgress}
+            />
+          ) : (
+            <Loader />
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          {!loadingLT ? (
+            <VisualizeMetric
+              metricInput={"throughput"}
+              metricData={throughput}
             />
           ) : (
             <Loader />

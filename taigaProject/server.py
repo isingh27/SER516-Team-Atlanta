@@ -3,11 +3,13 @@ from taigaApi.authenticate import authenticate
 from taigaApi.project.getProjectBySlug import get_project_by_slug
 from taigaApi.task.getTaskHistory import get_task_history, get_task_cycle_times, get_user_story_cycle_times
 from taigaApi.task.getTasks import get_closed_tasks, get_closed_user_stories
+from taigaApi.task.getTaskStatus import get_task_status
 from taigaApi.sprint.getCurrentSprintID import get_current_sprint_id
 from taigaApi.sprint.getMilestoneStats import get_milestone_stats
 from taigaApi.sprint.getAllSprintIDs import get_all_sprint_ids
 from flask_cors import CORS
 from datetime import datetime, timedelta
+from collections import defaultdict
 
 app = Flask(__name__)
 CORS(app)
@@ -199,6 +201,47 @@ def getSprintDetails(id):
         return jsonify({"message": "No current sprint found"}), 404
 
     return get_milestone_stats(id, token)
+
+@app.route("/workInProgress", methods=["POST"])
+def work_in_progress():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    project_id = request.json['projectId']
+    sprint_ids = get_all_sprint_ids(project_id, token)
+
+    response_data = {}
+
+    for sprint in sprint_ids:
+        sprint_name = sprint[0]
+        sprint_id = sprint[1]
+        sprint_tasks = get_task_status(sprint_id, token)
+
+        status_counts = defaultdict(int)
+        total_tasks = len(sprint_tasks)
+
+        for task in sprint_tasks:
+            status = task['status']
+            status_counts[status] += 1
+
+        percentages = {status.lower(): (count / total_tasks) * 100 if total_tasks > 0 else 0 for status, count in status_counts.items()}
+
+        sprint_data = {
+            "sprint_id": sprint_id,
+            "New": percentages.get("new", 0),
+            "In Progress": percentages.get("in progress", 0),
+            "Ready to test": percentages.get("ready for test", 0),
+            "Done": percentages.get("done", 0),
+            "Blocked": percentages.get("blocked", 0),
+        }
+
+        response_data[sprint_name] = {"sprint_id": sprint_id, **sprint_data}
+
+    return jsonify({"data": response_data, "status": "success"})
 
 @app.route("/throughputDaily", methods=["POST"])
 def throughput_daily():

@@ -2,13 +2,19 @@ import React from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { Chart } from "react-google-charts";
 
-function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDropDown, sprintOptions }) {
+function VisualizeMetric({
+  metricInput,
+  metricData,
+  sprintInput,
+  handleChangeDropDown,
+  sprintOptions,
+}) {
   //TODO: Implement State Management for getting the metricInput
   const options = {
     chart: {
       title: "Cycle Time",
       subtitle: "in days",
-      color: "red"
+      color: "red",
     },
     hAxis: { title: "# Task" },
     vAxis: { title: "Cycle Time" },
@@ -41,6 +47,26 @@ function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDro
     },
     hAxis: { title: "Date" },
     vAxis: { title: "Story points" },
+    legend: { position: "right" },
+  };
+
+  const optionsWIP = {
+    chart: {
+      title: "Work In Progress",
+      subtitle: "in percentage",
+    },
+    hAxis: { title: "Sprints" },
+    vAxis: { title: "Work In Progress" },
+    legend: { position: "right" },
+  };
+
+  const optionsTP = {
+    chart: {
+      title: "Throughput",
+      subtitle: "per days",
+    },
+    hAxis: { title: "Throughput" },
+    vAxis: { title: "Days" },
     legend: { position: "right" },
   };
 
@@ -139,6 +165,36 @@ function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDro
             data={metricData}
             options={optionsBD}
           />
+        </>
+      )}
+      {metricInput === "workInProgress" && (
+        <>
+          <b>WIP: Work In Progress</b>
+          {console.log("Wip", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="BarChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsWIP}
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
+        </>
+      )}
+      {metricInput === "throughput" && (
+        <>
+          <b>Throughput</b>
+          {console.log("TP", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="BarChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsTP}
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
         </>
       )}
     </Container>
