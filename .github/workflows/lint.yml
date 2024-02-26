@@ -18,3 +18,10 @@ jobs:
         run: cd ./ui && npm ci --prefer-offline
       - name: Eslint
         run: cd ./ui && npm run eslint -- --max-warnings 0
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install Flake8
+        run: pip install flake8
+      - name: Run Flake8
+        run: cd ./taigaProject && flake8 .
