@@ -336,11 +336,14 @@ const Dashboard = () => {
         </div>
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <div className="card-wrapper">
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
+        <Card className="custom-card">
+            <Card.Body>
           {!loadingLT ? (
             <VisualizeMetric
               metricInput={"cfd"}
@@ -349,7 +352,10 @@ const Dashboard = () => {
           ) : (
             <Loader />
           )}
+          </Card.Body>
+          </Card>
         </Col>
+        </div>
       </Row>
     </Container>
   );
