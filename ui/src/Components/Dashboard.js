@@ -41,6 +41,17 @@ const Dashboard = () => {
     ["Sprint 5", 100, 0],
   ];
 
+
+  // Dummy Data for CFD: Can be Time or Sprints
+  const cfdData = [
+    ["Time", "Work Completed", "Work In Progress", "Backlog"],
+    ["2021-01-01", 10, 20, 70],
+    ["2021-01-02", 20, 30, 50],
+    ["2021-01-03", 30, 40, 30],
+    ["2021-01-04", 40, 50, 10],
+    ["2021-01-05", 50, 60, 0],
+  ];
+
   const fetchSprints = () => {
     taigaService
       .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
@@ -322,6 +333,22 @@ const Dashboard = () => {
             <VisualizeMetric
               metricInput={"throughput"}
               metricData={throughputDaily}
+            />
+          ) : (
+            <Loader />
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          {!loadingLT ? (
+            <VisualizeMetric
+              metricInput={"cfd"}
+              metricData={cfdData}
             />
           ) : (
             <Loader />

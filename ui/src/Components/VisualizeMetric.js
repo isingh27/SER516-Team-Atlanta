@@ -70,6 +70,13 @@ function VisualizeMetric({
     legend: { position: "right" },
   };
 
+  const optionsCFD = {
+    title: "Cumulative Flow Diagram",
+    vAxis: { title: "Completed Stories" },
+    hAxis: { title: "Time" }, //TODO: Can be time or sprints
+    isStacked: true,
+  };
+
   // const sprintOptions = [
   //   {
   //     title: "Sprint 1",
@@ -193,6 +200,22 @@ function VisualizeMetric({
             loader={<div>Loading Chart</div>}
             data={metricData}
             options={optionsTP}
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
+        </>
+      )}
+      {metricInput === "cfd" && (
+        <>
+          <b>Cumulative Flow Diagram</b>
+          {console.log("CFD", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="SteppedAreaChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsCFD}
+            legendToggle
           />
           {/* <h3>{avgMetricData} Days</h3> */}
         </>
