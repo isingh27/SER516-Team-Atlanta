@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
+  const [throughputDaily, setThroughputDaily] = useState([]);
   const [sprintInput, setSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   let projectId = localStorage.getItem("projectId");
@@ -59,6 +60,7 @@ const Dashboard = () => {
     ["2021-01-04", 40, 50, 10],
     ["2021-01-05", 50, 60, 0],
   ];
+  
   const fetchSprints = () => {
     taigaService
       .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
@@ -147,6 +149,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (sprintInput === "") fetchSprints();
     callBDData();
+    callThroughputDaily();
   }, [sprintInput]);
 
   const callBDData = () => {
@@ -195,6 +198,52 @@ const Dashboard = () => {
         setLoadingBD(false);
       });
   };
+
+  const callThroughputDaily = () => {
+    taigaService
+      .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
+      .then((sprintsRes) => {
+        console.log(sprintsRes);
+        if (
+          sprintsRes &&
+          sprintsRes.data &&
+          sprintsRes.data.sprint_ids &&
+          sprintsRes.data.sprint_ids.length > 0
+        ) {
+          // Find the sprint ID that matches the selected sprint name
+          const selectedSprint = sprintsRes.data.sprint_ids.find(
+            (sprint) => sprint[1].toString() === sprintInput
+          );
+          if (!selectedSprint) {
+            throw new Error(`Sprint "${sprintInput}" not found`);
+          }
+          let sprintId = selectedSprint[1];
+          console.log(sprintId);
+          return taigaService.taigaProjectThroughputDaily(
+            localStorage.getItem("taigaToken"),
+            projectId,
+            sprintId
+          );
+        } else {
+          throw new Error("No sprints found for this project");
+        }
+      })
+      .then((throughputRes) => {
+        console.log("Throughput", throughputRes.data);
+        const throughputTempData = throughputRes.data.throughput_data.map(
+          (data) => {
+            return [data.date, data.tasks_done];
+          }
+        );
+        throughputTempData.unshift(["Date", "Tasks Completed"]);
+        setThroughputDaily(throughputTempData);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  };
+
+
 
   const Loader = () => <Spinner animation="border" role="status" />;
 
@@ -325,7 +374,23 @@ const Dashboard = () => {
           {!loadingLT ? (
             <VisualizeMetric
               metricInput={"throughput"}
-              metricData={throughput}
+              metricData={throughputDaily}
+            />
+          ) : (
+            <Loader />
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          {!loadingLT ? (
+            <VisualizeMetric
+              metricInput={"cfd"}
+              metricData={cfdData}
             />
           ) : (
             <Loader />
