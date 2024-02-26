@@ -65,7 +65,7 @@ function VisualizeMetric({
       title: "Throughput",
       subtitle: "per days",
     },
-    hAxis: { title: "Throughput" },
+    hAxis: { title: "Tasks Completed" },
     vAxis: { title: "Days" },
     legend: { position: "right" },
   };
@@ -191,7 +191,7 @@ function VisualizeMetric({
       )}
       {metricInput === "throughput" && (
         <>
-          <b>Throughput</b>
+          <b>Throughput Daily</b>
           {console.log("TP", metricData)}
           <Chart
             width="100%"
