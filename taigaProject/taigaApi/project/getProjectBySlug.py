@@ -19,11 +19,12 @@ def get_project_by_slug(project_slug, auth_token):
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
         'x-disable-pagination': 'True'
-        
+
     }
 
     try:
-        # Make a GET request to Taiga API to retrieve project information by slug
+        # Make a GET request to Taiga API to
+        # retrieve project information by slug
         response = requests.get(project_api_url, headers=headers)
         response.raise_for_status()
 

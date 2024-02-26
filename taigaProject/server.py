@@ -1,10 +1,12 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request
 from taigaApi.authenticate import authenticate
 from taigaApi.project.getProjectBySlug import get_project_by_slug
-from taigaApi.task.getTaskHistory import get_task_history, get_task_cycle_times, get_user_story_cycle_times
+from taigaApi.task.getTaskHistory import (
+    get_task_history,
+    get_task_cycle_times,
+    get_user_story_cycle_times)
 from taigaApi.task.getTasks import get_closed_tasks, get_closed_user_stories
 from taigaApi.task.getTaskStatus import get_task_status
-from taigaApi.sprint.getCurrentSprintID import get_current_sprint_id
 from taigaApi.sprint.getMilestoneStats import get_milestone_stats
 from taigaApi.sprint.getAllSprintIDs import get_all_sprint_ids
 from flask_cors import CORS
@@ -14,6 +16,7 @@ from collections import defaultdict
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route("/")
 def sampleRoute():
     response = jsonify({
@@ -21,30 +24,33 @@ def sampleRoute():
     })
     return response
 
+
 @app.route("/authenticate", methods=["POST"])
 def auth():
     username = request.json['username']
     password = (request.json['password'])
-    print("username",username)
-    print("pswd",password)
-    auth_token = authenticate(username,password)
+    print("username", username)
+    print("pswd", password)
+    auth_token = authenticate(username, password)
     print(auth_token)
     return jsonify({"token": auth_token, "status": "success"})
+
 
 @app.route("/projectDetails", methods=["POST"])
 def projectDetails():
     auth_header = request.headers.get('Authorization')
-    token=''
+    token = ''
     if auth_header and auth_header.startswith('Bearer '):
         token = auth_header.split(" ")[1]
     else:
         return jsonify({"message": "Token is missing or invalid"}), 401
-    
-    projectSlug= request.json['projectSlug']
-    project_info = get_project_by_slug(projectSlug,token)
-    if project_info == None:
+
+    projectSlug = request.json['projectSlug']
+    project_info = get_project_by_slug(projectSlug, token)
+    if project_info is None:
         return jsonify({"status": "error", "message": "Project not found"})
-    return jsonify({"data":project_info, "status": "success"})
+    return jsonify({"data": project_info, "status": "success"})
+
 
 @app.route("/sprints", methods=["POST"])
 def all_sprints():
@@ -64,6 +70,7 @@ def all_sprints():
 
     return jsonify({"sprint_ids": sprint_ids, "status": "success"})
 
+
 @app.route("/cycleTime", methods=["POST"])
 def cycle_time():
     auth_header = request.headers.get('Authorization')
@@ -78,9 +85,10 @@ def cycle_time():
     tasks = get_closed_tasks(project_id, token)
     cycle_time, closed_task = get_task_history(tasks, token)
     if closed_task == 0:
-        return jsonify({"message": "No closed tasks found in the project"}), 404
+        return jsonify({"message": "No closed tasks found"}), 404
     avg_cycle_time = round((cycle_time / closed_task), 2)
     return jsonify({"avg_cycle_time": avg_cycle_time, "status": "success"})
+
 
 @app.route("/leadTime", methods=["POST"])
 def lead_time():
@@ -99,8 +107,10 @@ def lead_time():
         created_date = datetime.fromisoformat(task["created_date"])
         finished_date = datetime.fromisoformat(task['finished_date'])
         lead_time = (finished_date - created_date).days
-        output.append({"task":task,"finished_date":finished_date,"lead_time":lead_time, "refId":task['ref']})
-    return jsonify({"plotData":output, "status":"success"})
+        output.append({"task": task, "finished_date": finished_date,
+                       "lead_time": lead_time, "refId": task['ref']})
+    return jsonify({"plotData": output, "status": "success"})
+
 
 @app.route("/cycleTimesPerTask", methods=["POST"])
 def cycle_time_per_task():
@@ -115,7 +125,7 @@ def cycle_time_per_task():
     closed_tasks = get_closed_tasks(project_id, token)
 
     if not closed_tasks:  # Check if the list of closed tasks is empty
-        return jsonify({"message": "No closed tasks found in the project"}), 404
+        return jsonify({"message": "No closed tasks found"}), 404
 
     cycle_times = get_task_cycle_times(closed_tasks, token)
 
@@ -127,8 +137,9 @@ def cycle_time_per_task():
             "end_date": end_date,
             "refId": ref   # refId is the task id
         })
-    
+
     return jsonify({"data": response_data, "status": "success"})
+
 
 @app.route("/cycleTimesPerUserStory", methods=["POST"])
 def cycle_time_per_user_story():
@@ -142,9 +153,9 @@ def cycle_time_per_user_story():
     project_id = request.json['projectId']
     closed_user_stories = get_closed_user_stories(project_id, token)
 
-    if not closed_user_stories:  # Check if the list of closed user stories is empty
-        return jsonify({"message": "No closed user stories found in the project"}), 404
-    
+    if not closed_user_stories:
+        return jsonify({"message": "No closed user stories found"}), 404
+
     cycle_times = get_user_story_cycle_times(closed_user_stories, token)
 
     response_data = []
@@ -153,10 +164,11 @@ def cycle_time_per_user_story():
             "cycle_time": cycle_time,
             "start_date": start_date,
             "end_date": end_date,
-            "refId": ref  # refId is the user story id
+            "refId": ref
         })
 
     return jsonify({"data": response_data, "status": "success"})
+
 
 @app.route("/burndownChart", methods=["POST"])
 def burndown_chart():
@@ -188,6 +200,7 @@ def burndown_chart():
 
     return jsonify({"burndown_chart_data": response_data, "status": "success"})
 
+
 @app.route("/sprintDetails/<id>", methods=["GET"])
 def getSprintDetails(id):
     auth_header = request.headers.get('Authorization')
@@ -201,6 +214,7 @@ def getSprintDetails(id):
         return jsonify({"message": "No current sprint found"}), 404
 
     return get_milestone_stats(id, token)
+
 
 @app.route("/workInProgress", methods=["POST"])
 def work_in_progress():
@@ -228,7 +242,9 @@ def work_in_progress():
             status = task['status']
             status_counts[status] += 1
 
-        percentages = {status.lower(): (count / total_tasks) * 100 if total_tasks > 0 else 0 for status, count in status_counts.items()}
+        percentages = {status.lower(): (count / total_tasks) * 100 if
+                       total_tasks > 0 else 0 for status, count in
+                       status_counts.items()}
 
         sprint_data = {
             "sprint_id": sprint_id,
@@ -242,6 +258,7 @@ def work_in_progress():
         response_data[sprint_name] = {"sprint_id": sprint_id, **sprint_data}
 
     return jsonify({"data": response_data, "status": "success"})
+
 
 @app.route("/throughputDaily", methods=["POST"])
 def throughput_daily():
@@ -258,18 +275,22 @@ def throughput_daily():
     if sprint_id is None:
         return jsonify({"message": "No current sprint found"}), 404
 
-    closed_tasks = get_closed_tasks(project_id,token)
+    closed_tasks = get_closed_tasks(project_id, token)
     milestone_stats = get_milestone_stats(sprint_id, token)
     date_format = "%Y-%m-%d"
-    st_date = datetime.strptime(milestone_stats['estimated_start'],date_format).date() #sprint start
-    fin_date = datetime.strptime(milestone_stats['estimated_finish'], date_format).date() #sprint fin
+    st_date = datetime.strptime(milestone_stats['estimated_start'],
+                                date_format).date()
+    fin_date = datetime.strptime(milestone_stats['estimated_finish'],
+                                 date_format).date()
 
     tasks_completed_per_day = {}
     for task in closed_tasks:
         finished_date_str = task.get('finished_date', '').split('T')[0]
         if finished_date_str:
-            finished_date = datetime.strptime(finished_date_str, date_format).date()
-            tasks_completed_per_day[finished_date] = tasks_completed_per_day.get(finished_date, 0) + 1
+            finished_date = datetime.strptime(finished_date_str,
+                                              date_format).date()
+            tasks_completed_per_day
+            [finished_date] = tasks_completed_per_day.get(finished_date, 0) + 1
 
     response_data = []
     current_date = st_date
@@ -302,27 +323,34 @@ def throughput_histogram():
     closed_tasks = get_closed_tasks(project_id, token)
     milestone_stats = get_milestone_stats(sprint_id, token)
     date_format = "%Y-%m-%d"
-    st_date = datetime.strptime(milestone_stats['estimated_start'], date_format).date()
-    fin_date = datetime.strptime(milestone_stats['estimated_finish'], date_format).date()
+    st_date = datetime.strptime(milestone_stats
+                                ['estimated_start'], date_format).date()
+    fin_date = datetime.strptime(milestone_stats
+                                 ['estimated_finish'], date_format).date()
 
     tasks_completed_per_day = {}
     for task in closed_tasks:
         finished_date_str = task.get('finished_date', '').split('T')[0]
         if finished_date_str:
-            finished_date = datetime.strptime(finished_date_str, date_format).date()
+            finished_date = datetime.strptime(finished_date_str,
+                                              date_format).date()
             if st_date <= finished_date <= fin_date:
-                tasks_completed_per_day[finished_date] = tasks_completed_per_day.get(finished_date, 0) + 1
+                tasks_completed_per_day
+                [finished_date] = tasks_completed_per_day.get(finished_date, 0)
+                + 1
 
-    # This dictionary will hold the frequency of days for each number of tasks completed.
+    # This dictionary will hold the frequency of days
+                # for each number of tasks completed.
     tasks_frequency = {}
     for tasks_done in tasks_completed_per_day.values():
         tasks_frequency[tasks_done] = tasks_frequency.get(tasks_done, 0) + 1
 
     # Preparing the data for the histogram.
-    histogram_data = [{"tasks_completed": k, "days_count": v} for k, v in tasks_frequency.items()]
+    histogram_data = [{"tasks_completed": k, "days_count": v}
+                      for k, v in tasks_frequency.items()]
 
-    return jsonify({"throughput_histogram": histogram_data, "status": "success"})
-
+    return jsonify({"throughput_histogram": histogram_data,
+                    "status": "success"})
 
 
 if __name__ == '__main__':
