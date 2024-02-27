@@ -19,12 +19,10 @@ def get_project_by_slug(project_slug, auth_token):
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
         'x-disable-pagination': 'True'
-
     }
 
     try:
-        # Make a GET request to Taiga API to
-        # retrieve project information by slug
+        # Make a GET request to Taiga API to fetch project info by slug
         response = requests.get(project_api_url, headers=headers)
         response.raise_for_status()
 
@@ -37,7 +35,7 @@ def get_project_by_slug(project_slug, auth_token):
         print(f"Error fetching project by slug: {e}")
         return None
 
-   
+
 def get_project_by_user(auth_token):
     # Get Taiga API URL from environment variables
     taiga_url = os.getenv('TAIGA_URL')
@@ -48,10 +46,9 @@ def get_project_by_user(auth_token):
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
         'x-disable-pagination': 'True'
-        
     }
     try:
-        # Make a GET request to Taiga API to retrieve project information by
+        # Make a GET request to Taiga API to fetch project info by slug
         response = requests.get(user_api_url, headers=headers)
         response.raise_for_status()
 
@@ -68,8 +65,8 @@ def get_project_by_user(auth_token):
 
         for project in project_info:
             project_details.append({
-                'id': project['id'], 
-                'name': project['name'], 
+                'id': project['id'],
+                'name': project['name'],
                 'slug': project['slug']
             })
 
@@ -79,4 +76,3 @@ def get_project_by_user(auth_token):
         # Handle errors during the API request and print an error message
         print(f"Error fetching project by slug: {e}")
         return None
-    
