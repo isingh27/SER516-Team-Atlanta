@@ -60,7 +60,7 @@ const Dashboard = () => {
     ["2021-01-04", 40, 50, 10],
     ["2021-01-05", 50, 60, 0],
   ];
-  
+
   const fetchSprints = () => {
     taigaService
       .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
@@ -243,183 +243,168 @@ const Dashboard = () => {
       });
   };
 
-
-
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
     <Container fluid>
-      <Row className="justify-content-md-center mt-4" style={{ height: "400px" }}>
-      <div className="card-wrapper">
-        <Col
-          md={12}
-          className="mb-4"
-          // style={{ borderBottom: "1px solid black" }}
-        >
-        <Card className="custom-card">
-            <Card.Body>
-          {!loadingCTTask ? (
-            <VisualizeMetric
-              metricInput={"cycleTime"}
-              avgMetricData={avgCycleTime}
-              metricData={cycleTimeByTask}
-            />
-          ) : (
-            <Loader />
-          )}
-          </Card.Body>
-          </Card>
-        </Col>
-      </div>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row
+        className="justify-content-md-center mt-4"
+        style={{ height: "400px" }}
+      >
         <div className="card-wrapper">
-        <Col
-          md={12}
-          className="mb-4"
-          // style={{ borderBottom: "1px solid black" }}
-        >
-        <Card className="custom-card">
-            <Card.Body>
-          {!loadingCTUS ? (
-            <VisualizeMetric
-              metricInput={"cycleTimeUS"}
-              avgMetricData={avgCycleTime}
-              metricData={cycleTimeByUS}
-            />
-          ) : (
-            <Loader />
-          )}
-          </Card.Body>
-          </Card>
-        </Col>
+          <Col
+            md={12}
+            className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingCTTask ? (
+                  <VisualizeMetric
+                    metricInput={"cycleTime"}
+                    avgMetricData={avgCycleTime}
+                    metricData={cycleTimeByTask}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
         </div>
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <div className="card-wrapper">
-        <Col
-          md={12}
-          className="mb-4"
-          // style={{ borderBottom: "1px solid black" }}
-        >
-        <Card className="custom-card">
-            <Card.Body>
-          {!loadingLT ? (
-            <VisualizeMetric metricInput={"leadTime"} metricData={leadTime} />
-          ) : (
-            <Loader />
-          )}
-          </Card.Body>
-          </Card>
-        </Col>
+          <Col
+            md={12}
+            className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingCTUS ? (
+                  <VisualizeMetric
+                    metricInput={"cycleTimeUS"}
+                    avgMetricData={avgCycleTime}
+                    metricData={cycleTimeByUS}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
         </div>
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <div className="card-wrapper">
-        <Col
-          md={12}
-          className="mb-4"
-          // style={{ borderBottom: "1px solid black" }}
-        >
-        <Card className="custom-card">
-            <Card.Body>
-          {!loadingBD ? (
-            <VisualizeMetric
-              metricInput="burndown"
-              sprintInput={sprintInput}
-              setSprintInput={setSprintInput}
-              metricData={burndownData}
-              handleChangeDropDown={handleChangeDropDown}
-              sprintOptions={sprints}
-            />
-          ) : (
-            <Loader />
-          )}
-          </Card.Body>
-          </Card>
-        </Col>
+          <Col
+            md={12}
+            className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingLT ? (
+                  <VisualizeMetric
+                    metricInput={"leadTime"}
+                    metricData={leadTime}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
         </div>
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <div className="card-wrapper">
-        <Col
-          md={12}
-          className="mb-4 mt-4"
-          // style={{ borderBottom: "1px solid black" }}
-        >
-        <Card className="custom-card">
-            <Card.Body>
-          {!loadingLT ? (
-            <VisualizeMetric
-              metricInput={"workInProgress"}
-              metricData={workInProgress}
-            />
-          ) : (
-            <Loader />
-          )}
-          </Card.Body>
-          </Card>
-        </Col>
+          <Col
+            md={12}
+            className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingBD ? (
+                  <VisualizeMetric
+                    metricInput="burndown"
+                    sprintInput={sprintInput}
+                    setSprintInput={setSprintInput}
+                    metricData={burndownData}
+                    handleChangeDropDown={handleChangeDropDown}
+                    sprintOptions={sprints}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
         </div>
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <div className="card-wrapper">
-        <Col
-          md={12}
-          className="mb-2"
-          // style={{ borderBottom: "1px solid black" }}
-        >
-        <Card className="custom-card">
-            <Card.Body>
-          {!loadingLT ? (
-            <VisualizeMetric
-              metricInput={"throughput"}
-              metricData={throughputDaily}
-            />
-          ) : (
-            <Loader />
-          )}
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-          {!loadingLT ? (
-            <VisualizeMetric
-              metricInput={"cfd"}
-              metricData={cfdData}
-            />
-          ) : (
-            <Loader />
-          )}
-          </Card.Body>
-          </Card>
-        </Col>
+          <Col
+            md={12}
+            className="mb-4 mt-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingLT ? (
+                  <VisualizeMetric
+                    metricInput={"workInProgress"}
+                    metricData={workInProgress}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
         </div>
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <div className="card-wrapper">
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-        <Card className="custom-card">
-            <Card.Body>
-          {!loadingLT ? (
-            <VisualizeMetric
-              metricInput={"cfd"}
-              metricData={cfdData}
-            />
-          ) : (
-            <Loader />
-          )}
-          </Card.Body>
-          </Card>
-        </Col>
+          <Col
+            md={12}
+            className="mb-2"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingLT ? (
+                  <VisualizeMetric
+                    metricInput={"throughput"}
+                    metricData={throughputDaily}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </div>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <div className="card-wrapper">
+          <Col
+            md={12}
+            className="mb-4"
+            style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingLT ? (
+                  <VisualizeMetric metricInput={"cfd"} metricData={cfdData} />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
         </div>
       </Row>
     </Container>

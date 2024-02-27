@@ -1,6 +1,9 @@
 from flask import Flask, jsonify, request
 from taigaApi.authenticate import authenticate
-from taigaApi.project.getProjectBySlug import get_project_by_slug, get_project_by_user
+from taigaApi.project.getProjectBySlug import (
+    get_project_by_slug,
+    get_project_by_user
+)
 from taigaApi.task.getTaskHistory import (
     get_task_history,
     get_task_cycle_times,
@@ -352,19 +355,23 @@ def throughput_histogram():
     return jsonify({"throughput_histogram": histogram_data,
                     "status": "success"})
 
+
 @app.route("/listUserProjects", methods=["GET"])
-def userProject():
+def user_project():
     auth_header = request.headers.get('Authorization')
-    token=''
+    token = ''
+
     if auth_header and auth_header.startswith('Bearer '):
         token = auth_header.split(" ")[1]
     else:
         return jsonify({"message": "Token is missing or invalid"}), 401
-    
+
     project_info = get_project_by_user(token)
-    if project_info == None:
+
+    if project_info is None:
         return jsonify({"status": "error", "message": "Project not found"})
-    return jsonify({"data":project_info, "status": "success"})
+
+    return jsonify({"data": project_info, "status": "success"})
 
 
 if __name__ == '__main__':

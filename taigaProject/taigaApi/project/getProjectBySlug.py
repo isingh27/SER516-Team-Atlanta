@@ -19,12 +19,10 @@ def get_project_by_slug(project_slug, auth_token):
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
         'x-disable-pagination': 'True'
-
     }
 
     try:
-        # Make a GET request to Taiga API to
-        # retrieve project information by slug
+        # Make a GET request to Taiga API to fetch project info by slug
         response = requests.get(project_api_url, headers=headers)
         response.raise_for_status()
 
@@ -36,7 +34,8 @@ def get_project_by_slug(project_slug, auth_token):
         # Handle errors during the API request and print an error message
         print(f"Error fetching project by slug: {e}")
         return None
-    
+
+
 def get_project_by_user(auth_token):
     # Get Taiga API URL from environment variables
     taiga_url = os.getenv('TAIGA_URL')
@@ -47,26 +46,33 @@ def get_project_by_user(auth_token):
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
         'x-disable-pagination': 'True'
-        
     }
     try:
-        # Make a GET request to Taiga API to retrieve project information by slug
+        # Make a GET request to Taiga API to fetch project info by slug
         response = requests.get(user_api_url, headers=headers)
         response.raise_for_status()
 
         # Extract and return the project information from the response
         user_info = response.json()
-        project_api_url = f"{taiga_url}/projects?member={user_info['id']}&order_by=user_order&slight=true"
-        responseProject = requests.get(project_api_url, headers=headers)
-        responseProject.raise_for_status()
-        project_info = responseProject.json()
-        projectDetails = []
+        project_api_url = (
+            f"{taiga_url}/projects?member={user_info['id']}"
+            "&order_by=user_order&slight=true"
+        )
+        response_project = requests.get(project_api_url, headers=headers)
+        response_project.raise_for_status()
+        project_info = response_project.json()
+        project_details = []
+
         for project in project_info:
-            projectDetails.append({'id': project['id'], 'name': project['name'], 'slug': project['slug']})
-        return projectDetails
-    
+            project_details.append({
+                'id': project['id'],
+                'name': project['name'],
+                'slug': project['slug']
+            })
+
+        return project_details
+
     except requests.exceptions.RequestException as e:
         # Handle errors during the API request and print an error message
         print(f"Error fetching project by slug: {e}")
         return None
-    
