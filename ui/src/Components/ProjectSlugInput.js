@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Row, Col, Spinner, Toast } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import CreatableSelect from 'react-select/creatable';
 
 import TaigaService from '../Services/taiga-service';
 
@@ -10,8 +11,32 @@ const ProjectSlugInput = () => {
     const [show, setShow] = useState(false);
     const [message, setMessage] = useState('');
     const [variant, setVariant] = useState('');
+    const [projects, setProjects] = useState([]);
+    const [projectLoading, setProjectLoading] = useState(false);
 
     const navigation = useNavigate();
+
+    useEffect(() => {
+        setProjectLoading(true);
+        TaigaService.taigaUserProjects(localStorage.getItem('taigaToken')).then((response) => {
+            console.log(response.data);
+            setProjectLoading(false);
+            if(response.data.status === 'success'){
+                console.log('User Projects:', response.data);
+                // localStorage.setItem('projects',JSON.stringify(response.data.data))
+                response.data.data.map((project) => {
+                    projects.push({label: project.slug, value: project.id});
+                }
+                );
+            }
+            else{
+                console.log('User Projects Retrieval Failed');
+            }
+        }).catch((error) => {
+            setProjectLoading(false);
+            console.log(error);
+        });
+    }, []);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -59,25 +84,26 @@ const ProjectSlugInput = () => {
                     <Toast className='mb-5' onClose={() => setShow(false)} show={show} delay={4000} autohide bg={variant} style={{marginRight:"auto",marginLeft:"auto"}}>
                         <Toast.Body>{message}</Toast.Body>
                     </Toast>
-                    <Form onSubmit={handleSubmit}>
+                    {!projectLoading ? <Form onSubmit={handleSubmit}>
                         <Row className="mb-3 align-items-center">
                             <Col sm={3} className="text-left">
                                 <Form.Label className="small">Project Slug</Form.Label>
                             </Col>
                             <Col sm={9}>
-                                <Form.Control 
+                                {/* <Form.Control 
                                     type="text" 
                                     placeholder="Enter project slug" 
                                     value={projectSlug} 
                                     onChange={(e) => setProjectSlug(e.target.value)}
-                                />
+                                /> */}
+                                <CreatableSelect placeholder="Enter project slug or Select" isClearable options={projects} onChange={(e) => setProjectSlug(e.label)}/>
                             </Col>
                         </Row>
 
-                        <Button variant="primary" type="submit">
+                        <Button size='lg' className='mt-3' variant="primary" type="submit">
                            {loading && <Spinner animation="border" role="status" />} Submit
                         </Button>
-                    </Form>
+                    </Form> : <Spinner animation="border" role="status" />}
                 </Col>
             </Row>
         </Container>

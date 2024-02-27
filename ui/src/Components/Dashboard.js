@@ -368,24 +368,24 @@ const Dashboard = () => {
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <div className="card-wrapper">
-          <Col
-            md={12}
-            className="mb-2"
-            // style={{ borderBottom: "1px solid black" }}
-          >
-            <Card className="custom-card">
-              <Card.Body>
-                {!loadingLT ? (
-                  <VisualizeMetric
-                    metricInput={"throughput"}
-                    metricData={throughputDaily}
-                  />
-                ) : (
-                  <Loader />
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
+        <Col
+          md={12}
+          className="mb-2"
+          // style={{ borderBottom: "1px solid black" }}
+        >
+        <Card className="custom-card">
+            <Card.Body>
+          {!loadingLT ? (
+            <VisualizeMetric
+              metricInput={"throughput"}
+              metricData={throughputDaily}
+            />
+          ) : (
+            <Loader />
+          )}
+          </Card.Body>
+          </Card>
+        </Col>
         </div>
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
