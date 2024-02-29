@@ -12,7 +12,8 @@ def get_user_story(project_id, auth_token):
     # Get Taiga API URL from environment variables
     taiga_url = os.getenv('TAIGA_URL')
 
-    # Construct the URL for the user stories API endpoint for the specified project
+    # Construct the URL for the user stories API endpoint
+    # for the specified project
     user_story_api_url = f"{taiga_url}/userstories?project={project_id}"
 
     # Define headers including the authorization token and content type
@@ -26,7 +27,8 @@ def get_user_story(project_id, auth_token):
 
         # Make a GET request to Taiga API to retrieve user stories
         response = requests.get(user_story_api_url, headers=headers)
-        response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
+        response.raise_for_status()  # Raise an exception for
+        # HTTP errors (4xx or 5xx)
 
         # Extract and return the user stories information from the response
         project_info = response.json()

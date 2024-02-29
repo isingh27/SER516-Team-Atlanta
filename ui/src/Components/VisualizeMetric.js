@@ -2,13 +2,19 @@ import React from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { Chart } from "react-google-charts";
 
-function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDropDown, sprintOptions }) {
+function VisualizeMetric({
+  metricInput,
+  metricData,
+  sprintInput,
+  handleChangeDropDown,
+  sprintOptions,
+}) {
   //TODO: Implement State Management for getting the metricInput
   const options = {
     chart: {
       title: "Cycle Time",
       subtitle: "in days",
-      color: "red"
+      color: "red",
     },
     hAxis: { title: "# Task" },
     vAxis: { title: "Cycle Time" },
@@ -54,6 +60,22 @@ function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDro
     legend: { position: "right" },
   };
 
+  const optionsTP = {
+    chart: {
+      title: "Throughput",
+      subtitle: "per days",
+    },
+    hAxis: { title: "Tasks Completed" },
+    vAxis: { title: "Days" },
+    legend: { position: "right" },
+  };
+
+  const optionsCFD = {
+    title: "Cumulative Flow Diagram",
+    vAxis: { title: "Completed Stories" },
+    hAxis: { title: "Time" }, //TODO: Can be time or sprints
+    isStacked: true,
+  };
 
   // const sprintOptions = [
   //   {
@@ -163,6 +185,37 @@ function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDro
             loader={<div>Loading Chart</div>}
             data={metricData}
             options={optionsWIP}
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
+        </>
+      )}
+      {metricInput === "throughput" && (
+        <>
+          <b>Throughput Daily</b>
+          {console.log("TP", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="BarChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsTP}
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
+        </>
+      )}
+      {metricInput === "cfd" && (
+        <>
+          <b>Cumulative Flow Diagram</b>
+          {console.log("CFD", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="SteppedAreaChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsCFD}
+            legendToggle
           />
           {/* <h3>{avgMetricData} Days</h3> */}
         </>

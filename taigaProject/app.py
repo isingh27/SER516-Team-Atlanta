@@ -3,10 +3,11 @@ import json
 from datetime import datetime, timedelta
 from taigaApi.authenticate import authenticate
 from taigaApi.project.getProjectBySlug import get_project_by_slug
-from taigaApi.project.getProjectTaskStatusName import get_project_task_status_name
+from taigaApi.project.getProjectTaskStatusName import (
+    get_project_task_status_name)
 from taigaApi.userStory.getUserStory import get_user_story
 from taigaApi.task.getTaskHistory import get_task_history, get_task_cycle_times
-from taigaApi.task.getTasks import get_closed_tasks, get_all_tasks
+from taigaApi.task.getTasks import get_closed_tasks
 
 
 # Function to format datetime objects for JSON serialization
@@ -27,11 +28,13 @@ def get_auth_token():
 def get_project_slug(auth_token):
     project_slug = input("Enter the Taiga project slug: ")
     project_info = get_project_by_slug(project_slug, auth_token)
-    task_status_name = get_project_task_status_name(project_info["id"], auth_token)
+    task_status_name = get_project_task_status_name
+    (project_info["id"], auth_token)
 
     project_details = {
         "name": project_info["name"],
-        "team_members": [member["full_name"] for member in project_info.get("members", [])],
+        "team_members":
+        [member["full_name"] for member in project_info.get("members", [])],
         "taskboard_column": [status["name"] for status in task_status_name],
     }
 
@@ -44,7 +47,8 @@ def get_project_slug(auth_token):
 # Function to get open user stories in the project
 def get_open_user_stories(project_id, auth_token):
     user_stories = get_user_story(project_id, auth_token)
-    open_user_stories = [story for story in user_stories if not story["is_closed"]]
+    open_user_stories = [story for story in user_stories if
+                         not story["is_closed"]]
 
     project_details = {
         "open_user_stories": [
@@ -68,10 +72,13 @@ def get_closed_tasks_per_week(project_id, auth_token):
     for task in closed_tasks:
         finished_date = datetime.fromisoformat(task["finished_date"])
         week_start = finished_date - timedelta(days=finished_date.weekday())
-        week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
-        week_end = week_start + timedelta(days=6, hours=23, minutes=59, seconds=59, microseconds=999999)
+        week_start = week_start.replace(hour=0, minute=0,
+                                        second=0, microsecond=0)
+        week_end = week_start + timedelta(days=6, hours=23, minutes=59,
+                                          seconds=59, microseconds=999999)
 
-        existing_week = next((week for week in task_groups if week["weekEnding"] == week_end), None)
+        existing_week = next((week for week in task_groups
+                              if week["weekEnding"] == week_end), None)
 
         if existing_week:
             existing_week["closedTasks"] += 1
@@ -112,7 +119,8 @@ def get_cycle_time(project_id, auth_token):
 
 
 def get_cycle_times(project_id, auth_token):
-    """Calculates and prints average cycle time for each task with start and end dates.
+    """Calculates and prints average cycle time for each task
+    with start and end dates.
 
     Args:
         project_id: The ID of the project.
@@ -160,7 +168,7 @@ def handle_user_action(project_id, auth_token):
         elif action == "4":
             print("\nCalculating average cycle time...")
             get_cycle_time(project_id, auth_token)
-        
+
         elif action == "5":
             print("\nCalculating cycle time for each task...")
             get_cycle_times(project_id, auth_token)
