@@ -355,6 +355,30 @@ def throughput_histogram():
     return jsonify({"throughput_histogram": histogram_data,
                     "status": "success"})
 
+@app.route("/cumulativeFlowDiagram", methods=["POST"])
+def cumulative_flow_diagram():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    sprint_id = request.json['sprintId']
+    project_id = request.json['projectId']
+    
+    #TODO: based on sprintId, get list of all tasks(to ever exist), then based on their status(new, in progress & done),
+    #construct the below array response_data, which is what the UI will be expecting.
+    response_data=[
+        ["Date", "Done", "In Progress","New"],
+        ["02-12-24", 1000, 400,300],
+        ["2014", 1170, 460,200],
+        ["2015", 660, 1120,100],
+        ["2016", 1030, 540,500],
+    ]
+
+    
+    return jsonify({"data": response_data, "status": "success"})
 
 @app.route("/listUserProjects", methods=["GET"])
 def user_project():
