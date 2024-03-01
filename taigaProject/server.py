@@ -13,6 +13,7 @@ from taigaApi.task.getTaskStatus import get_task_status
 from taigaApi.sprint.getMilestoneStats import get_milestone_stats
 from taigaApi.sprint.getAllSprintIDs import get_all_sprint_ids
 from taigaApi.userStory.getUserStory import get_burndown_chart_metric_detail, get_user_story_custom_attrib
+from taigaApi.sprint.getUserStoriesForSprint import get_user_stories_for_sprint
 from flask_cors import CORS
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -355,7 +356,8 @@ def throughput_histogram():
 
     return jsonify({"throughput_histogram": histogram_data,
                     "status": "success"})
-
+  
+  
 @app.route("/cumulativeFlowDiagram", methods=["POST"])
 def cumulative_flow_diagram():
     auth_header = request.headers.get('Authorization')
@@ -366,21 +368,24 @@ def cumulative_flow_diagram():
         return jsonify({"message": "Token is missing or invalid"}), 401
 
     sprint_id = request.json['sprintId']
-    project_id = request.json['projectId']
-    
-    #TODO: based on sprintId, get list of all tasks(to ever exist), then based on their status(new, in progress & done),
-    #construct the below array response_data, which is what the UI will be expecting.
-    response_data=[
-        ["Date", "Done", "In Progress","New"],
-        ["02-12-24", 1000, 400,300],
-        ["2014", 1170, 460,200],
-        ["2015", 660, 1120,100],
-        ["2016", 1030, 540,500],
+
+    response_data = get_user_stories_for_sprint(token, sprint_id)
+
+    formatted_data = [
+        {
+            "Date": date.strftime('%B %d, %Y'),
+            "New": counts['new'],
+            "In Progress": counts['in progress'],
+            "Ready for Test": counts['ready for test'],
+            "Blocked": counts['blocked'],
+            "Done": counts['done']
+        }
+        for date, counts in sorted(response_data.items())
     ]
 
-    
-    return jsonify({"data": response_data, "status": "success"})
-
+    return jsonify({"data": formatted_data, "status": "success"})
+  
+  
 @app.route("/listUserProjects", methods=["GET"])
 def user_project():
     auth_header = request.headers.get('Authorization')
@@ -397,7 +402,8 @@ def user_project():
         return jsonify({"status": "error", "message": "Project not found"})
 
     return jsonify({"data": project_info, "status": "success"})
-
+  
+  
 @app.route("/BVBurndown", methods=["POST"])
 def fetchBVBurndown():
     auth_header = request.headers.get('Authorization')
@@ -431,6 +437,7 @@ def fetchBVBurndown():
     BVBurnDownData = get_burndown_chart_metric_detail(sprint_id, BV_id, token)
 
     return  jsonify({"status": "success", "data":BVBurnDownData})
-
+  
+  
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
