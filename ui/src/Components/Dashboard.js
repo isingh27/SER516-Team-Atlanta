@@ -23,16 +23,22 @@ const Dashboard = () => {
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
   const [throughputDaily, setThroughputDaily] = useState([]);
+
+  const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
+  const [sprintInputThroughput, setSprintInputThroughput] = useState("");
   const [cfdData, setCfdData] = useState([]);
   const [wipData, setWipData] = useState([]);
-  const [sprintInput, setSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   let projectId = localStorage.getItem("projectId");
 
-  const handleChangeDropDown = (e) => {
+  const handleChangeDropDownBurnDown = (e) => {
     console.log(e.target.value);
-    setSprintInput(e.target.value);
-    // callBDData();
+    setSprintInputBurnDown(e.target.value);
+
+  };
+  const handleChangeDropDownThroughput = (e) => {
+    console.log(e.target.value);
+    setSprintInputThroughput(e.target.value);
   };
   // TODO: Implement the workInProgress state (Dummy Data for now)
   const workInProgress = [
@@ -64,7 +70,8 @@ const Dashboard = () => {
           const initialSprint =
             sprintOptions.find((option) => option.title === "Sprint1") ||
             sprintOptions[0];
-          setSprintInput(initialSprint.name);
+          setSprintInputBurnDown(initialSprint.name);
+          setSprintInputThroughput(initialSprint.name);
         } else {
           throw new Error("No sprints found for this project");
         }
@@ -129,12 +136,16 @@ const Dashboard = () => {
         setLoadingLT(false);
       });
   }, []);
+
   useEffect(() => {
-    if (sprintInput === "") fetchSprints();
+    if (sprintInputBurnDown === "") fetchSprints();
     callBDData();
+  }, [sprintInputBurnDown]);
+  useEffect(() => {
+    if (sprintInputThroughput === "") fetchSprints();
     callWipData();
     callThroughputDaily();
-  }, [sprintInput]);
+  }, [sprintInputThroughput]);
 
   const callBDData = () => {
     taigaService
@@ -149,10 +160,10 @@ const Dashboard = () => {
         ) {
           // Find the sprint ID that matches the selected sprint name
           const selectedSprint = sprintsRes.data.sprint_ids.find(
-            (sprint) => sprint[1].toString() === sprintInput
+            (sprint) => sprint[1].toString() === sprintInputBurnDown
           );
           if (!selectedSprint) {
-            throw new Error(`Sprint "${sprintInput}" not found`);
+            throw new Error(`Sprint "${sprintInputBurnDown}" not found`);
           }
           let sprintId = selectedSprint[1];
           console.log(sprintId);
@@ -210,21 +221,33 @@ const Dashboard = () => {
   const callThroughputDaily = () => {
     console.log("Sprint Input", sprintInput);
     taigaService
-      .taigaProjectThroughputDaily(
-        localStorage.getItem("taigaToken"),
-        projectId,
-        sprintInput
-      )
-      .then((res) => {
-        console.log("throughput daily response", res.data.throughput_data);
-        setThroughputDaily(res.data.throughput_data);
-        let throughputChartData = [];
-        res.data.throughput_data.map((item) => {
-          throughputChartData.push([item.date, item.tasks_done]);
-        });
-        throughputChartData.unshift(["Date", "Tasks Completed"]);
-        console.log("throughputChartData", throughputChartData);
-        setThroughputDaily(throughputChartData);
+      .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
+      .then((sprintsRes) => {
+        console.log(sprintsRes);
+        if (
+          sprintsRes &&
+          sprintsRes.data &&
+          sprintsRes.data.sprint_ids &&
+          sprintsRes.data.sprint_ids.length > 0
+        ) {
+          // Find the sprint ID that matches the selected sprint name
+          const selectedSprint = sprintsRes.data.sprint_ids.find(
+            (sprint) => sprint[1].toString() === sprintInputThroughput
+          );
+          if (!selectedSprint) {
+            throw new Error(`Sprint "${sprintInputThroughput}" not found`);
+          }
+          let sprintId = selectedSprint[1];
+          console.log(sprintId);
+          return taigaService.taigaProjectThroughputDaily(
+            localStorage.getItem("taigaToken"),
+            projectId,
+            sprintId
+          );
+        } else {
+          throw new Error("No sprints found for this project");
+        }
+
       })
       .catch((err) => {
         console.log(err);
@@ -333,11 +356,13 @@ const Dashboard = () => {
               <Card.Body>
                 {!loadingBD ? (
                   <VisualizeMetric
-                    metricInput="burndown BV"
-                    sprintInput={sprintInput}
-                    setSprintInput={setSprintInput}
+
+                    metricInput="burndown"
+                    sprintInputBurnDown={sprintInputBurnDown}
+                    setSprintInputBurnDown={setSprintInputBurnDown}
+
                     metricData={burndownData}
-                    handleChangeDropDown={handleChangeDropDown}
+                    handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
                     sprintOptions={sprints}
                   />
                 ) : (
@@ -383,6 +408,10 @@ const Dashboard = () => {
                   <VisualizeMetric
                     metricInput={"throughput"}
                     metricData={throughputDaily}
+                    sprintInputThroughput={sprintInputThroughput}
+                    setSprintInputThroughput={setSprintInputThroughput}
+                    handleChangeDropDownThroughput={handleChangeDropDownThroughput}
+                    sprintOptions={sprints}
                   />
                 ) : (
                   <Loader />

@@ -5,8 +5,10 @@ import { Chart } from "react-google-charts";
 function VisualizeMetric({
   metricInput,
   metricData,
-  sprintInput,
-  handleChangeDropDown,
+  sprintInputBurnDown,
+  handleChangeDropDownBurnDown,
+  sprintInputThroughput,
+  handleChangeDropDownThroughput,
   sprintOptions,
 }) {
   //TODO: Implement State Management for getting the metricInput
@@ -159,8 +161,8 @@ function VisualizeMetric({
         <>
           <b>Burndown Chart</b>
           <Form.Select
-            value={sprintInput}
-            onChange={handleChangeDropDown}
+            value={sprintInputBurnDown}
+            onChange={handleChangeDropDownBurnDown}
             required
             style={{ width: "10%" }}
           >
@@ -232,7 +234,27 @@ function VisualizeMetric({
       {metricInput === "throughput" && (
         <>
           <b>Throughput Daily</b>
-          {console.log("TP-->", metricData)}
+
+          <Form.Select
+            value={sprintInputThroughput}
+            onChange={handleChangeDropDownThroughput}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
+
+
+
+          {console.log("TP", metricData)}
+
           <Chart
             width="100%"
             height="300px"
