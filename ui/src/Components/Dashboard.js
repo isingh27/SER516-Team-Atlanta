@@ -270,6 +270,7 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
+
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
@@ -282,6 +283,32 @@ const Dashboard = () => {
             <Loader />
           )}
         </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <div className="card-wrapper">
+          <Col
+            md={12}
+            className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingBD ? (
+                  <VisualizeMetric
+                    metricInput="burndown BV"
+                    sprintInput={sprintInput}
+                    setSprintInput={setSprintInput}
+                    metricData={burndownData}
+                    handleChangeDropDown={handleChangeDropDown}
+                    sprintOptions={sprints}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </div>
       </Row>
     </Container>
   );
