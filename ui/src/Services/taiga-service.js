@@ -83,6 +83,15 @@ class TaigaService {
           });
   }
 
+  taigaProjectWorkInProgress(token,project_id) {
+    return axios.post(API_URL + "workInProgress",
+        {"projectId":project_id},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+}
   taigaProjectThroughputDaily(token, project_id, sprint_id) {
       return axios.post(API_URL + "throughputDaily",
           { "projectId": project_id, "sprintId": sprint_id },
@@ -95,6 +104,14 @@ class TaigaService {
   taigaProjectThroughputHistogram(token, project_id, sprint_id) {
       return axios.post(API_URL + "throughputHistogram",
           { "projectId": project_id, "sprintId": sprint_id },
+          {
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          });
+  }
+  taigaUserProjects(token) {
+      return axios.get(API_URL + "listUserProjects",
           {
               headers: {
                   Authorization: `Bearer ${token}`
