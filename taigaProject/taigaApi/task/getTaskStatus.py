@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 # Load environment variables from a .env file
 load_dotenv()
 
-
 def get_task_status(sprint_id, auth_token):
     # Get Taiga API URL from environment variables
     taiga_url = os.getenv('TAIGA_URL')

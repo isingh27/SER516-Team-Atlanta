@@ -12,6 +12,8 @@ from taigaApi.task.getTasks import get_closed_tasks, get_closed_user_stories
 from taigaApi.task.getTaskStatus import get_task_status
 from taigaApi.sprint.getMilestoneStats import get_milestone_stats
 from taigaApi.sprint.getAllSprintIDs import get_all_sprint_ids
+from taigaApi.userStory.getUserStory import get_burndown_chart_metric_detail, get_user_story_custom_attrib
+from taigaApi.sprint.getUserStoriesForSprint import get_user_stories_for_sprint
 from flask_cors import CORS
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -354,8 +356,36 @@ def throughput_histogram():
 
     return jsonify({"throughput_histogram": histogram_data,
                     "status": "success"})
+  
+  
+@app.route("/cumulativeFlowDiagram", methods=["POST"])
+def cumulative_flow_diagram():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
 
+    sprint_id = request.json['sprintId']
 
+    response_data = get_user_stories_for_sprint(token, sprint_id)
+
+    formatted_data = [
+        {
+            "Date": date.strftime('%B %d, %Y'),
+            "New": counts['new'],
+            "In Progress": counts['in progress'],
+            "Ready for Test": counts['ready for test'],
+            "Blocked": counts['blocked'],
+            "Done": counts['done']
+        }
+        for date, counts in sorted(response_data.items())
+    ]
+
+    return jsonify({"data": formatted_data, "status": "success"})
+  
+  
 @app.route("/listUserProjects", methods=["GET"])
 def user_project():
     auth_header = request.headers.get('Authorization')
@@ -372,7 +402,42 @@ def user_project():
         return jsonify({"status": "error", "message": "Project not found"})
 
     return jsonify({"data": project_info, "status": "success"})
+  
+  
+@app.route("/BVBurndown", methods=["POST"])
+def fetchBVBurndown():
+    auth_header = request.headers.get('Authorization')
+    token = ''
 
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+    sprint_id = request.json['sprintId']
+    project_id = request.json['projectId']
+    if not sprint_id:
+       return jsonify({"status": "error", "message": "SprintId required"})
+    if not project_id:
+         return jsonify({"status": "error", "message": "ProjectId required"})
+    milestone_stats = get_milestone_stats(sprint_id, token)
+    if milestone_stats is None:
+        return jsonify({"message": "Error fetching milestone stats"}), 500
+    custom_attributes = get_user_story_custom_attrib(project_id, token)
 
+    if custom_attributes is None:
+        return jsonify({"status": "error", "message": "Project not found"})
+    BV_id = None
+    for custom_attribute in custom_attributes:
+        if custom_attribute['name'] == "BV" or custom_attribute['name'] == "Business Value":
+            BV_id = custom_attribute['id']
+            break
+    if BV_id is None:
+        return jsonify({"status": "error", "message": "BV not found"})
+    
+    BVBurnDownData = get_burndown_chart_metric_detail(sprint_id, BV_id, token)
+
+    return  jsonify({"status": "success", "data":BVBurnDownData})
+  
+  
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
