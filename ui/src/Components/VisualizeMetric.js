@@ -50,6 +50,16 @@ function VisualizeMetric({
     legend: { position: "right" },
   };
 
+  const optionsBDBV = {
+    chart: {
+      title: "BurndownBV",
+      subtitle: "in days",
+    },
+    hAxis: { title: "Date" },
+    vAxis: { title: "Business Value" },
+    legend: { position: "right" },
+  };
+
   const optionsWIP = {
     chart: {
       title: "Work In Progress",
@@ -171,6 +181,36 @@ function VisualizeMetric({
             loader={<div>Loading Chart</div>}
             data={metricData}
             options={optionsBD}
+          />
+        </>
+      )}
+
+      {metricInput === "burndown BV" && (
+        <>
+          <b>Business Value Burndown Chart</b>
+          <Form.Select
+            value={sprintInput}
+            onChange={handleChangeDropDown}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
+          {console.log("metricData bdbv", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="LineChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsBDBV}
           />
         </>
       )}
