@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { GlobalContext } from "../GlobalContext";
-import { Container, Row, Col, Spinner } from "react-bootstrap";
+import { Container, Row, Col, Spinner, Card } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
@@ -22,7 +22,9 @@ const Dashboard = () => {
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
-  const [wipData, setWipData] = useState([])
+  const [throughputDaily, setThroughputDaily] = useState([]);
+  const [cfdData, setCfdData] = useState([]);
+  const [wipData, setWipData] = useState([]);
   const [sprintInput, setSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   let projectId = localStorage.getItem("projectId");
@@ -32,14 +34,14 @@ const Dashboard = () => {
     setSprintInput(e.target.value);
     // callBDData();
   };
-// TODO: Implement the workInProgress state (Dummy Data for now)
+  // TODO: Implement the workInProgress state (Dummy Data for now)
   const workInProgress = [
     ["Sprint", "Work In Progress", "Completed"],
-    ["Sprint 1", 20, 80.22,], 
-    ["Sprint 2", 40, 60,],
-    ["Sprint 3", 60, 40,],
-    ["Sprint 4", 80, 20,],
-    ["Sprint 5", 100, 0,],
+    ["Sprint 1", 20, 80.22],
+    ["Sprint 2", 40, 60],
+    ["Sprint 3", 60, 40],
+    ["Sprint 4", 80, 20],
+    ["Sprint 5", 100, 0],
   ];
 
   const fetchSprints = () => {
@@ -130,7 +132,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (sprintInput === "") fetchSprints();
     callBDData();
-    callWipData()
+    callWipData();
+    callThroughputDaily();
   }, [sprintInput]);
 
   const callBDData = () => {
@@ -180,25 +183,57 @@ const Dashboard = () => {
       });
   };
 
-  const callWipData = () =>{
-
+  const callWipData = () => {
     taigaService
-    .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
-    .then((res)=>{
-      let wipChartData = []
-      res.data && res.data.data.map((item)=>{
-        wipChartData.push([item.sprint_name, item['In Progress'],item['Done']])
+      .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
+      .then((res) => {
+        let wipChartData = [];
+        res.data &&
+          res.data.data.map((item) => {
+            wipChartData.push([
+              item.sprint_name,
+              item["In Progress"],
+              item["Done"],
+            ]);
+          });
+        wipChartData.unshift(["Sprint", "Work In Progress", "Completed"]);
+        setWipData(wipChartData);
       })
-      wipChartData.unshift(["Sprint", "Work In Progress", "Completed"]);
-      setWipData(wipChartData)
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
-    .finally(()=>{
-      setLoadingWip(false)
-    })
-  }
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoadingWip(false);
+      });
+  };
+
+  const callThroughputDaily = () => {
+    console.log("Sprint Input", sprintInput);
+    taigaService
+      .taigaProjectThroughputDaily(
+        localStorage.getItem("taigaToken"),
+        projectId,
+        sprintInput
+      )
+      .then((res) => {
+        console.log("throughput daily response", res.data.throughput_data);
+        setThroughputDaily(res.data.throughput_data);
+        let throughputChartData = [];
+        res.data.throughput_data.map((item) => {
+          throughputChartData.push([item.date, item.tasks_done]);
+        });
+        throughputChartData.unshift(["Date", "Tasks Completed"]);
+        console.log("throughputChartData", throughputChartData);
+        setThroughputDaily(throughputChartData);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoadingWip(false);
+      });
+  };
+
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
@@ -278,7 +313,10 @@ const Dashboard = () => {
           style={{ borderBottom: "1px solid black" }}
         >
           {!loadingWip ? (
-            <VisualizeMetric metricInput={"workInProgress"} metricData={wipData} />
+            <VisualizeMetric
+              metricInput={"workInProgress"}
+              metricData={wipData}
+            />
           ) : (
             <Loader />
           )}
@@ -334,24 +372,24 @@ const Dashboard = () => {
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <div className="card-wrapper">
-        <Col
-          md={12}
-          className="mb-2"
-          // style={{ borderBottom: "1px solid black" }}
-        >
-        <Card className="custom-card">
-            <Card.Body>
-          {!loadingLT ? (
-            <VisualizeMetric
-              metricInput={"throughput"}
-              metricData={throughputDaily}
-            />
-          ) : (
-            <Loader />
-          )}
-          </Card.Body>
-          </Card>
-        </Col>
+          <Col
+            md={12}
+            className="mb-2"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingLT ? (
+                  <VisualizeMetric
+                    metricInput={"throughput"}
+                    metricData={throughputDaily}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
         </div>
       </Row>
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
