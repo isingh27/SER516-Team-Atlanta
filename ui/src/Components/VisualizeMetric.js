@@ -55,8 +55,8 @@ function VisualizeMetric({
       title: "Work In Progress",
       subtitle: "in percentage",
     },
-    hAxis: { title: "Sprints" },
-    vAxis: { title: "Work In Progress" },
+    hAxis: { title: "Work In Progress" },
+    vAxis: { title: "Sprints" },
     legend: { position: "right" },
   };
 
