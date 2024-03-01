@@ -292,8 +292,7 @@ def throughput_daily():
         if finished_date_str:
             finished_date = datetime.strptime(finished_date_str,
                                               date_format).date()
-            tasks_completed_per_day
-            [finished_date] = tasks_completed_per_day.get(finished_date, 0) + 1
+            tasks_completed_per_day[finished_date] = tasks_completed_per_day.get(finished_date, 0) + 1
 
     response_data = []
     current_date = st_date

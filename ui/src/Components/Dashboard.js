@@ -22,14 +22,19 @@ const Dashboard = () => {
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
   const [throughputDaily, setThroughputDaily] = useState([]);
-  const [sprintInput, setSprintInput] = useState("");
+  const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
+  const [sprintInputThroughput, setSprintInputThroughput] = useState("");
   const [sprints, setSprints] = useState([]);
   let projectId = localStorage.getItem("projectId");
 
-  const handleChangeDropDown = (e) => {
+  const handleChangeDropDownBurnDown = (e) => {
     console.log(e.target.value);
-    setSprintInput(e.target.value);
-    // callBDData();
+    setSprintInputBurnDown(e.target.value);
+
+  };
+  const handleChangeDropDownThroughput = (e) => {
+    console.log(e.target.value);
+    setSprintInputThroughput(e.target.value);
   };
   // TODO: Implement the workInProgress state (Dummy Data for now)
   const workInProgress = [
@@ -81,7 +86,8 @@ const Dashboard = () => {
           const initialSprint =
             sprintOptions.find((option) => option.title === "Sprint1") ||
             sprintOptions[0];
-          setSprintInput(initialSprint.name);
+          setSprintInputBurnDown(initialSprint.name);
+          setSprintInputThroughput(initialSprint.name);
         } else {
           throw new Error("No sprints found for this project");
         }
@@ -146,11 +152,16 @@ const Dashboard = () => {
         setLoadingLT(false);
       });
   }, []);
+
   useEffect(() => {
-    if (sprintInput === "") fetchSprints();
+    if (sprintInputBurnDown === "") fetchSprints();
     callBDData();
+  }, [sprintInputBurnDown]);
+
+  useEffect(() => {
+    if (sprintInputThroughput === "") fetchSprints();
     callThroughputDaily();
-  }, [sprintInput]);
+  }, [sprintInputThroughput]);
 
   const callBDData = () => {
     taigaService
@@ -165,10 +176,10 @@ const Dashboard = () => {
         ) {
           // Find the sprint ID that matches the selected sprint name
           const selectedSprint = sprintsRes.data.sprint_ids.find(
-            (sprint) => sprint[1].toString() === sprintInput
+            (sprint) => sprint[1].toString() === sprintInputBurnDown
           );
           if (!selectedSprint) {
-            throw new Error(`Sprint "${sprintInput}" not found`);
+            throw new Error(`Sprint "${sprintInputBurnDown}" not found`);
           }
           let sprintId = selectedSprint[1];
           console.log(sprintId);
@@ -212,10 +223,10 @@ const Dashboard = () => {
         ) {
           // Find the sprint ID that matches the selected sprint name
           const selectedSprint = sprintsRes.data.sprint_ids.find(
-            (sprint) => sprint[1].toString() === sprintInput
+            (sprint) => sprint[1].toString() === sprintInputThroughput
           );
           if (!selectedSprint) {
-            throw new Error(`Sprint "${sprintInput}" not found`);
+            throw new Error(`Sprint "${sprintInputThroughput}" not found`);
           }
           let sprintId = selectedSprint[1];
           console.log(sprintId);
@@ -330,10 +341,10 @@ const Dashboard = () => {
                 {!loadingBD ? (
                   <VisualizeMetric
                     metricInput="burndown"
-                    sprintInput={sprintInput}
-                    setSprintInput={setSprintInput}
+                    sprintInputBurnDown={sprintInputBurnDown}
+                    setSprintInputBurnDown={setSprintInputBurnDown}
                     metricData={burndownData}
-                    handleChangeDropDown={handleChangeDropDown}
+                    handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
                     sprintOptions={sprints}
                   />
                 ) : (
@@ -379,6 +390,10 @@ const Dashboard = () => {
                   <VisualizeMetric
                     metricInput={"throughput"}
                     metricData={throughputDaily}
+                    sprintInputThroughput={sprintInputThroughput}
+                    setSprintInputThroughput={setSprintInputThroughput}
+                    handleChangeDropDownThroughput={handleChangeDropDownThroughput}
+                    sprintOptions={sprints}
                   />
                 ) : (
                   <Loader />
