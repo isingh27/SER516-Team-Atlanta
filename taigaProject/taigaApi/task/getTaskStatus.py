@@ -26,7 +26,9 @@ def get_task_status(sprint_id, auth_token):
 
         # Extract and return the task information from the response
         tasks = response.json()
-        sprint_tasks = [{'id': task['id'], 'name': task['subject'], 'status': task['status_extra_info']['name'], 'sprint_id': sprint_id} for task in tasks]
+        sprint_tasks = [{'id': task['id'], 'name': task['subject'],
+                         'status': task['status_extra_info']['name'],
+                         'sprint_id': sprint_id} for task in tasks]
 
         return sprint_tasks
 

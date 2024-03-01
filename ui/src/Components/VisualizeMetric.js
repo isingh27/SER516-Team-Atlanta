@@ -55,8 +55,8 @@ function VisualizeMetric({
       title: "Work In Progress",
       subtitle: "in percentage",
     },
-    hAxis: { title: "Sprints" },
-    vAxis: { title: "Work In Progress" },
+    hAxis: { title: "Work In Progress" },
+    vAxis: { title: "Sprints" },
     legend: { position: "right" },
   };
 
@@ -65,9 +65,16 @@ function VisualizeMetric({
       title: "Throughput",
       subtitle: "per days",
     },
-    hAxis: { title: "Throughput" },
+    hAxis: { title: "Tasks Completed" },
     vAxis: { title: "Days" },
     legend: { position: "right" },
+  };
+
+  const optionsCFD = {
+    title: "Cumulative Flow Diagram",
+    vAxis: { title: "Completed Stories" },
+    hAxis: { title: "Time" }, //TODO: Can be time or sprints
+    isStacked: true,
   };
 
   // const sprintOptions = [
@@ -184,7 +191,7 @@ function VisualizeMetric({
       )}
       {metricInput === "throughput" && (
         <>
-          <b>Throughput</b>
+          <b>Throughput Daily</b>
           {console.log("TP", metricData)}
           <Chart
             width="100%"
@@ -193,6 +200,22 @@ function VisualizeMetric({
             loader={<div>Loading Chart</div>}
             data={metricData}
             options={optionsTP}
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
+        </>
+      )}
+      {metricInput === "cfd" && (
+        <>
+          <b>Cumulative Flow Diagram</b>
+          {console.log("CFD", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="SteppedAreaChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsCFD}
+            legendToggle
           />
           {/* <h3>{avgMetricData} Days</h3> */}
         </>

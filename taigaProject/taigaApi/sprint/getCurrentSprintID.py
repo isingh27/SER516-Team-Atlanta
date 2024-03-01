@@ -6,6 +6,7 @@ import datetime
 # Load environment variables from a .env file
 load_dotenv()
 
+
 def get_current_sprint_id(project_id, auth_token):
 
     # Get Taiga API URL from environment variables
@@ -22,7 +23,8 @@ def get_current_sprint_id(project_id, auth_token):
     }
 
     try:
-        # Make a GET request to Taiga API to retrieve milestone stats by sprint id
+        # Make a GET request to Taiga API to retrieve
+        # milestone stats by sprint id
         response = requests.get(project_api_url, headers=headers)
         response.raise_for_status()
 
@@ -34,8 +36,10 @@ def get_current_sprint_id(project_id, auth_token):
 
         # Iterate over the milestones (sprints) and find the current one
         for sprint in project_info:
-            start_date = datetime.datetime.strptime(sprint['estimated_start'], '%Y-%m-%d').date()
-            end_date = datetime.datetime.strptime(sprint['estimated_finish'], '%Y-%m-%d').date()
+            start_date = datetime.datetime.strptime(sprint['estimated_start'],
+                                                    '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(sprint['estimated_finish'],
+                                                  '%Y-%m-%d').date()
 
             if start_date <= current_date <= end_date:
                 return sprint['id']
