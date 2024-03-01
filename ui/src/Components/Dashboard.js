@@ -310,6 +310,69 @@ const Dashboard = () => {
           </Col>
         </div>
       </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <div className="card-wrapper">
+          <Col
+            md={12}
+            className="mb-4 mt-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingLT ? (
+                  <VisualizeMetric
+                    metricInput={"workInProgress"}
+                    metricData={workInProgress}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </div>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <div className="card-wrapper">
+        <Col
+          md={12}
+          className="mb-2"
+          // style={{ borderBottom: "1px solid black" }}
+        >
+        <Card className="custom-card">
+            <Card.Body>
+          {!loadingLT ? (
+            <VisualizeMetric
+              metricInput={"throughput"}
+              metricData={throughputDaily}
+            />
+          ) : (
+            <Loader />
+          )}
+          </Card.Body>
+          </Card>
+        </Col>
+        </div>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <div className="card-wrapper">
+          <Col
+            md={12}
+            className="mb-4"
+            style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingLT ? (
+                  <VisualizeMetric metricInput={"cfd"} metricData={cfdData} />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </div>
+      </Row>
     </Container>
   );
 };

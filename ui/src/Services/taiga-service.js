@@ -110,6 +110,14 @@ class TaigaService {
               }
           });
   }
+  taigaUserProjects(token) {
+      return axios.get(API_URL + "listUserProjects",
+          {
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          });
+  }
 }
 
 export default new TaigaService();
