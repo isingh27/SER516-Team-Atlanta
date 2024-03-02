@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { GlobalContext } from "../GlobalContext";
-import { Container, Row, Col, Spinner } from "react-bootstrap";
+import { Container, Row, Col, Spinner,Card } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
@@ -14,7 +14,7 @@ const Dashboard = () => {
   const [loadingLT, setLoadingLT] = useState(true);
   const [loadingBD, setLoadingBD] = useState(true);
   const [loadingWip, setLoadingWip] = useState(true);
-
+  const [loadingCFD, setLoadingCFD] = useState(true)
   const projectName = localStorage.getItem("projectName");
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
@@ -23,10 +23,13 @@ const Dashboard = () => {
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
   const [wipData, setWipData] = useState([])
+  const [cfdData, setCfdData] = useState([])
   const [sprintInput, setSprintInput] = useState("");
+  const [cfdSprintInput, setCfdSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   let projectId = localStorage.getItem("projectId");
 
+  
   const handleChangeDropDown = (e) => {
     console.log(e.target.value);
     setSprintInput(e.target.value);
@@ -63,6 +66,7 @@ const Dashboard = () => {
             sprintOptions.find((option) => option.title === "Sprint1") ||
             sprintOptions[0];
           setSprintInput(initialSprint.name);
+          setCfdSprintInput(initialSprint.name);
         } else {
           throw new Error("No sprints found for this project");
         }
@@ -131,8 +135,51 @@ const Dashboard = () => {
     if (sprintInput === "") fetchSprints();
     callBDData();
     callWipData()
-  }, [sprintInput]);
+    callCFDData();
+  }, [sprintInput,cfdSprintInput]);
 
+  const callCFDData = () => {
+    taigaService
+      .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
+      .then((sprintsRes) => {
+        console.log(sprintsRes);
+        if (
+          sprintsRes &&
+          sprintsRes.data &&
+          sprintsRes.data.sprint_ids &&
+          sprintsRes.data.sprint_ids.length > 0
+        ) {
+          // Find the sprint ID that matches the selected sprint name
+          const selectedSprint = sprintsRes.data.sprint_ids.find(
+            (sprint) => sprint[1].toString() === cfdSprintInput
+          );
+          if (!selectedSprint) {
+            throw new Error(`Sprint "${cfdSprintInput}" not found`);
+          }
+          let sprintId = selectedSprint[1];
+          return taigaService.taigaProjectCumulativeFlowDiagram(
+            localStorage.getItem("taigaToken"),projectId,sprintId);
+        } else {
+          throw new Error("No sprints found for this project");
+        }
+      })
+      .then((cfdRes) => {
+        console.log("cfdRes",cfdRes);
+        const cfdTempData = cfdRes.data.data.map(
+          (data) => {
+            return [data.date, data.closed, (data.inProgress), data.new];
+          }
+        );
+        cfdTempData.unshift(["Date","Closed", "In Progress", "New"]);
+        console.log("cfdTempData",cfdTempData)
+        setCfdData(cfdTempData);
+        setLoadingCFD(false);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      })
+
+    }
   const callBDData = () => {
     taigaService
       .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
@@ -283,7 +330,25 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-    </Container>
+      <Row className="justify-content-md-center">
+        <div className="card-wrapper">
+          <Col
+            md={12}
+            className="mb-4"
+            style={{ borderBottom: "1px solid black"}}
+          >
+            <Card className="custom-card" style={{height:"900px"}}>
+              <Card.Body>
+                {!loadingCFD ? (
+                  <VisualizeMetric metricInput={"cfd"} metricData={cfdData} />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </div>
+      </Row>    </Container>
   );
 };
 

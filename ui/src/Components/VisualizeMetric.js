@@ -72,6 +72,7 @@ function VisualizeMetric({
 
   const optionsCFD = {
     title: "Cumulative Flow Diagram",
+    height:"800",
     vAxis: { title: "Completed Stories" },
     hAxis: { title: "Time" }, //TODO: Can be time or sprints
     isStacked: true,
@@ -210,8 +211,8 @@ function VisualizeMetric({
           {console.log("CFD", metricData)}
           <Chart
             width="100%"
-            height="300px"
-            chartType="SteppedAreaChart"
+            height="800"
+            chartType="AreaChart"
             loader={<div>Loading Chart</div>}
             data={metricData}
             options={optionsCFD}
