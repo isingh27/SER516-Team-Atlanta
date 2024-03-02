@@ -423,8 +423,8 @@ def user_project():
         return jsonify({"status": "error", "message": "Project not found"})
 
     return jsonify({"data": project_info, "status": "success"})
-  
-  
+
+
 @app.route("/BVBurndown", methods=["POST"])
 def fetchBVBurndown():
     auth_header = request.headers.get('Authorization')
@@ -440,9 +440,9 @@ def fetchBVBurndown():
        return jsonify({"status": "error", "message": "SprintId required"})
     if not project_id:
          return jsonify({"status": "error", "message": "ProjectId required"})
-    milestone_stats = get_milestone_stats(sprint_id, token)
-    if milestone_stats is None:
-        return jsonify({"message": "Error fetching milestone stats"}), 500
+    # milestone_stats = get_milestone_stats(sprint_id, token)
+    # if milestone_stats is None:
+    #     return jsonify({"message": "Error fetching milestone stats"}), 500
     custom_attributes = get_user_story_custom_attrib(project_id, token)
 
     if custom_attributes is None:

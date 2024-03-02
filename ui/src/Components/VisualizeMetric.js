@@ -8,6 +8,8 @@ function VisualizeMetric({
   sprintInput,
   handleChangeDropDown,
   sprintOptions,
+  sprintInputBurnDown,
+  handleChangeDropDownBurnDown
 }) {
 
   const options = {
@@ -219,6 +221,34 @@ function VisualizeMetric({
             legendToggle
           />
           {/* <h3>{avgMetricData} Days</h3> */}
+        </>
+      )}
+      {metricInput === "burndownBV" && (
+        <>
+          <b>Business Value Burndown Chart</b>
+          <Form.Select
+            value={sprintInputBurnDown}
+            onChange={handleChangeDropDownBurnDown}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="LineChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsBD}
+          />
         </>
       )}
     </Container>

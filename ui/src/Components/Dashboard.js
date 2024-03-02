@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [loadingCTUS, setLoadingCTUS] = useState(true);
   const [loadingLT, setLoadingLT] = useState(true);
   const [loadingBD, setLoadingBD] = useState(true);
+  const [loadingBDBV, setLoadingBDBV] = useState(true)
   const [loadingWip, setLoadingWip] = useState(true);
   const [loadingCFD, setLoadingCFD] = useState(true)
   const projectName = localStorage.getItem("projectName");
@@ -24,7 +25,9 @@ const Dashboard = () => {
   const [burndownData, setBurndownData] = useState([]);
   const [wipData, setWipData] = useState([])
   const [cfdData, setCfdData] = useState([])
+  const [burndownBVData, setBurndownBVData] = useState([])
   const [sprintInput, setSprintInput] = useState("");
+  const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   let projectId = localStorage.getItem("projectId");
@@ -35,6 +38,14 @@ const Dashboard = () => {
     setSprintInput(e.target.value);
     // callBDData();
   };
+
+  const handleChangeDropDownBurnDown = (e) => {
+    console.log(e.target.value);
+    setSprintInputBurnDown(e.target.value);
+    // callBDData();
+  };
+
+
 // TODO: Implement the workInProgress state (Dummy Data for now)
   const workInProgress = [
     ["Sprint", "Work In Progress", "Completed"],
@@ -130,13 +141,63 @@ const Dashboard = () => {
         setLeadTime(leadTimeTempdata);
         setLoadingLT(false);
       });
+      callWipData()
   }, []);
   useEffect(() => {
     if (sprintInput === "") fetchSprints();
     callBDData();
     callWipData()
     callCFDData();
+    callBDBVData()
   }, [sprintInput,cfdSprintInput]);
+
+  const callBDBVData = () => {
+    taigaService
+      .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
+      .then((sprintsRes) => {
+        console.log(sprintsRes);
+        if (
+          sprintsRes &&
+          sprintsRes.data &&
+          sprintsRes.data.sprint_ids &&
+          sprintsRes.data.sprint_ids.length > 0
+        ) {
+          // Find the sprint ID that matches the selected sprint name
+          const selectedSprint = sprintsRes.data.sprint_ids.find(
+            (sprint) => sprint[1].toString() === sprintInput
+          );
+          if (!selectedSprint) {
+            throw new Error(`Sprint "${sprintInput}" not found`);
+          }
+          let sprintId = selectedSprint[1];
+          // console.log(sprintId);
+          return taigaService.taigaBurnDownBV(
+            localStorage.getItem("taigaToken"),
+            projectId,
+            sprintId
+          );
+        } else {
+          throw new Error("No sprints found for this project");
+        }
+      })
+      .then((burndownRes) => {
+        // console.log("BVBurndown",burndownRes.data.data);
+        const bdTempData = burndownRes.data.data.partial_burndown.partial_burndown_data.map(
+          (data, index) => {
+            return [data.date, data.expected_remaining, burndownRes.data.data.total_burndown.total_burndown_data[index].expected_remaining];
+          }
+        );
+        // bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
+        bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
+        setBurndownBVData(bdTempData);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      })
+      .finally(() => {
+        setLoadingBDBV(false);
+      });
+  };
 
   const callCFDData = () => {
     taigaService
@@ -233,8 +294,8 @@ const Dashboard = () => {
     .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
     .then((res)=>{
       let wipChartData = []
-      res.data && res.data.data.map((item)=>{
-        wipChartData.push([item.sprint_name, item['In Progress'],item['Done']])
+      res.data && Object.keys(res.data.data).map((item)=>{
+        wipChartData.push([item, res.data.data[item]['In Progress'],res.data.data[item]['Done']])
       })
       wipChartData.unshift(["Sprint", "Work In Progress", "Completed"]);
       setWipData(wipChartData)
@@ -317,6 +378,33 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
+      <Row className="justify-content-md-center">
+        <div className="card-wrapper">
+          <Col
+            md={12}
+            className="mb-4"
+            style={{ borderBottom: "1px solid black"}}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+              {!loadingBDBV ? (
+                <VisualizeMetric
+                  metricInput="burndownBV"
+                  sprintInputBurnDown={sprintInputBurnDown}
+                  setSprintInputBurnDown={setSprintInputBurnDown}
+                  metricData={burndownData}
+                  handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
+                  sprintOptions={sprints}
+                />
+              ) : (
+                <Loader />
+              )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </div>
+      </Row>    
+
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
@@ -348,7 +436,12 @@ const Dashboard = () => {
             </Card>
           </Col>
         </div>
-      </Row>    </Container>
+      </Row>    
+      
+      
+      
+      
+      </Container>
   );
 };
 
