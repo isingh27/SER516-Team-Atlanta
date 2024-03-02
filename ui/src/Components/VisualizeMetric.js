@@ -11,7 +11,6 @@ function VisualizeMetric({
   sprintInputBurnDown,
   handleChangeDropDownBurnDown
 }) {
-
   const options = {
     chart: {
       title: "Cycle Time",
@@ -52,6 +51,16 @@ function VisualizeMetric({
     legend: { position: "right" },
   };
 
+  const optionsBDBV = {
+    chart: {
+      title: "Burndown",
+      subtitle: "in days",
+    },
+    hAxis: { title: "Date" },
+    vAxis: { title: "Business Value" },
+    legend: { position: "right" },
+  };
+
   const optionsWIP = {
     chart: {
       title: "Work In Progress",
@@ -74,7 +83,7 @@ function VisualizeMetric({
 
   const optionsCFD = {
     title: "Cumulative Flow Diagram",
-    height:"800",
+    height: "800",
     vAxis: { title: "Completed Stories" },
     hAxis: { title: "Time" }, //TODO: Can be time or sprints
     isStacked: true,
@@ -177,6 +186,34 @@ function VisualizeMetric({
           />
         </>
       )}
+      {metricInput === "burndownBV" && (
+        <>
+          <b>Business Value Burndown Chart</b>
+          <Form.Select
+            value={sprintInputBurnDown}
+            onChange={handleChangeDropDownBurnDown}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="LineChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsBDBV}
+          />
+        </>
+      )}
       {metricInput === "workInProgress" && (
         <>
           <b>WIP: Work In Progress</b>
@@ -192,9 +229,24 @@ function VisualizeMetric({
           {/* <h3>{avgMetricData} Days</h3> */}
         </>
       )}
-      {metricInput === "throughput" && (
+      {metricInput === "throughputDaily" && (
         <>
           <b>Throughput Daily</b>
+          <Form.Select
+            value={sprintInput}
+            onChange={handleChangeDropDown}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
           {console.log("TP", metricData)}
           <Chart
             width="100%"
@@ -221,34 +273,6 @@ function VisualizeMetric({
             legendToggle
           />
           {/* <h3>{avgMetricData} Days</h3> */}
-        </>
-      )}
-      {metricInput === "burndownBV" && (
-        <>
-          <b>Business Value Burndown Chart</b>
-          <Form.Select
-            value={sprintInputBurnDown}
-            onChange={handleChangeDropDownBurnDown}
-            required
-            style={{ width: "10%" }}
-          >
-            <option value="" disabled hidden>
-              Select Sprint
-            </option>
-            {sprintOptions.map((option, index) => (
-              <option key={index} value={option.name}>
-                {option.title}
-              </option>
-            ))}
-          </Form.Select>
-          <Chart
-            width="100%"
-            height="300px"
-            chartType="LineChart"
-            loader={<div>Loading Chart</div>}
-            data={metricData}
-            options={optionsBD}
-          />
         </>
       )}
     </Container>
