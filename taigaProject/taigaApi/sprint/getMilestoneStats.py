@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 # Load environment variables from a .env file
 load_dotenv()
 
+
 def get_milestone_stats(sprint_id, auth_token):
 
     # Get Taiga API URL from environment variables
@@ -21,7 +22,8 @@ def get_milestone_stats(sprint_id, auth_token):
     }
 
     try:
-        # Make a GET request to Taiga API to retrieve milestone stats by sprint id
+        # Make a GET request to Taiga API to
+        # retrieve milestone stats by sprint id
         response = requests.get(project_api_url, headers=headers)
         response.raise_for_status()
 
@@ -33,4 +35,3 @@ def get_milestone_stats(sprint_id, auth_token):
         # Handle errors during the API request and print an error message
         print(f"Error fetching milestone stats: {e}")
         return None
-    

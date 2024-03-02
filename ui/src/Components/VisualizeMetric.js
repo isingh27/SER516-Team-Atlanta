@@ -2,13 +2,21 @@ import React from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { Chart } from "react-google-charts";
 
-function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDropDown, sprintOptions }) {
-  //TODO: Implement State Management for getting the metricInput
+function VisualizeMetric({
+  metricInput,
+  metricData,
+  sprintInput,
+  handleChangeDropDown,
+  sprintOptions,
+  sprintInputBurnDown,
+  handleChangeDropDownBurnDown
+}) {
+
   const options = {
     chart: {
       title: "Cycle Time",
       subtitle: "in days",
-      color: "red"
+      color: "red",
     },
     hAxis: { title: "# Task" },
     vAxis: { title: "Cycle Time" },
@@ -42,6 +50,34 @@ function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDro
     hAxis: { title: "Date" },
     vAxis: { title: "Story points" },
     legend: { position: "right" },
+  };
+
+  const optionsWIP = {
+    chart: {
+      title: "Work In Progress",
+      subtitle: "in percentage",
+    },
+    hAxis: { title: "Work In Progress" },
+    vAxis: { title: "Sprints" },
+    legend: { position: "right" },
+  };
+
+  const optionsTP = {
+    chart: {
+      title: "Throughput",
+      subtitle: "per days",
+    },
+    hAxis: { title: "Tasks Completed" },
+    vAxis: { title: "Days" },
+    legend: { position: "right" },
+  };
+
+  const optionsCFD = {
+    title: "Cumulative Flow Diagram",
+    height:"800",
+    vAxis: { title: "Completed Stories" },
+    hAxis: { title: "Time" }, //TODO: Can be time or sprints
+    isStacked: true,
   };
 
   // const sprintOptions = [
@@ -114,7 +150,7 @@ function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDro
       )}
       {metricInput === "burndown" && (
         <>
-          <b>Burndown Chart</b>
+          <b>Burndown Chart - Partial Story Points</b>
           <Form.Select
             value={sprintInput}
             onChange={handleChangeDropDown}
@@ -131,6 +167,80 @@ function VisualizeMetric({ metricInput, metricData, sprintInput, handleChangeDro
             ))}
           </Form.Select>
           {console.log("metricData bd", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="LineChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsBD}
+          />
+        </>
+      )}
+      {metricInput === "workInProgress" && (
+        <>
+          <b>WIP: Work In Progress</b>
+          {console.log("Wip", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="BarChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsWIP}
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
+        </>
+      )}
+      {metricInput === "throughput" && (
+        <>
+          <b>Throughput Daily</b>
+          {console.log("TP", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="BarChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsTP}
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
+        </>
+      )}
+      {metricInput === "cfd" && (
+        <>
+          <b>Cumulative Flow Diagram</b>
+          {console.log("CFD", metricData)}
+          <Chart
+            width="100%"
+            height="800"
+            chartType="AreaChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsCFD}
+            legendToggle
+          />
+          {/* <h3>{avgMetricData} Days</h3> */}
+        </>
+      )}
+      {metricInput === "burndownBV" && (
+        <>
+          <b>Business Value Burndown Chart</b>
+          <Form.Select
+            value={sprintInputBurnDown}
+            onChange={handleChangeDropDownBurnDown}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
           <Chart
             width="100%"
             height="300px"
