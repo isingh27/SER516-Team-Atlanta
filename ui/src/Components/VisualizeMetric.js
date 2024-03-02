@@ -8,6 +8,8 @@ function VisualizeMetric({
   sprintInput,
   handleChangeDropDown,
   sprintOptions,
+  handleChangeDropDownBurnDown,
+  sprintInputBurnDown
 }) {
   const options = {
     chart: {
@@ -46,6 +48,16 @@ function VisualizeMetric({
     },
     hAxis: { title: "Date" },
     vAxis: { title: "Story points" },
+    legend: { position: "right" },
+  };
+
+  const optionsBDBV = {
+    chart: {
+      title: "Burndown",
+      subtitle: "in days",
+    },
+    hAxis: { title: "Date" },
+    vAxis: { title: "Business Value" },
     legend: { position: "right" },
   };
 
@@ -171,6 +183,34 @@ function VisualizeMetric({
             loader={<div>Loading Chart</div>}
             data={metricData}
             options={optionsBD}
+          />
+        </>
+      )}
+      {metricInput === "burndownBV" && (
+        <>
+          <b>Business Value Burndown Chart</b>
+          <Form.Select
+            value={sprintInputBurnDown}
+            onChange={handleChangeDropDownBurnDown}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="LineChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsBDBV}
           />
         </>
       )}

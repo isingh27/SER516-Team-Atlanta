@@ -82,6 +82,15 @@ class TaigaService {
               }
           });
   }
+  taigaBurnDownBV(token, project_id, sprint_id) {
+      return axios.post(API_URL + "BVBurndown",
+      { "projectId": project_id, "sprintId": sprint_id },
+      {
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          });
+  }
 
   taigaProjectWorkInProgress(token,project_id) {
     return axios.post(API_URL + "workInProgress",

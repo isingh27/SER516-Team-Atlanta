@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [loadingWip, setLoadingWip] = useState(true);
   const [loadingCFD, setLoadingCFD] = useState(true);
   const [loadingTP, setLoadingTP] = useState(true);
+  const [loadingBDBV, setLoadingBDBV] = useState(true)
   const projectName = localStorage.getItem("projectName");
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
@@ -26,7 +27,9 @@ const Dashboard = () => {
   const [throughputDaily, setThroughputDaily] = useState([]);
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
+  const [burndownBVData, setBurndownBVData] = useState([])
   const [sprintInput, setSprintInput] = useState("");
+  const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   const [sprintInputTP, setSprintInputTP] = useState("");
@@ -35,6 +38,12 @@ const Dashboard = () => {
   const handleChangeDropDown = (e) => {
     console.log(e.target.value);
     setSprintInput(e.target.value);
+    // callBDData();
+  };
+
+  const handleChangeDropDownBurnDown = (e) => {
+    console.log(e.target.value);
+    setSprintInputBurnDown(e.target.value);
     // callBDData();
   };
 
@@ -74,6 +83,7 @@ const Dashboard = () => {
           setSprintInput(initialSprint.name);
           setCfdSprintInput(initialSprint.name);
           setSprintInputTP(initialSprint.name);
+          setSprintInputBurnDown(initialSprint.name);
         } else {
           throw new Error("No sprints found for this project");
         }
@@ -145,10 +155,11 @@ const Dashboard = () => {
     // callWipData();
     callCFDData();
     callThroughputDaily();
+    callBDBVData()
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
 
+
   const callThroughputDaily = () => {
-    setLoadingTP(true);
     taigaService
       .taigaProjectThroughputDaily(
         localStorage.getItem("taigaToken"),
@@ -277,6 +288,58 @@ const Dashboard = () => {
         setLoadingWip(false);
       });
   };
+
+  const callBDBVData = () => {
+    taigaService
+      .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
+      .then((sprintsRes) => {
+        console.log(sprintsRes);
+        if (
+          sprintsRes &&
+          sprintsRes.data &&
+          sprintsRes.data.sprint_ids &&
+          sprintsRes.data.sprint_ids.length > 0
+        ) {
+          // Find the sprint ID that matches the selected sprint name
+          const selectedSprint = sprintsRes.data.sprint_ids.find(
+            (sprint) => sprint[1].toString() === sprintInput
+          );
+          if (!selectedSprint) {
+            throw new Error(`Sprint "${sprintInput}" not found`);
+          }
+          let sprintId = selectedSprint[1];
+          // console.log(sprintId);
+          return taigaService.taigaBurnDownBV(
+            localStorage.getItem("taigaToken"),
+            projectId,
+            sprintId
+          );
+        } else {
+          throw new Error("No sprints found for this project");
+        }
+      })
+      .then((burndownRes) => {
+        // console.log("BVBurndown",burndownRes.data.data);
+        const bdTempData = burndownRes.data.data.partial_burndown.partial_burndown_data.map(
+          (data, index) => {
+            const dateObject = new Date(data.date);
+          // Format the date to YYYY-MM-DD
+          const formattedDate = dateObject.toISOString().split('T')[0];
+            return [formattedDate, data.expected_remaining, burndownRes.data.data.total_burndown.total_burndown_data[index].expected_remaining];
+          }
+        );
+        // bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
+        bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
+        setBurndownBVData(bdTempData);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      })
+      .finally(() => {
+        setLoadingBDBV(false);
+      });
+  };
+  
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
@@ -348,6 +411,32 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
+      <Row className="justify-content-md-center">
+        <div className="card-wrapper">
+          <Col
+            md={12}
+            className="mb-4"
+            style={{ borderBottom: "1px solid black"}}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+              {!loadingBDBV ? (
+                <VisualizeMetric
+                  metricInput="burndownBV"
+                  sprintInputBurnDown={sprintInputBurnDown}
+                  setSprintInputBurnDown={setSprintInputBurnDown}
+                  metricData={burndownBVData}
+                  handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
+                  sprintOptions={sprints}
+                />
+              ) : (
+                <Loader />
+              )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </div>
+      </Row>    
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
@@ -402,8 +491,8 @@ const Dashboard = () => {
             </Card>
           </Col>
         </div>
-      </Row>{" "}
-    </Container>
+      </Row>    
+      </Container>
   );
 };
 
