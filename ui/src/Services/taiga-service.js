@@ -110,6 +110,16 @@ class TaigaService {
               }
           });
   }
+  taigaProjectCumulativeFlowDiagram(token, project_id, sprint_id) {
+    return axios.post(API_URL + "cumulativeFlowDiagram",
+    { "projectId": project_id, "sprintId": sprint_id },
+    {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+}
+
   taigaUserProjects(token) {
       return axios.get(API_URL + "listUserProjects",
           {

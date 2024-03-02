@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { GlobalContext } from "../GlobalContext";
-import { Container, Row, Col, Spinner, Card } from "react-bootstrap";
+import { Container, Row, Col, Spinner,Card } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
@@ -14,7 +14,7 @@ const Dashboard = () => {
   const [loadingLT, setLoadingLT] = useState(true);
   const [loadingBD, setLoadingBD] = useState(true);
   const [loadingWip, setLoadingWip] = useState(true);
-
+  const [loadingCFD, setLoadingCFD] = useState(true)
   const projectName = localStorage.getItem("projectName");
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
@@ -22,32 +22,27 @@ const Dashboard = () => {
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
-  const [throughputDaily, setThroughputDaily] = useState([]);
-
-  const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
-  const [sprintInputThroughput, setSprintInputThroughput] = useState("");
-  const [cfdData, setCfdData] = useState([]);
-  const [wipData, setWipData] = useState([]);
+  const [wipData, setWipData] = useState([])
+  const [cfdData, setCfdData] = useState([])
+  const [sprintInput, setSprintInput] = useState("");
+  const [cfdSprintInput, setCfdSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   let projectId = localStorage.getItem("projectId");
 
-  const handleChangeDropDownBurnDown = (e) => {
+  
+  const handleChangeDropDown = (e) => {
     console.log(e.target.value);
-    setSprintInputBurnDown(e.target.value);
-
+    setSprintInput(e.target.value);
+    // callBDData();
   };
-  const handleChangeDropDownThroughput = (e) => {
-    console.log(e.target.value);
-    setSprintInputThroughput(e.target.value);
-  };
-  // TODO: Implement the workInProgress state (Dummy Data for now)
+// TODO: Implement the workInProgress state (Dummy Data for now)
   const workInProgress = [
     ["Sprint", "Work In Progress", "Completed"],
-    ["Sprint 1", 20, 80.22],
-    ["Sprint 2", 40, 60],
-    ["Sprint 3", 60, 40],
-    ["Sprint 4", 80, 20],
-    ["Sprint 5", 100, 0],
+    ["Sprint 1", 20, 80.22,], 
+    ["Sprint 2", 40, 60,],
+    ["Sprint 3", 60, 40,],
+    ["Sprint 4", 80, 20,],
+    ["Sprint 5", 100, 0,],
   ];
 
   const fetchSprints = () => {
@@ -70,8 +65,8 @@ const Dashboard = () => {
           const initialSprint =
             sprintOptions.find((option) => option.title === "Sprint1") ||
             sprintOptions[0];
-          setSprintInputBurnDown(initialSprint.name);
-          setSprintInputThroughput(initialSprint.name);
+          setSprintInput(initialSprint.name);
+          setCfdSprintInput(initialSprint.name);
         } else {
           throw new Error("No sprints found for this project");
         }
@@ -136,17 +131,55 @@ const Dashboard = () => {
         setLoadingLT(false);
       });
   }, []);
-
   useEffect(() => {
-    if (sprintInputBurnDown === "") fetchSprints();
+    if (sprintInput === "") fetchSprints();
     callBDData();
-  }, [sprintInputBurnDown]);
-  useEffect(() => {
-    if (sprintInputThroughput === "") fetchSprints();
-    callWipData();
-    callThroughputDaily();
-  }, [sprintInputThroughput]);
+    callWipData()
+    callCFDData();
+  }, [sprintInput,cfdSprintInput]);
 
+  const callCFDData = () => {
+    taigaService
+      .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
+      .then((sprintsRes) => {
+        console.log(sprintsRes);
+        if (
+          sprintsRes &&
+          sprintsRes.data &&
+          sprintsRes.data.sprint_ids &&
+          sprintsRes.data.sprint_ids.length > 0
+        ) {
+          // Find the sprint ID that matches the selected sprint name
+          const selectedSprint = sprintsRes.data.sprint_ids.find(
+            (sprint) => sprint[1].toString() === cfdSprintInput
+          );
+          if (!selectedSprint) {
+            throw new Error(`Sprint "${cfdSprintInput}" not found`);
+          }
+          let sprintId = selectedSprint[1];
+          return taigaService.taigaProjectCumulativeFlowDiagram(
+            localStorage.getItem("taigaToken"),projectId,sprintId);
+        } else {
+          throw new Error("No sprints found for this project");
+        }
+      })
+      .then((cfdRes) => {
+        console.log("cfdRes",cfdRes);
+        const cfdTempData = cfdRes.data.data.map(
+          (data) => {
+            return [data.date, data.closed, (data.inProgress), data.new];
+          }
+        );
+        cfdTempData.unshift(["Date","Closed", "In Progress", "New"]);
+        console.log("cfdTempData",cfdTempData)
+        setCfdData(cfdTempData);
+        setLoadingCFD(false);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      })
+
+    }
   const callBDData = () => {
     taigaService
       .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
@@ -160,10 +193,10 @@ const Dashboard = () => {
         ) {
           // Find the sprint ID that matches the selected sprint name
           const selectedSprint = sprintsRes.data.sprint_ids.find(
-            (sprint) => sprint[1].toString() === sprintInputBurnDown
+            (sprint) => sprint[1].toString() === sprintInput
           );
           if (!selectedSprint) {
-            throw new Error(`Sprint "${sprintInputBurnDown}" not found`);
+            throw new Error(`Sprint "${sprintInput}" not found`);
           }
           let sprintId = selectedSprint[1];
           console.log(sprintId);
@@ -194,69 +227,25 @@ const Dashboard = () => {
       });
   };
 
-  const callWipData = () => {
+  const callWipData = () =>{
+
     taigaService
-      .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
-      .then((res) => {
-        let wipChartData = [];
-        res.data &&
-          res.data.data.map((item) => {
-            wipChartData.push([
-              item.sprint_name,
-              item["In Progress"],
-              item["Done"],
-            ]);
-          });
-        wipChartData.unshift(["Sprint", "Work In Progress", "Completed"]);
-        setWipData(wipChartData);
+    .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
+    .then((res)=>{
+      let wipChartData = []
+      res.data && res.data.data.map((item)=>{
+        wipChartData.push([item.sprint_name, item['In Progress'],item['Done']])
       })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoadingWip(false);
-      });
-  };
-
-  const callThroughputDaily = () => {
-    console.log("Sprint Input", sprintInput);
-    taigaService
-      .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
-      .then((sprintsRes) => {
-        console.log(sprintsRes);
-        if (
-          sprintsRes &&
-          sprintsRes.data &&
-          sprintsRes.data.sprint_ids &&
-          sprintsRes.data.sprint_ids.length > 0
-        ) {
-          // Find the sprint ID that matches the selected sprint name
-          const selectedSprint = sprintsRes.data.sprint_ids.find(
-            (sprint) => sprint[1].toString() === sprintInputThroughput
-          );
-          if (!selectedSprint) {
-            throw new Error(`Sprint "${sprintInputThroughput}" not found`);
-          }
-          let sprintId = selectedSprint[1];
-          console.log(sprintId);
-          return taigaService.taigaProjectThroughputDaily(
-            localStorage.getItem("taigaToken"),
-            projectId,
-            sprintId
-          );
-        } else {
-          throw new Error("No sprints found for this project");
-        }
-
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoadingWip(false);
-      });
-  };
-
+      wipChartData.unshift(["Sprint", "Work In Progress", "Completed"]);
+      setWipData(wipChartData)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+    .finally(()=>{
+      setLoadingWip(false)
+    })
+  }
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
@@ -328,7 +317,6 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
@@ -336,101 +324,22 @@ const Dashboard = () => {
           style={{ borderBottom: "1px solid black" }}
         >
           {!loadingWip ? (
-            <VisualizeMetric
-              metricInput={"workInProgress"}
-              metricData={wipData}
-            />
+            <VisualizeMetric metricInput={"workInProgress"} metricData={wipData} />
           ) : (
             <Loader />
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row className="justify-content-md-center">
         <div className="card-wrapper">
           <Col
             md={12}
             className="mb-4"
-            // style={{ borderBottom: "1px solid black" }}
+            style={{ borderBottom: "1px solid black"}}
           >
-            <Card className="custom-card">
+            <Card className="custom-card" style={{height:"900px"}}>
               <Card.Body>
-                {!loadingBD ? (
-                  <VisualizeMetric
-
-                    metricInput="burndown"
-                    sprintInputBurnDown={sprintInputBurnDown}
-                    setSprintInputBurnDown={setSprintInputBurnDown}
-
-                    metricData={burndownData}
-                    handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
-                    sprintOptions={sprints}
-                  />
-                ) : (
-                  <Loader />
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
-        </div>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
-        <div className="card-wrapper">
-          <Col
-            md={12}
-            className="mb-4 mt-4"
-            // style={{ borderBottom: "1px solid black" }}
-          >
-            <Card className="custom-card">
-              <Card.Body>
-                {!loadingLT ? (
-                  <VisualizeMetric
-                    metricInput={"workInProgress"}
-                    metricData={workInProgress}
-                  />
-                ) : (
-                  <Loader />
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
-        </div>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
-        <div className="card-wrapper">
-          <Col
-            md={12}
-            className="mb-2"
-            // style={{ borderBottom: "1px solid black" }}
-          >
-            <Card className="custom-card">
-              <Card.Body>
-                {!loadingLT ? (
-                  <VisualizeMetric
-                    metricInput={"throughput"}
-                    metricData={throughputDaily}
-                    sprintInputThroughput={sprintInputThroughput}
-                    setSprintInputThroughput={setSprintInputThroughput}
-                    handleChangeDropDownThroughput={handleChangeDropDownThroughput}
-                    sprintOptions={sprints}
-                  />
-                ) : (
-                  <Loader />
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
-        </div>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
-        <div className="card-wrapper">
-          <Col
-            md={12}
-            className="mb-4"
-            style={{ borderBottom: "1px solid black" }}
-          >
-            <Card className="custom-card">
-              <Card.Body>
-                {!loadingLT ? (
+                {!loadingCFD ? (
                   <VisualizeMetric metricInput={"cfd"} metricData={cfdData} />
                 ) : (
                   <Loader />
@@ -439,8 +348,7 @@ const Dashboard = () => {
             </Card>
           </Col>
         </div>
-      </Row>
-    </Container>
+      </Row>    </Container>
   );
 };
 
