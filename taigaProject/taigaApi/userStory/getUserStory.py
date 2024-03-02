@@ -193,6 +193,7 @@ def update_bv_days_data(days_bv_data, milestone_start, milestone_finish, expecte
         
         if days_bv_data[dt]["expected_remaining"] < 0:
             days_bv_data[dt]["expected_remaining"] = 0
+
 def update_points_days_data(days_data, milestone_start, milestone_finish, expected_decrement):
     for dt in daterange(milestone_start + timedelta(1), milestone_finish + timedelta(1)):
         if dt not in days_data:
@@ -204,64 +205,162 @@ def update_points_days_data(days_data, milestone_start, milestone_finish, expect
         if days_data[dt]["expected_remaining"] < 0:
             days_data[dt]["expected_remaining"] = 0
 
-def process_burndown_details(user_story, auth_token, total_business_value, days_data, attribute_key, days_bv_data, days_total_data):
-    user_story_details = get_user_story_details(user_story, auth_token)
-    if user_story_details["status"] == 200:
-        user_story_data = user_story_details["data"]
-        if user_story_data["status"]["name"] == "Ready":
-            if user_story_data["points"] is not None:
-                if user_story_data["points"] > 0:
-                    user_story_data["points"] = round(user_story_data["points"], 2)
-                    user_story_data["business_value"] = round(user_story_data["business_value"], 2)
-                    user_story_data["date_created"] = datetime.fromisoformat(user_story_data["date_created"]).date()
-                    user_story_data["date_closed"] = datetime.fromisoformat(user_story_data["date_closed"]).date()
-                    if user_story_data["date_created"] not in days_data:
-                        days_data[user_story_data["date_created"]] = append_points_date_data(user_story_data["date_created"], 0, days_data[user_story_data["date_created"] - timedelta(1)]["remaining"])
-                    days_data[user_story_data["date_created"]]["completed"] += user_story_data["points"]
-                    days_data[user_story_data["date_created"]]["remaining"] -= user_story_data["points"]
-                    days_data[user_story_data["date_created"]]["expected_remaining"] -= user_story_data["points"]
-                    if user_story_data["date_closed"] not in days_data:
-                        days_data[user_story_data["date_closed"]] = append_points_date_data(user_story_data["date_closed"], days_data[user_story_data["date_closed"] - timedelta(1)]["completed"], days_data[user_story_data["date_closed"] - timedelta(1)]["remaining"])
-                    days_data[user_story_data["date_closed"]]["completed"] -= user_story_data["points"]
-                    days_data[user_story_data["date_closed"]]["remaining"] += user_story_data["points"]
-                    days_data[user_story_data["date_closed"]]["expected_remaining"] += user_story_data["points"]
-                    if user_story_data["date_created"] not in days_total_data:
-                        days_total_data[user_story_data["date_created"]] = append_points_date_data(user_story_data["date_created"], 0, days_total_data[user_story_data["date_created"] - timedelta(1)]["remaining"])
-                    days_total_data
-                    days_total_data[user_story_data["date_created"]]["completed"] += user_story_data["points"]
-                    days_total_data[user_story_data["date_created"]]["remaining"] -= user_story_data["points"]
-                    days_total_data[user_story_data["date_created"]]["expected_remaining"] -= user_story_data["points"]
-                    if user_story_data["date_closed"] not in days_total_data:
-                        days_total_data[user_story_data["date_closed"]] = append_points_date_data(user_story_data["date_closed"], days_total_data[user_story_data["date_closed"] - timedelta(1)]["completed"], days_total_data[user_story_data["date_closed"] - timedelta(1)]["remaining"])
-                    days_total_data[user_story_data["date_closed"]]["completed"] -= user_story_data["points"]
-                    days_total_data[user_story_data["date_closed"]]["remaining"] += user_story_data["points"]
-                    days_total_data[user_story_data["date_closed"]]["expected_remaining"] += user_story_data["points"]
-                    if user_story_data["date_created"] not in days_bv_data:
-                        days_bv_data[user_story_data["date_created"]] = {
-                            "date": user_story_data["date_created"],
-                            "completed": 0,
-                            "remaining": days_bv_data[user_story_data["date_created"] - timedelta(1)]["remaining"]
-                        }
-                    days_bv_data[user_story_data["date_created"]]["completed"] += user_story_data["business_value"]
-                    days_bv_data[user_story_data["date_created"]]["remaining"] -= user_story_data["business_value"]
-                    days_bv_data[user_story_data["date_created"]]["expected_remaining"] -= user_story_data["business_value"]
-                    if user_story_data["date_closed"] not in days_bv_data:
-                        days_bv_data[user_story_data["date_closed"]] = {
-                            "date": user_story_data["date_closed"],
-                            "completed": 0,
-                            "remaining": days_bv_data[user_story_data["date_closed"] - timedelta(1)]["remaining"]
-                        }
-                    days_bv_data[user_story_data["date_closed"]]["completed"] -= user_story_data["business_value"]
-                    days_bv_data[user_story_data["date_closed"]]["remaining"] += user_story_data["business_value"]
-                    days_bv_data[user_story_data["date_closed"]]["expected_remaining"] += user_story_data["business_value"]
-                    total_business_value["bv"] += user_story_data["business_value"]
-    else:
-        print(f"Error fetching user story details: {user_story_details['status']}")
-        return None
+# def process_burndown_details(user_story, auth_token, total_business_value, days_data, attribute_key, days_bv_data, days_total_data):
+#     print(f"Processing user story: {user_story['id']} & attribute_key: {attribute_key}")
+#     user_story_details = get_user_story_details(user_story['id'], auth_token)
+#     if user_story_details["status"] == 200:
+#         user_story_data = user_story_details["data"]
+#         if user_story_data["status"]["name"] == "Ready":
+#             if user_story_data["points"] is not None:
+#                 if user_story_data["points"] > 0:
+#                     user_story_data["points"] = round(user_story_data["points"], 2)
+#                     user_story_data["business_value"] = round(user_story_data["business_value"], 2)
+#                     user_story_data["date_created"] = datetime.fromisoformat(user_story_data["date_created"]).date()
+#                     user_story_data["date_closed"] = datetime.fromisoformat(user_story_data["date_closed"]).date()
+#                     if user_story_data["date_created"] not in days_data:
+#                         days_data[user_story_data["date_created"]] = append_points_date_data(user_story_data["date_created"], 0, days_data[user_story_data["date_created"] - timedelta(1)]["remaining"])
+#                     days_data[user_story_data["date_created"]]["completed"] += user_story_data["points"]
+#                     days_data[user_story_data["date_created"]]["remaining"] -= user_story_data["points"]
+#                     days_data[user_story_data["date_created"]]["expected_remaining"] -= user_story_data["points"]
+#                     if user_story_data["date_closed"] not in days_data:
+#                         days_data[user_story_data["date_closed"]] = append_points_date_data(user_story_data["date_closed"], days_data[user_story_data["date_closed"] - timedelta(1)]["completed"], days_data[user_story_data["date_closed"] - timedelta(1)]["remaining"])
+#                     days_data[user_story_data["date_closed"]]["completed"] -= user_story_data["points"]
+#                     days_data[user_story_data["date_closed"]]["remaining"] += user_story_data["points"]
+#                     days_data[user_story_data["date_closed"]]["expected_remaining"] += user_story_data["points"]
+#                     if user_story_data["date_created"] not in days_total_data:
+#                         days_total_data[user_story_data["date_created"]] = append_points_date_data(user_story_data["date_created"], 0, days_total_data[user_story_data["date_created"] - timedelta(1)]["remaining"])
+#                     days_total_data
+#                     days_total_data[user_story_data["date_created"]]["completed"] += user_story_data["points"]
+#                     days_total_data[user_story_data["date_created"]]["remaining"] -= user_story_data["points"]
+#                     days_total_data[user_story_data["date_created"]]["expected_remaining"] -= user_story_data["points"]
+#                     if user_story_data["date_closed"] not in days_total_data:
+#                         days_total_data[user_story_data["date_closed"]] = append_points_date_data(user_story_data["date_closed"], days_total_data[user_story_data["date_closed"] - timedelta(1)]["completed"], days_total_data[user_story_data["date_closed"] - timedelta(1)]["remaining"])
+#                     days_total_data[user_story_data["date_closed"]]["completed"] -= user_story_data["points"]
+#                     days_total_data[user_story_data["date_closed"]]["remaining"] += user_story_data["points"]
+#                     days_total_data[user_story_data["date_closed"]]["expected_remaining"] += user_story_data["points"]
+#                     if user_story_data["date_created"] not in days_bv_data:
+#                         days_bv_data[user_story_data["date_created"]] = {
+#                             "date": user_story_data["date_created"],
+#                             "completed": 0,
+#                             "remaining": days_bv_data[user_story_data["date_created"] - timedelta(1)]["remaining"]
+#                         }
+#                     days_bv_data[user_story_data["date_created"]]["completed"] += user_story_data["business_value"]
+#                     days_bv_data[user_story_data["date_created"]]["remaining"] -= user_story_data["business_value"]
+#                     days_bv_data[user_story_data["date_created"]]["expected_remaining"] -= user_story_data["business_value"]
+#                     if user_story_data["date_closed"] not in days_bv_data:
+#                         days_bv_data[user_story_data["date_closed"]] = {
+#                             "date": user_story_data["date_closed"],
+#                             "completed": 0,
+#                             "remaining": days_bv_data[user_story_data["date_closed"] - timedelta(1)]["remaining"]
+#                         }
+#                     days_bv_data[user_story_data["date_closed"]]["completed"] -= user_story_data["business_value"]
+#                     days_bv_data[user_story_data["date_closed"]]["remaining"] += user_story_data["business_value"]
+#                     days_bv_data[user_story_data["date_closed"]]["expected_remaining"] += user_story_data["business_value"]
+#                     total_business_value["bv"] += user_story_data["business_value"]
+#     else:
+#         print(f"Error fetching user story details: {user_story_details['status']}")
+#         return None
 
-def get_burndown_chart_metric_detail(milestone_id, attribute_key, auth_token):
-    milestone = get_milestone_stats(milestone_id, auth_token)    
-    partial_burndown, bv_burndown, total_burndown = calc_burndown_day_data(auth_token, milestone, attribute_key)
+def process_burndown_details(user_story, auth_token, total_business_value, days_data, attribute_key, days_bv_data, days_total_data):
+    tasks = get_tasks_by_story_id(user_story["id"], auth_token)
+    extract_partial_burndown_data(user_story, tasks, days_data)
+
+    business_value = get_business_value(user_story["id"], attribute_key, auth_token)
+    total_business_value["bv"] = total_business_value["bv"] + int(business_value)
+    extract_bv_burndown_data(user_story, int(business_value), days_bv_data)
+
+    extract_total_burndown_data(user_story, days_total_data)
+
+def get_tasks_by_story_id(story_id, auth_token):
+    taiga_url = os.getenv('TAIGA_URL')
+    task_api_url = f"{taiga_url}/tasks?user_story={story_id}"
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type': 'application/json'
+    }
+    try:
+        response = requests.get(task_api_url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching tasks by story id: {e}")
+        return None
+    
+def get_business_value(story_id, attribute
+                        , auth_token):
+        taiga_url = os.getenv('TAIGA_URL')
+        user_story_api_url = f"{taiga_url}/userstories/{story_id}"
+        headers = {
+            'Authorization': f'Bearer {auth_token}',
+            'Content-Type': 'application/json'
+        }
+
+        try:
+            response = requests.get(user_story_api_url, headers=headers)
+            response.raise_for_status()
+            user_story = response.json()
+            for custom_attribute in user_story["custom_attributes"]:
+                if custom_attribute["name"] == attribute:
+                    return custom_attribute["value"]
+            return 0
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching user story details: {e}")
+            return 0
+
+def extract_partial_burndown_data(user_story, tasks, days_data):
+    for task in tasks:
+        if task["status"]["name"] == "Ready":
+            if task["points"] is not None:
+                if task["points"] > 0:
+                    task["points"] = round(task["points"], 2)
+                    task["date_created"] = datetime.fromisoformat(task["date_created"]).date()
+                    task["date_closed"] = datetime.fromisoformat(task["date_closed"]).date()
+                    if task["date_created"] not in days_data:
+                        days_data[task["date_created"]] = append_points_date_data(task["date_created"], 0, days_data[task["date_created"] - timedelta(1)]["remaining"])
+                    days_data[task["date_created"]]["completed"] += task["points"]
+                    days_data[task["date_created"]]["remaining"] -= task["points"]
+                    days_data[task["date_created"]]["expected_remaining"] -= task["points"]
+                    if task["date_closed"] not in days_data:
+                        days_data[task["date_closed"]] = append_points_date_data(task["date_closed"], days_data[task["date_closed"] - timedelta(1)]["completed"], days_data[task["date_closed"] - timedelta(1)]["remaining"])
+                    days_data[task["date_closed"]]["completed"] -= task["points"]
+                    days_data[task["date_closed"]]["remaining"] += task["points"]
+                    days_data[task["date_closed"]]["expected_remaining"] += task["points"]
+
+def extract_bv_burndown_data(user_story, business_value, days_bv_data):
+    if user_story["date_created"] not in days_bv_data:
+        days_bv_data[user_story["date_created"]] = {
+            "date": user_story["date_created"],
+            "completed": 0,
+            "remaining": days_bv_data[user_story["date_created"] - timedelta(1)]["remaining"]
+        }
+    days_bv_data[user_story["date_created"]]["completed"] += business_value
+    days_bv_data[user_story["date_created"]]["remaining"] -= business_value
+    days_bv_data[user_story["date_created"]]["expected_remaining"] -= business_value
+    if user_story["date_closed"] not in days_bv_data:
+        days_bv_data[user_story["date_closed"]] = {
+            "date": user_story["date_closed"],
+            "completed": 0,
+            "remaining": days_bv_data[user_story["date_closed"] - timedelta(1)]["remaining"]
+        }
+    days_bv_data[user_story["date_closed"]]["completed"] -= business_value
+    days_bv_data[user_story["date_closed"]]["remaining"] += business_value
+    days_bv_data[user_story["date_closed"]]["expected_remaining"] += business_value
+
+def extract_total_burndown_data(user_story, days_total_data):
+    if user_story["date_created"] not in days_total_data:
+        days_total_data[user_story["date_created"]] = append_points_date_data(user_story["date_created"], 0, days_total_data[user_story["date_created"] - timedelta(1)]["remaining"])
+    days_total_data[user_story["date_created"]]["completed"] += user_story["points"]
+    days_total_data[user_story["date_created"]]["remaining"] -= user_story["points"]
+    days_total_data[user_story["date_created"]]["expected_remaining"] -= user_story["points"]
+    if user_story["date_closed"] not in days_total_data:
+        days_total_data[user_story["date_closed"]] = append_points_date_data(user_story["date_closed"], days_total_data[user_story["date_closed"] - timedelta(1)]["completed"], days_total_data[user_story["date_closed"] - timedelta(1)]["remaining"])
+    days_total_data[user_story["date_closed"]]["completed"] -= user_story["points"]
+    days_total_data[user_story["date_closed"]]["remaining"] += user_story["points"]
+    days_total_data[user_story["date_closed"]]["expected_remaining"] += user_story["points"]
+
+def get_burndown_chart_metric_detail(milestone_id, attrib_key, auth_token):
+    milestone = get_milestone_stats(milestone_id, auth_token)
+    partial_burndown, bv_burndown, total_burndown = calc_burndown_day_data(auth_token, milestone, attrib_key)
     partial_burndown = list(partial_burndown.values())
     partial_burndown.sort(key=lambda l: l["date"])
     bv_burndown = list(bv_burndown.values())

@@ -8,8 +8,8 @@ function VisualizeMetric({
   sprintInput,
   handleChangeDropDown,
   sprintOptions,
-  handleChangeDropDownBurnDown,
-  sprintInputBurnDown
+  sprintInputBurnDown,
+  handleChangeDropDownBurnDown
 }) {
   const options = {
     chart: {

@@ -13,10 +13,10 @@ const Dashboard = () => {
   const [loadingCTUS, setLoadingCTUS] = useState(true);
   const [loadingLT, setLoadingLT] = useState(true);
   const [loadingBD, setLoadingBD] = useState(true);
+  const [loadingBDBV, setLoadingBDBV] = useState(true)
   const [loadingWip, setLoadingWip] = useState(true);
   const [loadingCFD, setLoadingCFD] = useState(true);
   const [loadingTP, setLoadingTP] = useState(true);
-  const [loadingBDBV, setLoadingBDBV] = useState(true)
   const projectName = localStorage.getItem("projectName");
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
@@ -437,6 +437,7 @@ const Dashboard = () => {
           </Col>
         </div>
       </Row>    
+
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
@@ -492,6 +493,10 @@ const Dashboard = () => {
           </Col>
         </div>
       </Row>    
+      
+      
+      
+      
       </Container>
   );
 };
