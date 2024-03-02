@@ -137,11 +137,12 @@ const Dashboard = () => {
         setLeadTime(leadTimeTempdata);
         setLoadingLT(false);
       });
+      callWipData();
   }, []);
   useEffect(() => {
     if (sprintInput === "") fetchSprints();
     callBDData();
-    callWipData();
+    // callWipData();
     callCFDData();
     callThroughputDaily();
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
@@ -258,21 +259,17 @@ const Dashboard = () => {
   };
 
   const callWipData = () => {
+    setLoadingWip(true);
     taigaService
-      .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
-      .then((res) => {
-        let wipChartData = [];
-        res.data &&
-          res.data.data.map((item) => {
-            wipChartData.push([
-              item.sprint_name,
-              item["In Progress"],
-              item["Done"],
-            ]);
-          });
-        wipChartData.unshift(["Sprint", "Work In Progress", "Completed"]);
-        setWipData(wipChartData);
+    .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
+    .then((res)=>{
+      let wipChartData = []
+      res.data && Object.keys(res.data.data).map((item)=>{
+        wipChartData.push([item, res.data.data[item]['In Progress'],res.data.data[item]['Done']])
       })
+      wipChartData.unshift(["Sprint", "In Progress", "Done"]);
+      setWipData(wipChartData);
+    })
       .catch((err) => {
         console.log(err);
       })
