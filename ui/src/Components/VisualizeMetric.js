@@ -148,7 +148,7 @@ function VisualizeMetric({
       )}
       {metricInput === "burndown" && (
         <>
-          <b>Burndown Chart - Business Value</b>
+          <b>Burndown Chart - Partial Story Points</b>
           <Form.Select
             value={sprintInput}
             onChange={handleChangeDropDown}

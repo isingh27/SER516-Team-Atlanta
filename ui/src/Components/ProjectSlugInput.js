@@ -38,6 +38,13 @@ const ProjectSlugInput = () => {
         });
     }, []);
 
+    const handleOnChange = (e) => {
+        console.log(e);
+        if(!e)
+            return;
+        setProjectSlug(e.label);
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
         if (!projectSlug) {
@@ -96,7 +103,7 @@ const ProjectSlugInput = () => {
                                     value={projectSlug} 
                                     onChange={(e) => setProjectSlug(e.target.value)}
                                 /> */}
-                                <CreatableSelect placeholder="Enter project slug or Select" isClearable options={projects} onChange={(e) => setProjectSlug(e.label)}/>
+                                <CreatableSelect placeholder="Enter project slug or Select" isClearable options={projects} onChange={(e) => handleOnChange(e)}/>
                             </Col>
                         </Row>
 
