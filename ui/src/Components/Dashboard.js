@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { GlobalContext } from "../GlobalContext";
-import { Container, Row, Col, Spinner,Card } from "react-bootstrap";
+import { Container, Row, Col, Spinner, Card } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
@@ -14,7 +14,8 @@ const Dashboard = () => {
   const [loadingLT, setLoadingLT] = useState(true);
   const [loadingBD, setLoadingBD] = useState(true);
   const [loadingWip, setLoadingWip] = useState(true);
-  const [loadingCFD, setLoadingCFD] = useState(true)
+  const [loadingCFD, setLoadingCFD] = useState(true);
+  const [loadingTP, setLoadingTP] = useState(true);
   const projectName = localStorage.getItem("projectName");
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
@@ -22,27 +23,32 @@ const Dashboard = () => {
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
-  const [wipData, setWipData] = useState([])
-  const [cfdData, setCfdData] = useState([])
+  const [throughputDaily, setThroughputDaily] = useState([]);
+  const [wipData, setWipData] = useState([]);
+  const [cfdData, setCfdData] = useState([]);
   const [sprintInput, setSprintInput] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
+  const [sprintInputTP, setSprintInputTP] = useState("");
   let projectId = localStorage.getItem("projectId");
 
-  
   const handleChangeDropDown = (e) => {
     console.log(e.target.value);
     setSprintInput(e.target.value);
     // callBDData();
   };
-// TODO: Implement the workInProgress state (Dummy Data for now)
+
+  const handleChangeDropDownTP = (e) => {
+    setSprintInputTP(e.target.value);
+  };
+  // TODO: Implement the workInProgress state (Dummy Data for now)
   const workInProgress = [
     ["Sprint", "Work In Progress", "Completed"],
-    ["Sprint 1", 20, 80.22,], 
-    ["Sprint 2", 40, 60,],
-    ["Sprint 3", 60, 40,],
-    ["Sprint 4", 80, 20,],
-    ["Sprint 5", 100, 0,],
+    ["Sprint 1", 20, 80.22],
+    ["Sprint 2", 40, 60],
+    ["Sprint 3", 60, 40],
+    ["Sprint 4", 80, 20],
+    ["Sprint 5", 100, 0],
   ];
 
   const fetchSprints = () => {
@@ -67,6 +73,7 @@ const Dashboard = () => {
             sprintOptions[0];
           setSprintInput(initialSprint.name);
           setCfdSprintInput(initialSprint.name);
+          setSprintInputTP(initialSprint.name);
         } else {
           throw new Error("No sprints found for this project");
         }
@@ -134,9 +141,32 @@ const Dashboard = () => {
   useEffect(() => {
     if (sprintInput === "") fetchSprints();
     callBDData();
-    callWipData()
+    callWipData();
     callCFDData();
-  }, [sprintInput,cfdSprintInput]);
+    callThroughputDaily();
+  }, [sprintInput, cfdSprintInput, sprintInputTP]);
+
+  const callThroughputDaily = () => {
+    setLoadingTP(true);
+    taigaService
+      .taigaProjectThroughputDaily(
+        localStorage.getItem("taigaToken"),
+        projectId,
+        sprintInputTP
+      )
+      .then((res) => {
+        console.log("THROUGHPUT  DAILY: ", res.data.throughput_data);
+        let throughputTempData = res.data.throughput_data.map((data) => {
+          return [data.date, data.tasks_done];
+        });
+        throughputTempData.unshift(["Days", "Tasks Completed"]);
+        setThroughputDaily(throughputTempData);
+        setLoadingTP(false);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  };
 
   const callCFDData = () => {
     taigaService
@@ -158,28 +188,28 @@ const Dashboard = () => {
           }
           let sprintId = selectedSprint[1];
           return taigaService.taigaProjectCumulativeFlowDiagram(
-            localStorage.getItem("taigaToken"),projectId,sprintId);
+            localStorage.getItem("taigaToken"),
+            projectId,
+            sprintId
+          );
         } else {
           throw new Error("No sprints found for this project");
         }
       })
       .then((cfdRes) => {
-        console.log("cfdRes",cfdRes);
-        const cfdTempData = cfdRes.data.data.map(
-          (data) => {
-            return [data.date, data.closed, (data.inProgress), data.new];
-          }
-        );
-        cfdTempData.unshift(["Date","Closed", "In Progress", "New"]);
-        console.log("cfdTempData",cfdTempData)
+        console.log("cfdRes", cfdRes);
+        const cfdTempData = cfdRes.data.data.map((data) => {
+          return [data.date, data.closed, data.inProgress, data.new];
+        });
+        cfdTempData.unshift(["Date", "Closed", "In Progress", "New"]);
+        console.log("cfdTempData", cfdTempData);
         setCfdData(cfdTempData);
         setLoadingCFD(false);
       })
       .catch((error) => {
         console.error(error.message);
-      })
-
-    }
+      });
+  };
   const callBDData = () => {
     taigaService
       .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
@@ -227,25 +257,29 @@ const Dashboard = () => {
       });
   };
 
-  const callWipData = () =>{
-
+  const callWipData = () => {
     taigaService
-    .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
-    .then((res)=>{
-      let wipChartData = []
-      res.data && res.data.data.map((item)=>{
-        wipChartData.push([item.sprint_name, item['In Progress'],item['Done']])
+      .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
+      .then((res) => {
+        let wipChartData = [];
+        res.data &&
+          res.data.data.map((item) => {
+            wipChartData.push([
+              item.sprint_name,
+              item["In Progress"],
+              item["Done"],
+            ]);
+          });
+        wipChartData.unshift(["Sprint", "Work In Progress", "Completed"]);
+        setWipData(wipChartData);
       })
-      wipChartData.unshift(["Sprint", "Work In Progress", "Completed"]);
-      setWipData(wipChartData)
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
-    .finally(()=>{
-      setLoadingWip(false)
-    })
-  }
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoadingWip(false);
+      });
+  };
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
@@ -324,7 +358,30 @@ const Dashboard = () => {
           style={{ borderBottom: "1px solid black" }}
         >
           {!loadingWip ? (
-            <VisualizeMetric metricInput={"workInProgress"} metricData={wipData} />
+            <VisualizeMetric
+              metricInput={"workInProgress"}
+              metricData={wipData}
+            />
+          ) : (
+            <Loader />
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          {!loadingTP ? (
+            <VisualizeMetric
+              metricInput={"throughputDaily"}
+              sprintInput={sprintInputTP}
+              setSprintInput={setSprintInputTP}
+              metricData={throughputDaily}
+              handleChangeDropDown={handleChangeDropDownTP}
+              sprintOptions={sprints}
+            />
           ) : (
             <Loader />
           )}
@@ -335,9 +392,9 @@ const Dashboard = () => {
           <Col
             md={12}
             className="mb-4"
-            style={{ borderBottom: "1px solid black"}}
+            style={{ borderBottom: "1px solid black" }}
           >
-            <Card className="custom-card" style={{height:"900px"}}>
+            <Card className="custom-card" style={{ height: "900px" }}>
               <Card.Body>
                 {!loadingCFD ? (
                   <VisualizeMetric metricInput={"cfd"} metricData={cfdData} />
@@ -348,7 +405,8 @@ const Dashboard = () => {
             </Card>
           </Col>
         </div>
-      </Row>    </Container>
+      </Row>{" "}
+    </Container>
   );
 };
 

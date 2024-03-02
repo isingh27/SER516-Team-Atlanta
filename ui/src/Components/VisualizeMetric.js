@@ -9,7 +9,6 @@ function VisualizeMetric({
   handleChangeDropDown,
   sprintOptions,
 }) {
-
   const options = {
     chart: {
       title: "Cycle Time",
@@ -72,7 +71,7 @@ function VisualizeMetric({
 
   const optionsCFD = {
     title: "Cumulative Flow Diagram",
-    height:"800",
+    height: "800",
     vAxis: { title: "Completed Stories" },
     hAxis: { title: "Time" }, //TODO: Can be time or sprints
     isStacked: true,
@@ -190,9 +189,24 @@ function VisualizeMetric({
           {/* <h3>{avgMetricData} Days</h3> */}
         </>
       )}
-      {metricInput === "throughput" && (
+      {metricInput === "throughputDaily" && (
         <>
           <b>Throughput Daily</b>
+          <Form.Select
+            value={sprintInput}
+            onChange={handleChangeDropDown}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
           {console.log("TP", metricData)}
           <Chart
             width="100%"
