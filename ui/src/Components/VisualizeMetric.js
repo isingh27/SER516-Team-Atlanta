@@ -5,8 +5,10 @@ import { Chart } from "react-google-charts";
 function VisualizeMetric({
   metricInput,
   metricData,
-  sprintInput,
-  handleChangeDropDown,
+  sprintInputBurnDown,
+  handleChangeDropDownBurnDown,
+  sprintInputThroughput,
+  handleChangeDropDownThroughput,
   sprintOptions,
 }) {
   //TODO: Implement State Management for getting the metricInput
@@ -50,6 +52,16 @@ function VisualizeMetric({
     legend: { position: "right" },
   };
 
+  const optionsBDBV = {
+    chart: {
+      title: "BurndownBV",
+      subtitle: "in days",
+    },
+    hAxis: { title: "Date" },
+    vAxis: { title: "Business Value" },
+    legend: { position: "right" },
+  };
+
   const optionsWIP = {
     chart: {
       title: "Work In Progress",
@@ -66,7 +78,7 @@ function VisualizeMetric({
       subtitle: "per days",
     },
     hAxis: { title: "Tasks Completed" },
-    vAxis: { title: "Days" },
+    vAxis: { title: "Date" },
     legend: { position: "right" },
   };
 
@@ -150,8 +162,8 @@ function VisualizeMetric({
         <>
           <b>Burndown Chart</b>
           <Form.Select
-            value={sprintInput}
-            onChange={handleChangeDropDown}
+            value={sprintInputBurnDown}
+            onChange={handleChangeDropDownBurnDown}
             required
             style={{ width: "10%" }}
           >
@@ -175,6 +187,36 @@ function VisualizeMetric({
           />
         </>
       )}
+
+      {metricInput === "burndown BV" && (
+        <>
+          <b>Business Value Burndown Chart</b>
+          <Form.Select
+            value={sprintInput}
+            onChange={handleChangeDropDown}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
+          {console.log("metricData bdbv", metricData)}
+          <Chart
+            width="100%"
+            height="300px"
+            chartType="LineChart"
+            loader={<div>Loading Chart</div>}
+            data={metricData}
+            options={optionsBDBV}
+          />
+        </>
+      )}
       {metricInput === "workInProgress" && (
         <>
           <b>WIP: Work In Progress</b>
@@ -193,7 +235,27 @@ function VisualizeMetric({
       {metricInput === "throughput" && (
         <>
           <b>Throughput Daily</b>
+
+          <Form.Select
+            value={sprintInputThroughput}
+            onChange={handleChangeDropDownThroughput}
+            required
+            style={{ width: "10%" }}
+          >
+            <option value="" disabled hidden>
+              Select Sprint
+            </option>
+            {sprintOptions.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.title}
+              </option>
+            ))}
+          </Form.Select>
+
+
+
           {console.log("TP", metricData)}
+
           <Chart
             width="100%"
             height="300px"
