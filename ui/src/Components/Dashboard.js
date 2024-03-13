@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
+  const [totalBurndownData, setTotalBurndownData] = useState([])
   const [throughputDaily, setThroughputDaily] = useState([]);
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
@@ -42,15 +43,17 @@ const Dashboard = () => {
   };
 
   const handleChangeDropDownBurnDown = (e) => {
-    console.log(e.target.value);
+    console.log("changed",e.target.value);
     setSprintInputBurnDown(e.target.value);
+    setSprintInput(e.target.value);
+    combineBDData()
     // callBDData();
   };
 
   const handleChangeDropDownTP = (e) => {
     setSprintInputTP(e.target.value);
   };
-  // TODO: Implement the workInProgress state (Dummy Data for now)
+
   const workInProgress = [
     ["Sprint", "Work In Progress", "Completed"],
     ["Sprint 1", 20, 80.22],
@@ -156,8 +159,39 @@ const Dashboard = () => {
     callCFDData();
     callThroughputDaily();
     callBDBVData()
+
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
 
+  useEffect(() => {
+    if (!loadingBD && !loadingBDBV) {
+      combineBDData();
+    }
+  }, [loadingBD, loadingBDBV, burndownData, burndownBVData]);
+  
+const combineBDData = () => {
+  let tempTotalBD =[]
+  burndownData.map((item)=>{
+    if(item && item[0]!=="Date"){
+      if(item[2]!=undefined){
+        item[3] = item[2]
+      }else{
+        item[3] = item[1]
+        item[2] = item[1]
+      }
+      tempTotalBD.push(item)
+    }
+  })
+  burndownBVData.map((item,index)=>{
+    if(item && item[0]!=="Date"){
+      if(tempTotalBD[index]>=2){
+        tempTotalBD[index][2] = item[1]
+      }
+    }
+  })
+  tempTotalBD.unshift(["Date", "Open Points", "Business Value", "Optimal Points"]);
+  console.log("tempTotalBD ",tempTotalBD)
+  setTotalBurndownData(tempTotalBD)
+}
 
   const callThroughputDaily = () => {
     taigaService
@@ -260,13 +294,11 @@ const Dashboard = () => {
         bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
         setBurndownData(bdTempData);
+        setLoadingBD(false);
       })
       .catch((error) => {
         console.error(error.message);
       })
-      .finally(() => {
-        setLoadingBD(false);
-      });
   };
 
   const callWipData = () => {
@@ -331,13 +363,11 @@ const Dashboard = () => {
         // bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
         setBurndownBVData(bdTempData);
+        setLoadingBDBV(false);
       })
       .catch((error) => {
         console.error(error.message);
       })
-      .finally(() => {
-        setLoadingBDBV(false);
-      });
   };
   
   const Loader = () => <Spinner animation="border" role="status" />;
@@ -378,7 +408,7 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      {/* <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
           className="mb-4"
@@ -410,7 +440,7 @@ const Dashboard = () => {
             <Loader />
           )}
         </Col>
-      </Row>
+      </Row> */}
       <Row className="justify-content-md-center">
         <div className="card-wrapper">
           <Col
@@ -420,12 +450,12 @@ const Dashboard = () => {
           >
             <Card className="custom-card">
               <Card.Body>
-              {!loadingBDBV ? (
+              {(!loadingBD && !loadingBDBV && totalBurndownData.length>0)? (
                 <VisualizeMetric
                   metricInput="burndownBV"
                   sprintInputBurnDown={sprintInputBurnDown}
                   setSprintInputBurnDown={setSprintInputBurnDown}
-                  metricData={burndownBVData}
+                  metricData={totalBurndownData}
                   handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
                   sprintOptions={sprints}
                 />

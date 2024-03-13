@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { Chart } from "react-google-charts";
 
@@ -9,7 +9,7 @@ function VisualizeMetric({
   handleChangeDropDown,
   sprintOptions,
   sprintInputBurnDown,
-  handleChangeDropDownBurnDown
+  handleChangeDropDownBurnDown,
 }) {
   const options = {
     chart: {
@@ -111,7 +111,6 @@ function VisualizeMetric({
   //     name: "Sprint5",
   //   },
   // ];
-
   return (
     <Container fluid>
       {metricInput === "cycleTime" && (
@@ -157,7 +156,7 @@ function VisualizeMetric({
           {/* <h3>{avgMetricData} Days</h3> */}
         </>
       )}
-      {metricInput === "burndown" && (
+      {metricInput === "burndown" && metricData.length>0 && (
         <>
           <b>Burndown Chart - Partial Story Points</b>
           <Form.Select
@@ -175,7 +174,7 @@ function VisualizeMetric({
               </option>
             ))}
           </Form.Select>
-          {console.log("metricData bd", metricData)}
+          {/* {console.log("metricData bd", metricData)} */}
           <Chart
             width="100%"
             height="300px"
@@ -188,7 +187,7 @@ function VisualizeMetric({
       )}
       {metricInput === "burndownBV" && (
         <>
-          <b>Business Value Burndown Chart</b>
+          <b>Storypoints & Business Value Burndown Chart</b>
           <Form.Select
             value={sprintInputBurnDown}
             onChange={handleChangeDropDownBurnDown}
