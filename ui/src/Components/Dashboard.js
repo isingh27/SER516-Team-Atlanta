@@ -4,6 +4,7 @@ import { Container, Row, Col, Spinner, Card } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
+import LeadTimeVisualization from "./Visualization/LeadTimeVisualization";
 
 const Dashboard = () => {
   const navigation = useNavigate();
@@ -13,7 +14,7 @@ const Dashboard = () => {
   const [loadingCTUS, setLoadingCTUS] = useState(true);
   const [loadingLT, setLoadingLT] = useState(true);
   const [loadingBD, setLoadingBD] = useState(true);
-  const [loadingBDBV, setLoadingBDBV] = useState(true)
+  const [loadingBDBV, setLoadingBDBV] = useState(true);
   const [loadingWip, setLoadingWip] = useState(true);
   const [loadingCFD, setLoadingCFD] = useState(true);
   const [loadingTP, setLoadingTP] = useState(true);
@@ -27,7 +28,7 @@ const Dashboard = () => {
   const [throughputDaily, setThroughputDaily] = useState([]);
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
-  const [burndownBVData, setBurndownBVData] = useState([])
+  const [burndownBVData, setBurndownBVData] = useState([]);
   const [sprintInput, setSprintInput] = useState("");
   const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
@@ -147,7 +148,7 @@ const Dashboard = () => {
         setLeadTime(leadTimeTempdata);
         setLoadingLT(false);
       });
-      callWipData();
+    callWipData();
   }, []);
   useEffect(() => {
     if (sprintInput === "") fetchSprints();
@@ -155,9 +156,8 @@ const Dashboard = () => {
     // callWipData();
     callCFDData();
     callThroughputDaily();
-    callBDBVData()
+    callBDBVData();
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
-
 
   const callThroughputDaily = () => {
     taigaService
@@ -272,15 +272,20 @@ const Dashboard = () => {
   const callWipData = () => {
     setLoadingWip(true);
     taigaService
-    .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
-    .then((res)=>{
-      let wipChartData = []
-      res.data && Object.keys(res.data.data).map((item)=>{
-        wipChartData.push([item, res.data.data[item]['In Progress'],res.data.data[item]['Done']])
+      .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
+      .then((res) => {
+        let wipChartData = [];
+        res.data &&
+          Object.keys(res.data.data).map((item) => {
+            wipChartData.push([
+              item,
+              res.data.data[item]["In Progress"],
+              res.data.data[item]["Done"],
+            ]);
+          });
+        wipChartData.unshift(["Sprint", "In Progress", "Done"]);
+        setWipData(wipChartData);
       })
-      wipChartData.unshift(["Sprint", "In Progress", "Done"]);
-      setWipData(wipChartData);
-    })
       .catch((err) => {
         console.log(err);
       })
@@ -320,14 +325,20 @@ const Dashboard = () => {
       })
       .then((burndownRes) => {
         // console.log("BVBurndown",burndownRes.data.data);
-        const bdTempData = burndownRes.data.data.partial_burndown.partial_burndown_data.map(
-          (data, index) => {
-            const dateObject = new Date(data.date);
-          // Format the date to YYYY-MM-DD
-          const formattedDate = dateObject.toISOString().split('T')[0];
-            return [formattedDate, data.expected_remaining, burndownRes.data.data.total_burndown.total_burndown_data[index].expected_remaining];
-          }
-        );
+        const bdTempData =
+          burndownRes.data.data.partial_burndown.partial_burndown_data.map(
+            (data, index) => {
+              const dateObject = new Date(data.date);
+              // Format the date to YYYY-MM-DD
+              const formattedDate = dateObject.toISOString().split("T")[0];
+              return [
+                formattedDate,
+                data.expected_remaining,
+                burndownRes.data.data.total_burndown.total_burndown_data[index]
+                  .expected_remaining,
+              ];
+            }
+          );
         // bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
         setBurndownBVData(bdTempData);
@@ -339,7 +350,7 @@ const Dashboard = () => {
         setLoadingBDBV(false);
       });
   };
-  
+
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
@@ -385,7 +396,7 @@ const Dashboard = () => {
           style={{ borderBottom: "1px solid black" }}
         >
           {!loadingLT ? (
-            <VisualizeMetric metricInput={"leadTime"} metricData={leadTime} />
+            <LeadTimeVisualization metricData={leadTime} />
           ) : (
             <Loader />
           )}
@@ -416,27 +427,27 @@ const Dashboard = () => {
           <Col
             md={12}
             className="mb-4"
-            style={{ borderBottom: "1px solid black"}}
+            style={{ borderBottom: "1px solid black" }}
           >
             <Card className="custom-card">
               <Card.Body>
-              {!loadingBDBV ? (
-                <VisualizeMetric
-                  metricInput="burndownBV"
-                  sprintInputBurnDown={sprintInputBurnDown}
-                  setSprintInputBurnDown={setSprintInputBurnDown}
-                  metricData={burndownBVData}
-                  handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
-                  sprintOptions={sprints}
-                />
-              ) : (
-                <Loader />
-              )}
+                {!loadingBDBV ? (
+                  <VisualizeMetric
+                    metricInput="burndownBV"
+                    sprintInputBurnDown={sprintInputBurnDown}
+                    setSprintInputBurnDown={setSprintInputBurnDown}
+                    metricData={burndownBVData}
+                    handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
+                    sprintOptions={sprints}
+                  />
+                ) : (
+                  <Loader />
+                )}
               </Card.Body>
             </Card>
           </Col>
         </div>
-      </Row>    
+      </Row>
 
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
@@ -492,12 +503,8 @@ const Dashboard = () => {
             </Card>
           </Col>
         </div>
-      </Row>    
-      
-      
-      
-      
-      </Container>
+      </Row>
+    </Container>
   );
 };
 
