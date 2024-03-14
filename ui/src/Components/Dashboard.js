@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
+  const [totalBurndownData, setTotalBurndownData] = useState([])
   const [throughputDaily, setThroughputDaily] = useState([]);
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
@@ -43,15 +44,17 @@ const Dashboard = () => {
   };
 
   const handleChangeDropDownBurnDown = (e) => {
-    console.log(e.target.value);
+    console.log("changed",e.target.value);
     setSprintInputBurnDown(e.target.value);
+    setSprintInput(e.target.value);
+    combineBDData()
     // callBDData();
   };
 
   const handleChangeDropDownTP = (e) => {
     setSprintInputTP(e.target.value);
   };
-  // TODO: Implement the workInProgress state (Dummy Data for now)
+
   const workInProgress = [
     ["Sprint", "Work In Progress", "Completed"],
     ["Sprint 1", 20, 80.22],
@@ -93,6 +96,31 @@ const Dashboard = () => {
         console.error(error.message);
       });
   };
+
+  const combineBDData = () => {
+    let tempTotalBD =[]
+    burndownData.map((item)=>{
+      if(item && item[0]!=="Date"){
+        if(item[2]!=undefined){
+          item[3] = item[2]
+        }else{
+          item[3] = item[1]
+          item[2] = item[1]
+        }
+        tempTotalBD.push(item)
+      }
+    })
+    burndownBVData.map((item,index)=>{
+      if(item && item[0]!=="Date"){
+        if(tempTotalBD[index]>=2){
+          tempTotalBD[index][2] = item[1]
+        }
+      }
+    })
+    tempTotalBD.unshift(["Date", "Open Points", "Business Value", "Optimal Points"]);
+    console.log("tempTotalBD ",tempTotalBD)
+    setTotalBurndownData(tempTotalBD)
+  }
 
   useEffect(() => {
     console.log("Selected option:", metricInput);
@@ -156,8 +184,15 @@ const Dashboard = () => {
     // callWipData();
     callCFDData();
     callThroughputDaily();
-    callBDBVData();
+    callBDBVData()
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
+
+  useEffect(() => {
+    if (!loadingBD && !loadingBDBV) {
+      combineBDData();
+    }
+  }, [loadingBD, loadingBDBV, burndownData, burndownBVData]);
+
 
   const callThroughputDaily = () => {
     taigaService
@@ -260,13 +295,14 @@ const Dashboard = () => {
         bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
         setBurndownData(bdTempData);
+        setLoadingBD(false);
       })
       .catch((error) => {
         console.error(error.message);
       })
-      .finally(() => {
-        setLoadingBD(false);
-      });
+      // .finally(() => {
+      //   setLoadingBD(false);
+      // });
   };
 
   const callWipData = () => {
@@ -342,13 +378,14 @@ const Dashboard = () => {
         // bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
         setBurndownBVData(bdTempData);
+        setLoadingBDBV(false);
       })
       .catch((error) => {
         console.error(error.message);
       })
-      .finally(() => {
-        setLoadingBDBV(false);
-      });
+      // .finally(() => {
+      //   setLoadingBDBV(false);
+      // });
   };
 
   const Loader = () => <Spinner animation="border" role="status" />;
@@ -372,12 +409,15 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row className="justify-content-md-center mt-2 mb-3" style={{ height: "400px" }}>
+        <div className="card-wrapper">
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
+          <Card className="custom-card">
+            <Card.Body>
           {!loadingCTUS ? (
             <VisualizeMetric
               metricInput={"cycleTimeUS"}
@@ -387,9 +427,12 @@ const Dashboard = () => {
           ) : (
             <Loader />
           )}
+          </Card.Body>
+          </Card>
         </Col>
+        </div>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
           className="mb-4"
@@ -402,7 +445,7 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      {/*<Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
           className="mb-4"
@@ -421,8 +464,8 @@ const Dashboard = () => {
             <Loader />
           )}
         </Col>
-      </Row>
-      <Row className="justify-content-md-center">
+      </Row> */}
+      <Row className="justify-content-md-center mt-4">
         <div className="card-wrapper">
           <Col
             md={12}
@@ -430,19 +473,19 @@ const Dashboard = () => {
             style={{ borderBottom: "1px solid black" }}
           >
             <Card className="custom-card">
-              <Card.Body>
-                {!loadingBDBV ? (
-                  <VisualizeMetric
-                    metricInput="burndownBV"
-                    sprintInputBurnDown={sprintInputBurnDown}
-                    setSprintInputBurnDown={setSprintInputBurnDown}
-                    metricData={burndownBVData}
-                    handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
-                    sprintOptions={sprints}
-                  />
-                ) : (
-                  <Loader />
-                )}
+            <Card.Body>
+              {(!loadingBD && !loadingBDBV && totalBurndownData.length>0)? (
+                <VisualizeMetric
+                  metricInput="burndownBV"
+                  sprintInputBurnDown={sprintInputBurnDown}
+                  setSprintInputBurnDown={setSprintInputBurnDown}
+                  metricData={totalBurndownData}
+                  handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
+                  sprintOptions={sprints}
+                />
+              ) : (
+                <Loader />
+              )}
               </Card.Body>
             </Card>
           </Col>

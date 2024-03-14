@@ -186,9 +186,9 @@ function VisualizeMetric({
           />
         </>
       )}
-      {metricInput === "burndownBV" && (
+     {metricInput === "burndownBV" && (
         <>
-          <b>Business Value Burndown Chart</b>
+          <b>Storypoints & Business Value Burndown Chart</b>
           <Form.Select
             value={sprintInputBurnDown}
             onChange={handleChangeDropDownBurnDown}
