@@ -4,6 +4,7 @@ import { Container, Row, Col, Spinner, Card } from "react-bootstrap";
 import taigaService from "../Services/taiga-service";
 import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
+import LeadTimeVisualization from "./Visualization/LeadTimeVisualization";
 
 const Dashboard = () => {
   const navigation = useNavigate();
@@ -13,7 +14,7 @@ const Dashboard = () => {
   const [loadingCTUS, setLoadingCTUS] = useState(true);
   const [loadingLT, setLoadingLT] = useState(true);
   const [loadingBD, setLoadingBD] = useState(true);
-  const [loadingBDBV, setLoadingBDBV] = useState(true)
+  const [loadingBDBV, setLoadingBDBV] = useState(true);
   const [loadingWip, setLoadingWip] = useState(true);
   const [loadingCFD, setLoadingCFD] = useState(true);
   const [loadingTP, setLoadingTP] = useState(true);
@@ -28,7 +29,7 @@ const Dashboard = () => {
   const [throughputDaily, setThroughputDaily] = useState([]);
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
-  const [burndownBVData, setBurndownBVData] = useState([])
+  const [burndownBVData, setBurndownBVData] = useState([]);
   const [sprintInput, setSprintInput] = useState("");
   const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
@@ -96,6 +97,31 @@ const Dashboard = () => {
       });
   };
 
+  const combineBDData = () => {
+    let tempTotalBD =[]
+    burndownData.map((item)=>{
+      if(item && item[0]!=="Date"){
+        if(item[2]!=undefined){
+          item[3] = item[2]
+        }else{
+          item[3] = item[1]
+          item[2] = item[1]
+        }
+        tempTotalBD.push(item)
+      }
+    })
+    burndownBVData.map((item,index)=>{
+      if(item && item[0]!=="Date"){
+        if(tempTotalBD[index]>=2){
+          tempTotalBD[index][2] = item[1]
+        }
+      }
+    })
+    tempTotalBD.unshift(["Date", "Open Points", "Business Value", "Optimal Points"]);
+    console.log("tempTotalBD ",tempTotalBD)
+    setTotalBurndownData(tempTotalBD)
+  }
+
   useEffect(() => {
     console.log("Selected option:", metricInput);
     // setLoading(true);
@@ -150,7 +176,7 @@ const Dashboard = () => {
         setLeadTime(leadTimeTempdata);
         setLoadingLT(false);
       });
-      callWipData();
+    callWipData();
   }, []);
   useEffect(() => {
     if (sprintInput === "") fetchSprints();
@@ -159,7 +185,6 @@ const Dashboard = () => {
     callCFDData();
     callThroughputDaily();
     callBDBVData()
-
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
 
   useEffect(() => {
@@ -167,31 +192,7 @@ const Dashboard = () => {
       combineBDData();
     }
   }, [loadingBD, loadingBDBV, burndownData, burndownBVData]);
-  
-const combineBDData = () => {
-  let tempTotalBD =[]
-  burndownData.map((item)=>{
-    if(item && item[0]!=="Date"){
-      if(item[2]!=undefined){
-        item[3] = item[2]
-      }else{
-        item[3] = item[1]
-        item[2] = item[1]
-      }
-      tempTotalBD.push(item)
-    }
-  })
-  burndownBVData.map((item,index)=>{
-    if(item && item[0]!=="Date"){
-      if(tempTotalBD[index]>=2){
-        tempTotalBD[index][2] = item[1]
-      }
-    }
-  })
-  tempTotalBD.unshift(["Date", "Open Points", "Business Value", "Optimal Points"]);
-  console.log("tempTotalBD ",tempTotalBD)
-  setTotalBurndownData(tempTotalBD)
-}
+
 
   const callThroughputDaily = () => {
     taigaService
@@ -299,20 +300,28 @@ const combineBDData = () => {
       .catch((error) => {
         console.error(error.message);
       })
+      // .finally(() => {
+      //   setLoadingBD(false);
+      // });
   };
 
   const callWipData = () => {
     setLoadingWip(true);
     taigaService
-    .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
-    .then((res)=>{
-      let wipChartData = []
-      res.data && Object.keys(res.data.data).map((item)=>{
-        wipChartData.push([item, res.data.data[item]['In Progress'],res.data.data[item]['Done']])
+      .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
+      .then((res) => {
+        let wipChartData = [];
+        res.data &&
+          Object.keys(res.data.data).map((item) => {
+            wipChartData.push([
+              item,
+              res.data.data[item]["In Progress"],
+              res.data.data[item]["Done"],
+            ]);
+          });
+        wipChartData.unshift(["Sprint", "In Progress", "Done"]);
+        setWipData(wipChartData);
       })
-      wipChartData.unshift(["Sprint", "In Progress", "Done"]);
-      setWipData(wipChartData);
-    })
       .catch((err) => {
         console.log(err);
       })
@@ -352,14 +361,20 @@ const combineBDData = () => {
       })
       .then((burndownRes) => {
         // console.log("BVBurndown",burndownRes.data.data);
-        const bdTempData = burndownRes.data.data.partial_burndown.partial_burndown_data.map(
-          (data, index) => {
-            const dateObject = new Date(data.date);
-          // Format the date to YYYY-MM-DD
-          const formattedDate = dateObject.toISOString().split('T')[0];
-            return [formattedDate, data.expected_remaining, burndownRes.data.data.total_burndown.total_burndown_data[index].expected_remaining];
-          }
-        );
+        const bdTempData =
+          burndownRes.data.data.partial_burndown.partial_burndown_data.map(
+            (data, index) => {
+              const dateObject = new Date(data.date);
+              // Format the date to YYYY-MM-DD
+              const formattedDate = dateObject.toISOString().split("T")[0];
+              return [
+                formattedDate,
+                data.expected_remaining,
+                burndownRes.data.data.total_burndown.total_burndown_data[index]
+                  .expected_remaining,
+              ];
+            }
+          );
         // bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
         setBurndownBVData(bdTempData);
@@ -368,8 +383,11 @@ const combineBDData = () => {
       .catch((error) => {
         console.error(error.message);
       })
+      // .finally(() => {
+      //   setLoadingBDBV(false);
+      // });
   };
-  
+
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
@@ -391,12 +409,15 @@ const combineBDData = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row className="justify-content-md-center mt-2 mb-3" style={{ height: "400px" }}>
+        <div className="card-wrapper">
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
+          <Card className="custom-card">
+            <Card.Body>
           {!loadingCTUS ? (
             <VisualizeMetric
               metricInput={"cycleTimeUS"}
@@ -406,22 +427,25 @@ const combineBDData = () => {
           ) : (
             <Loader />
           )}
+          </Card.Body>
+          </Card>
         </Col>
+        </div>
       </Row>
-      {/* <Row className="justify-content-md-center" style={{ height: "400px" }}>
+       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
           {!loadingLT ? (
-            <VisualizeMetric metricInput={"leadTime"} metricData={leadTime} />
+            <LeadTimeVisualization metricData={leadTime} />
           ) : (
             <Loader />
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      {/*<Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
           className="mb-4"
@@ -441,15 +465,15 @@ const combineBDData = () => {
           )}
         </Col>
       </Row> */}
-      <Row className="justify-content-md-center">
+      <Row className="justify-content-md-center mt-4">
         <div className="card-wrapper">
           <Col
             md={12}
             className="mb-4"
-            style={{ borderBottom: "1px solid black"}}
+            style={{ borderBottom: "1px solid black" }}
           >
             <Card className="custom-card">
-              <Card.Body>
+            <Card.Body>
               {(!loadingBD && !loadingBDBV && totalBurndownData.length>0)? (
                 <VisualizeMetric
                   metricInput="burndownBV"
@@ -466,7 +490,7 @@ const combineBDData = () => {
             </Card>
           </Col>
         </div>
-      </Row>    
+      </Row>
 
       <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
@@ -522,12 +546,8 @@ const combineBDData = () => {
             </Card>
           </Col>
         </div>
-      </Row>    
-      
-      
-      
-      
-      </Container>
+      </Row>
+    </Container>
   );
 };
 
