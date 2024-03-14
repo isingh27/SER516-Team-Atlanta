@@ -157,7 +157,7 @@ class TaigaService {
     });
   }
 
-  taigaUserProjects(token, project_id, startDate, endDate) {
+  taigaUserProjectsLeadTimeByRange(token, project_id, startDate, endDate) {
     return axios.post(
       API_URL + "leadTimeByRange",
       { projectId: project_id, startDate: startDate, endDate: endDate },

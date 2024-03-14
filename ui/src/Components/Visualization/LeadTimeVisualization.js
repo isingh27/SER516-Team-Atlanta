@@ -14,7 +14,7 @@ function LeadTimeVisualization({ metricData, loading, setLoading }) {
   const handleOnSubmit = () => {
     // setLoading(true);
     taigaService
-      .taigaUserProjects(
+      .taigaUserProjectsLeadTimeByRange(
         localStorage.getItem("taigaToken"),
         localStorage.getItem("projectId"),
         startDate,
