@@ -25,7 +25,7 @@ const Dashboard = () => {
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
   const [leadTime, setLeadTime] = useState();
   const [burndownData, setBurndownData] = useState([]);
-  const [totalBurndownData, setTotalBurndownData] = useState([])
+  const [totalBurndownData, setTotalBurndownData] = useState([]);
   const [throughputDaily, setThroughputDaily] = useState([]);
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
@@ -44,10 +44,10 @@ const Dashboard = () => {
   };
 
   const handleChangeDropDownBurnDown = (e) => {
-    console.log("changed",e.target.value);
+    console.log("changed", e.target.value);
     setSprintInputBurnDown(e.target.value);
     setSprintInput(e.target.value);
-    combineBDData()
+    combineBDData();
     // callBDData();
   };
 
@@ -98,29 +98,34 @@ const Dashboard = () => {
   };
 
   const combineBDData = () => {
-    let tempTotalBD =[]
-    burndownData.map((item)=>{
-      if(item && item[0]!=="Date"){
-        if(item[2]!=undefined){
-          item[3] = item[2]
-        }else{
-          item[3] = item[1]
-          item[2] = item[1]
+    let tempTotalBD = [];
+    burndownData.map((item) => {
+      if (item && item[0] !== "Date") {
+        if (item[2] != undefined) {
+          item[3] = item[2];
+        } else {
+          item[3] = item[1];
+          item[2] = item[1];
         }
-        tempTotalBD.push(item)
+        tempTotalBD.push(item);
       }
-    })
-    burndownBVData.map((item,index)=>{
-      if(item && item[0]!=="Date"){
-        if(tempTotalBD[index]>=2){
-          tempTotalBD[index][2] = item[1]
+    });
+    burndownBVData.map((item, index) => {
+      if (item && item[0] !== "Date") {
+        if (tempTotalBD[index] >= 2) {
+          tempTotalBD[index][2] = item[1];
         }
       }
-    })
-    tempTotalBD.unshift(["Date", "Open Points", "Business Value", "Optimal Points"]);
-    console.log("tempTotalBD ",tempTotalBD)
-    setTotalBurndownData(tempTotalBD)
-  }
+    });
+    tempTotalBD.unshift([
+      "Date",
+      "Open Points",
+      "Business Value",
+      "Optimal Points",
+    ]);
+    console.log("tempTotalBD ", tempTotalBD);
+    setTotalBurndownData(tempTotalBD);
+  };
 
   useEffect(() => {
     console.log("Selected option:", metricInput);
@@ -184,7 +189,7 @@ const Dashboard = () => {
     // callWipData();
     callCFDData();
     callThroughputDaily();
-    callBDBVData()
+    callBDBVData();
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
 
   useEffect(() => {
@@ -192,7 +197,6 @@ const Dashboard = () => {
       combineBDData();
     }
   }, [loadingBD, loadingBDBV, burndownData, burndownBVData]);
-
 
   const callThroughputDaily = () => {
     taigaService
@@ -299,10 +303,10 @@ const Dashboard = () => {
       })
       .catch((error) => {
         console.error(error.message);
-      })
-      // .finally(() => {
-      //   setLoadingBD(false);
-      // });
+      });
+    // .finally(() => {
+    //   setLoadingBD(false);
+    // });
   };
 
   const callWipData = () => {
@@ -382,10 +386,10 @@ const Dashboard = () => {
       })
       .catch((error) => {
         console.error(error.message);
-      })
-      // .finally(() => {
-      //   setLoadingBDBV(false);
-      // });
+      });
+    // .finally(() => {
+    //   setLoadingBDBV(false);
+    // });
   };
 
   const Loader = () => <Spinner animation="border" role="status" />;
@@ -409,37 +413,44 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center mt-2 mb-3" style={{ height: "400px" }}>
+      <Row
+        className="justify-content-md-center mt-2 mb-3"
+        style={{ height: "400px" }}
+      >
         <div className="card-wrapper">
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-          <Card className="custom-card">
-            <Card.Body>
-          {!loadingCTUS ? (
-            <VisualizeMetric
-              metricInput={"cycleTimeUS"}
-              avgMetricData={avgCycleTime}
-              metricData={cycleTimeByUS}
-            />
-          ) : (
-            <Loader />
-          )}
-          </Card.Body>
-          </Card>
-        </Col>
+          <Col
+            md={12}
+            className="mb-4"
+            style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="custom-card">
+              <Card.Body>
+                {!loadingCTUS ? (
+                  <VisualizeMetric
+                    metricInput={"cycleTimeUS"}
+                    avgMetricData={avgCycleTime}
+                    metricData={cycleTimeByUS}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
         </div>
       </Row>
-       <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
           {!loadingLT ? (
-            <LeadTimeVisualization metricData={leadTime} />
+            <LeadTimeVisualization
+              metricData={leadTime}
+              loading={loadingLT}
+              setLoading={setLoadingLT}
+            />
           ) : (
             <Loader />
           )}
@@ -473,19 +484,19 @@ const Dashboard = () => {
             style={{ borderBottom: "1px solid black" }}
           >
             <Card className="custom-card">
-            <Card.Body>
-              {(!loadingBD && !loadingBDBV && totalBurndownData.length>0)? (
-                <VisualizeMetric
-                  metricInput="burndownBV"
-                  sprintInputBurnDown={sprintInputBurnDown}
-                  setSprintInputBurnDown={setSprintInputBurnDown}
-                  metricData={totalBurndownData}
-                  handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
-                  sprintOptions={sprints}
-                />
-              ) : (
-                <Loader />
-              )}
+              <Card.Body>
+                {!loadingBD && !loadingBDBV && totalBurndownData.length > 0 ? (
+                  <VisualizeMetric
+                    metricInput="burndownBV"
+                    sprintInputBurnDown={sprintInputBurnDown}
+                    setSprintInputBurnDown={setSprintInputBurnDown}
+                    metricData={totalBurndownData}
+                    handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
+                    sprintOptions={sprints}
+                  />
+                ) : (
+                  <Loader />
+                )}
               </Card.Body>
             </Card>
           </Col>

@@ -156,6 +156,18 @@ class TaigaService {
       },
     });
   }
+
+  taigaUserProjectsLeadTimeByRange(token, project_id, startDate, endDate) {
+    return axios.post(
+      API_URL + "leadTimeByRange",
+      { projectId: project_id, startDate: startDate, endDate: endDate },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  }
 }
 
 export default new TaigaService();
