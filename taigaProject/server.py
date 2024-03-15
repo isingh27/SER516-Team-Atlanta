@@ -487,5 +487,25 @@ def lead_time_range():
     return jsonify({"plotData": output, "status": "success"})
   
   
+
+@app.route("/totalBurndown", methods=["POST"])
+def fetchTotalBurndown():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+    sprint_id = request.json['sprintId']
+    project_id = request.json['projectId']
+    if not sprint_id:
+       return jsonify({"status": "error", "message": "SprintId required"})
+    if not project_id:
+         return jsonify({"status": "error", "message": "ProjectId required"})
+
+
+    return  jsonify({"status": "success", "data":[]})
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
