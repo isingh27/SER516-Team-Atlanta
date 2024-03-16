@@ -17,6 +17,7 @@ from taigaApi.sprint.getUserStoriesForSprint import get_user_stories_for_sprint
 from flask_cors import CORS
 from datetime import date, datetime, timedelta
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 CORS(app)
@@ -131,8 +132,10 @@ def cycle_time_per_task():
 
     if not closed_tasks:  # Check if the list of closed tasks is empty
         return jsonify({"message": "No closed tasks found"}), 404
-
-    cycle_times = get_task_cycle_times(closed_tasks, token)
+    cycle_times = []
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        cycle_times = executor.submit(get_task_cycle_times, closed_tasks, token).result()
+    # cycle_times = get_task_cycle_times(closed_tasks, token)
 
     response_data = []
     for cycle_time, start_date, end_date, ref in cycle_times:

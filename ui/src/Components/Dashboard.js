@@ -5,10 +5,10 @@ import taigaService from "../Services/taiga-service";
 import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
 import LeadTimeVisualization from "./Visualization/LeadTimeVisualization";
+import CycleTimeArbRange from "./Visualization/CycleTimeArbRange";
 
 const Dashboard = () => {
   const navigation = useNavigate();
-  const [avgCycleTime, setAvgCycleTime] = useState("");
 
   const [loadingCTTask, setLoadingCTTask] = useState(true);
   const [loadingCTUS, setLoadingCTUS] = useState(true);
@@ -36,6 +36,7 @@ const Dashboard = () => {
   const [sprints, setSprints] = useState([]);
   const [sprintInputTP, setSprintInputTP] = useState("");
   let projectId = localStorage.getItem("projectId");
+  const [cycleTimeData, setCycleTimeData] = useState([]);
 
   const handleChangeDropDown = (e) => {
     console.log(e.target.value);
@@ -130,12 +131,12 @@ const Dashboard = () => {
   useEffect(() => {
     console.log("Selected option:", metricInput);
     // setLoading(true);
-    taigaService
-      .taigaProjectCycleTime(localStorage.getItem("taigaToken"), projectId)
-      .then((res) => {
-        console.log(res);
-        setAvgCycleTime(res.data.avg_cycle_time);
-      });
+    // taigaService
+    //   .taigaProjectCycleTime(localStorage.getItem("taigaToken"), projectId)
+    //   .then((res) => {
+    //     console.log(res);
+    //     setAvgCycleTime(res.data.avg_cycle_time);
+    //   });
 
     taigaService
       .taigaProjectCycleTimesPerTask(
@@ -144,6 +145,7 @@ const Dashboard = () => {
       )
       .then((res) => {
         console.log(res);
+        setCycleTimeData(res.data.data);
         const cycleTimeData = res.data.data.map((task, index) => {
           return [`T-${task.refId}`, task.cycle_time];
         });
@@ -405,9 +407,21 @@ const Dashboard = () => {
           {!loadingCTTask ? (
             <VisualizeMetric
               metricInput={"cycleTime"}
-              avgMetricData={avgCycleTime}
               metricData={cycleTimeByTask}
             />
+          ) : (
+            <Loader />
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          {!loadingCTTask ? (
+            <CycleTimeArbRange metricData={cycleTimeByTask} cycleTimeData={cycleTimeData}/>
           ) : (
             <Loader />
           )}
@@ -428,8 +442,7 @@ const Dashboard = () => {
                 {!loadingCTUS ? (
                   <VisualizeMetric
                     metricInput={"cycleTimeUS"}
-                    avgMetricData={avgCycleTime}
-                    metricData={cycleTimeByUS}
+                          metricData={cycleTimeByUS}
                   />
                 ) : (
                   <Loader />
