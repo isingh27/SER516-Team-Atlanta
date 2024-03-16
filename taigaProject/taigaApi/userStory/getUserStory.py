@@ -262,11 +262,14 @@ def update_points_days_data(days_data, milestone_start, milestone_finish, expect
 #         return None
 
 def process_burndown_details(user_story, auth_token, total_business_value, days_data, attribute_key, days_bv_data, days_total_data):
+    print("Function called")
     tasks = get_tasks_by_story_id(user_story["id"], auth_token)
     extract_partial_burndown_data(user_story, tasks, days_data)
-
+    print("Before calling get_business_value")
     business_value = get_business_value(user_story["id"], attribute_key, auth_token)
+    print(f"After calling get_business_value: {business_value}")
     total_business_value["bv"] = total_business_value["bv"] + int(business_value)
+    print(f"Total business value: {total_business_value['bv']}")
     extract_bv_burndown_data(user_story, int(business_value), days_bv_data)
 
     extract_total_burndown_data(user_story, days_total_data)
@@ -286,26 +289,29 @@ def get_tasks_by_story_id(story_id, auth_token):
         print(f"Error fetching tasks by story id: {e}")
         return None
     
-def get_business_value(story_id, attribute
-                        , auth_token):
+def get_business_value(story_id, attribute, auth_token):
+        print("Getting business value")
         taiga_url = os.getenv('TAIGA_URL')
-        user_story_api_url = f"{taiga_url}/userstories/{story_id}"
+        user_story_api_url = f"{taiga_url}/userstories/custom-attributes-values/{story_id}"
         headers = {
             'Authorization': f'Bearer {auth_token}',
             'Content-Type': 'application/json'
         }
-
         try:
+            print ("Before making request")
             response = requests.get(user_story_api_url, headers=headers)
             response.raise_for_status()
-            user_story = response.json()
-            for custom_attribute in user_story["custom_attributes"]:
-                if custom_attribute["name"] == attribute:
-                    return custom_attribute["value"]
-            return 0
+            print ("After making request")
+            custom_attributes = response.json()
+            print ("Custom attributes are: ", custom_attributes)
+            attributes_values = custom_attributes.get("attributes_values", {})
+            business_value = attributes_values.get(str(attribute), 0)
+            print ("Business value is: ", business_value)
+            return business_value   
         except requests.exceptions.RequestException as e:
-            print(f"Error fetching user story details: {e}")
+            print(f"Error fetching user story custom attributes: {e}")
             return 0
+        
 
 def extract_partial_burndown_data(user_story, tasks, days_data):
     for task in tasks:
@@ -333,6 +339,7 @@ def extract_bv_burndown_data(user_story, business_value, days_bv_data):
             "completed": 0,
             "remaining": days_bv_data[user_story["date_created"] - timedelta(1)]["remaining"]
         }
+    print("Days BV Data: ", days_bv_data)
     days_bv_data[user_story["date_created"]]["completed"] += business_value
     days_bv_data[user_story["date_created"]]["remaining"] -= business_value
     days_bv_data[user_story["date_created"]]["expected_remaining"] -= business_value
@@ -345,6 +352,7 @@ def extract_bv_burndown_data(user_story, business_value, days_bv_data):
     days_bv_data[user_story["date_closed"]]["completed"] -= business_value
     days_bv_data[user_story["date_closed"]]["remaining"] += business_value
     days_bv_data[user_story["date_closed"]]["expected_remaining"] += business_value
+
 
 def extract_total_burndown_data(user_story, days_total_data):
     if user_story["date_created"] not in days_total_data:
@@ -360,6 +368,7 @@ def extract_total_burndown_data(user_story, days_total_data):
 
 def get_burndown_chart_metric_detail(milestone_id, attrib_key, auth_token):
     milestone = get_milestone_stats(milestone_id, auth_token)
+    print("Milestone: ", milestone)
     partial_burndown, bv_burndown, total_burndown = calc_burndown_day_data(auth_token, milestone, attrib_key)
     partial_burndown = list(partial_burndown.values())
     partial_burndown.sort(key=lambda l: l["date"])
