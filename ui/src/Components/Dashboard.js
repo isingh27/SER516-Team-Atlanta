@@ -14,7 +14,8 @@ const Dashboard = () => {
   const [loadingCTUS, setLoadingCTUS] = useState(true);
   const [loadingLT, setLoadingLT] = useState(true);
   const [loadingBD, setLoadingBD] = useState(true);
-  const [loadingBDBV, setLoadingBDBV] = useState(true);
+  // const [loadingBDBV, setLoadingBDBV] = useState(true);
+  // const [loadingTotal, setLoadingTotal] = useState(true);
   const [loadingWip, setLoadingWip] = useState(true);
   const [loadingCFD, setLoadingCFD] = useState(true);
   const [loadingTP, setLoadingTP] = useState(true);
@@ -30,6 +31,7 @@ const Dashboard = () => {
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
   const [burndownBVData, setBurndownBVData] = useState([]);
+  const [burndownTotalData, setBurndownTotalData] = useState([])
   const [sprintInput, setSprintInput] = useState("");
   const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
@@ -48,7 +50,7 @@ const Dashboard = () => {
     console.log("changed", e.target.value);
     setSprintInputBurnDown(e.target.value);
     setSprintInput(e.target.value);
-    combineBDData();
+    // combineBDData();
     // callBDData();
   };
 
@@ -99,33 +101,41 @@ const Dashboard = () => {
   };
 
   const combineBDData = () => {
-    let tempTotalBD = [];
-    burndownData.map((item) => {
+    console.log('we start fun enter')
+    let tempCombinedBD = [];
+    burndownData.forEach((item) => {
       if (item && item[0] !== "Date") {
-        if (item[2] != undefined) {
-          item[3] = item[2];
-        } else {
-          item[3] = item[1];
-          item[2] = item[1];
-        }
-        tempTotalBD.push(item);
+        let newItem = [...item];
+        newItem[3] = newItem[1]; // Set business value as partial points for init
+        newItem[4] = newItem[2];
+        tempCombinedBD.push(newItem);
       }
     });
-    burndownBVData.map((item, index) => {
-      if (item && item[0] !== "Date") {
-        if (tempTotalBD[index] >= 2) {
-          tempTotalBD[index][2] = item[1];
-        }
+
+    // Update with burndownTotalData
+    burndownTotalData.forEach((item, index) => {
+      if (item && item[0] !== "Date" && tempCombinedBD[index]) {
+        tempCombinedBD[index][2] = item[1]; // Update total points
       }
     });
-    tempTotalBD.unshift([
+
+    // Update with burndownBVData
+    burndownBVData.forEach((item, index) => {
+      if (item && item[0] !== "Date" && tempCombinedBD[index]) {
+        tempCombinedBD[index][3] = item[1]; // Update business value
+      }
+    });
+
+  tempCombinedBD.unshift([
       "Date",
-      "Open Points",
+      "Partial Points",
+      "Total Points",
       "Business Value",
       "Optimal Points",
     ]);
-    console.log("tempTotalBD ", tempTotalBD);
-    setTotalBurndownData(tempTotalBD);
+    console.log("tempCombinedBD ", tempCombinedBD);
+    setTotalBurndownData(tempCombinedBD);
+    setLoadingBD(false)
   };
 
   useEffect(() => {
@@ -192,15 +202,37 @@ const Dashboard = () => {
     callCFDData();
     callThroughputDaily();
     callBDBVData();
+    callBDTotalData();
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
 
   useEffect(() => {
-    if (!loadingBD && !loadingBDBV) {
+    setLoadingBD(true); // represents all BD-related loading states.
+  
+    const fetchDataAndUpdate = async () => {
+      try {
+        await Promise.all([
+          callBDData(),
+          callBDBVData(),
+          callBDTotalData(),
+        ]);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      } finally {
+        setLoadingBD(false); // Now all fetching and state updates should be complete.
+      }
+    };
+  
+    fetchDataAndUpdate();
+  }, [sprintInputBurnDown]);
+    
+  useEffect(() => {
+    if (!loadingBD) {
       combineBDData();
     }
-  }, [loadingBD, loadingBDBV, burndownData, burndownBVData]);
+  }, [loadingBD, burndownData, burndownBVData, burndownTotalData]);
 
-  const callThroughputDaily = () => {
+  
+  const callThroughputDaily = () => {580
     taigaService
       .taigaProjectThroughputDaily(
         localStorage.getItem("taigaToken"),
@@ -263,55 +295,78 @@ const Dashboard = () => {
         console.error(error.message);
       });
   };
-  const callBDData = () => {
-    taigaService
-      .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
-      .then((sprintsRes) => {
+  const callBDData = async () => { //BD for partial storypoints
+    try {
+      const sprintsRes = await taigaService.taigaProjectSprints(localStorage.getItem("taigaToken"), projectId);
+      console.log(sprintsRes);
+      if (sprintsRes && sprintsRes.data && sprintsRes.data.sprint_ids && sprintsRes.data.sprint_ids.length > 0) {
+        const selectedSprint = sprintsRes.data.sprint_ids.find(sprint => sprint[1].toString() === sprintInput);
+        if (!selectedSprint) {
+          throw new Error(`Sprint "${sprintInput}" not found`);
+        }
+        let sprintId = selectedSprint[1];
+        console.log(sprintId);
+  
+        const burndownRes = await taigaService.taigaProjectBurnDownChart(localStorage.getItem("taigaToken"), sprintId);
+        console.log(burndownRes);
+  
+        const bdTempData = burndownRes.data.burndown_chart_data.days.map(data => {
+          return [data.day, data.open_points, data.optimal_points];
+        });
+        bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
+        bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
+        setBurndownData(bdTempData);
+      } else {
+        throw new Error("No sprints found for this project");
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+    };
+
+    const callBDTotalData = async () => {
+      try {
+        const sprintsRes = await taigaService.taigaProjectSprints(localStorage.getItem("taigaToken"), projectId);
         console.log(sprintsRes);
+    
         if (
           sprintsRes &&
           sprintsRes.data &&
           sprintsRes.data.sprint_ids &&
           sprintsRes.data.sprint_ids.length > 0
         ) {
-          // Find the sprint ID that matches the selected sprint name
           const selectedSprint = sprintsRes.data.sprint_ids.find(
-            (sprint) => sprint[1].toString() === sprintInput
+            sprint => sprint[1].toString() === sprintInput
           );
           if (!selectedSprint) {
             throw new Error(`Sprint "${sprintInput}" not found`);
           }
           let sprintId = selectedSprint[1];
           console.log(sprintId);
-          return taigaService.taigaProjectBurnDownChart(
-            localStorage.getItem("taigaToken"),
-            sprintId
-          );
+    
+          const burndownRes = await taigaService.taigaBurndownTotal(localStorage.getItem("taigaToken"), projectId, sprintId);
+          console.log("total burndown", burndownRes.data.data);
+    
+          const bdTempData = burndownRes.data.data.total_burndown.total_burndown_data.map(data => {
+            const dateObject = new Date(data.date);
+            const formattedDate = dateObject.toISOString().split("T")[0];
+            return [
+              formattedDate,
+              data.remaining,
+              data.expected_remaining,
+            ];
+          });
+          bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
+          setBurndownTotalData(bdTempData);
         } else {
           throw new Error("No sprints found for this project");
         }
-      })
-      .then((burndownRes) => {
-        console.log(burndownRes);
-        const bdTempData = burndownRes.data.burndown_chart_data.days.map(
-          (data) => {
-            return [data.day, data.open_points, data.optimal_points];
-          }
-        );
-        bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
-        bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
-        setBurndownData(bdTempData);
-        setLoadingBD(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error.message);
-      });
-    // .finally(() => {
-    //   setLoadingBD(false);
-    // });
-  };
-
-  const callWipData = () => {
+      }
+      
+    };
+      const callWipData = () => {
     setLoadingWip(true);
     taigaService
       .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
@@ -336,64 +391,48 @@ const Dashboard = () => {
       });
   };
 
-  const callBDBVData = () => {
-    taigaService
-      .taigaProjectSprints(localStorage.getItem("taigaToken"), projectId)
-      .then((sprintsRes) => {
-        console.log(sprintsRes);
-        if (
-          sprintsRes &&
-          sprintsRes.data &&
-          sprintsRes.data.sprint_ids &&
-          sprintsRes.data.sprint_ids.length > 0
-        ) {
-          // Find the sprint ID that matches the selected sprint name
-          const selectedSprint = sprintsRes.data.sprint_ids.find(
-            (sprint) => sprint[1].toString() === sprintInput
-          );
-          if (!selectedSprint) {
-            throw new Error(`Sprint "${sprintInput}" not found`);
-          }
-          let sprintId = selectedSprint[1];
-          // console.log(sprintId);
-          return taigaService.taigaBurnDownBV(
-            localStorage.getItem("taigaToken"),
-            projectId,
-            sprintId
-          );
-        } else {
-          throw new Error("No sprints found for this project");
+  const callBDBVData = async () => {
+    try {
+      const sprintsRes = await taigaService.taigaProjectSprints(localStorage.getItem("taigaToken"), projectId);
+      console.log(sprintsRes);
+  
+      if (
+        sprintsRes &&
+        sprintsRes.data &&
+        sprintsRes.data.sprint_ids &&
+        sprintsRes.data.sprint_ids.length > 0
+      ) {
+        const selectedSprint = sprintsRes.data.sprint_ids.find(
+          sprint => sprint[1].toString() === sprintInput
+        );
+        if (!selectedSprint) {
+          throw new Error(`Sprint "${sprintInput}" not found`);
         }
-      })
-      .then((burndownRes) => {
-        // console.log("BVBurndown",burndownRes.data.data);
-        const bdTempData =
-          burndownRes.data.data.partial_burndown.partial_burndown_data.map(
-            (data, index) => {
-              const dateObject = new Date(data.date);
-              // Format the date to YYYY-MM-DD
-              const formattedDate = dateObject.toISOString().split("T")[0];
-              return [
-                formattedDate,
-                data.expected_remaining,
-                burndownRes.data.data.total_burndown.total_burndown_data[index]
-                  .expected_remaining,
-              ];
-            }
-          );
-        // bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
+        let sprintId = selectedSprint[1];
+        console.log(sprintId);
+  
+        const burndownRes = await taigaService.taigaBurnDownBV(localStorage.getItem("taigaToken"), projectId, sprintId);
+        console.log("BVBurndown", burndownRes.data.data);
+  
+        const bdTempData = burndownRes.data.data.total_burndown.total_burndown_data.map(data => {
+          const dateObject = new Date(data.date);
+          const formattedDate = dateObject.toISOString().split("T")[0];
+          return [
+            formattedDate,
+            data.remaining,
+            data.expected_remaining,
+          ];
+        });
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
         setBurndownBVData(bdTempData);
-        setLoadingBDBV(false);
-      })
-      .catch((error) => {
-        console.error(error.message);
-      });
-    // .finally(() => {
-    //   setLoadingBDBV(false);
-    // });
+      } else {
+        throw new Error("No sprints found for this project");
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
   };
-
+  
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
@@ -498,7 +537,7 @@ const Dashboard = () => {
           >
             <Card className="custom-card">
               <Card.Body>
-                {!loadingBD && !loadingBDBV && totalBurndownData.length > 0 ? (
+                {!loadingBD && totalBurndownData.length > 1 ? (
                   <VisualizeMetric
                     metricInput="burndownBV"
                     sprintInputBurnDown={sprintInputBurnDown}
