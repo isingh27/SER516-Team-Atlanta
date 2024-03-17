@@ -190,7 +190,6 @@ def burndown_chart():
         return jsonify({"message": "No current sprint found"}), 404
 
     milestone_stats = get_milestone_stats(sprint_id, token)
-    print(milestone_stats)
     if milestone_stats is None:
         return jsonify({"message": "Error fetching milestone stats"}), 500
 
@@ -203,7 +202,7 @@ def burndown_chart():
         "total_points": milestone_stats["total_points"]
     }
 
-    return jsonify({"burndown_chart_data": response_data, "status": "success"})
+    return jsonify({"burndown_chart_data": milestone_stats, "status": "success"})
 
 
 @app.route("/sprintDetails/<id>", methods=["GET"])
@@ -476,9 +475,23 @@ def fetchTotalBurndown():
        return jsonify({"status": "error", "message": "SprintId required"})
     if not project_id:
          return jsonify({"status": "error", "message": "ProjectId required"})
+    
+    custom_attributes = get_user_story_custom_attrib(project_id, token)
+
+    if custom_attributes is None:
+        return jsonify({"status": "error", "message": "Project not found"})
+    BV_id = None
+    for custom_attribute in custom_attributes:
+        if custom_attribute['name'] == "BV" or custom_attribute['name'] == "Business Value":
+            BV_id = custom_attribute['id']
+            break
+    if BV_id is None:
+        return jsonify({"status": "error", "message": "BV not found"})
+    
+    totalBurnDownData = get_burndown_chart_metric_detail(sprint_id, BV_id, token)
 
 
-    return  jsonify({"status": "success", "data":[]})
+    return  jsonify({"status": "success", "data":totalBurnDownData})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
