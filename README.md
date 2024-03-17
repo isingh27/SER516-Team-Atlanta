@@ -4,7 +4,7 @@
   
 WebApp built using React that uses Flask as backend for interacting with the Taiga API to perform various task and calculating metrics.
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/bab3a11e-263b-4e5e-bf02-2bd272aeac3e/deploy-status)]
+![Netlify Status](https://api.netlify.com/api/v1/badges/bab3a11e-263b-4e5e-bf02-2bd272aeac3e/deploy-status)
 
 Live Preview: [Here](https://team-atlanta.netlify.app)
 
