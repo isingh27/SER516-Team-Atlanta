@@ -205,7 +205,7 @@ def burndown_chart():
         "total_points": milestone_stats["total_points"]
     }
 
-    return jsonify({"burndown_chart_data": milestone_stats, "status": "success"})
+    return jsonify({"burndown_chart_data": response_data, "status": "success"})
 
 
 @app.route("/sprintDetails/<id>", methods=["GET"])

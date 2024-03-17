@@ -59,6 +59,7 @@ function VisualizeMetric({
     hAxis: { title: "Date" },
     vAxis: { title: "Business Value" },
     legend: { position: "right" },
+    curveType: "function",
   };
 
   const optionsWIP = {
@@ -156,7 +157,7 @@ function VisualizeMetric({
           {/* <h3>{avgMetricData} Days</h3> */}
         </>
       )}
-      {metricInput === "burndown" && metricData.length>0 && (
+      {/* {metricInput === "burndown" && metricData.length>0 && (
         <>
           <b>Burndown Chart - Partial Story Points</b>
           <Form.Select
@@ -174,7 +175,6 @@ function VisualizeMetric({
               </option>
             ))}
           </Form.Select>
-          {/* {console.log("metricData bd", metricData)} */}
           <Chart
             width="100%"
             height="300px"
@@ -184,10 +184,10 @@ function VisualizeMetric({
             options={optionsBD}
           />
         </>
-      )}
+      )} */}
      {metricInput === "burndownBV" && (
         <>
-          <b>Storypoints & Business Value Burndown Chart</b>
+          <b>Burndown Charts</b>
           <Form.Select
             value={sprintInputBurnDown}
             onChange={handleChangeDropDownBurnDown}
