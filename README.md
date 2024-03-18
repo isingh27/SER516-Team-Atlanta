@@ -17,7 +17,29 @@ Before running the script, make sure you have the following installed:
 - Taiga account with API access
 - Taiga project slug
 
-## Setup
+## Setup (using docker)
+
+### Prerequisites
+
+Before spinning up the docker containers, make sure you have the following installed:
+
+- Docker
+- Docker Compose
+
+1. Make sure you are in the root of the project directory. This should have the `docker-compose.yml` file.
+
+2. Build and Run the Docker Containers
+	
+	```bash
+	docker-compose up --build
+	```
+
+3. Accesing the applications
+* The React frontend app will be accessible at http://localhost:3000.
+* The Flask backend APIs will be accessible at http://localhost:105.
+
+
+## Setup (manually)
 
 1. Clone the repository:
 

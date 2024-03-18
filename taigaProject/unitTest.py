@@ -13,10 +13,7 @@ class TestAuthenticateEndpoint(unittest.TestCase):
         # Mocking authenticate function to return a token
         print("mock_authenticate --> ", mock_authenticate.return_value)
         mock_authenticate.return_value = "mocked_token"
-<<<<<<< HEAD
 
-=======
->>>>>>> Period-2
         # Taking username and password as user inputs
         username = input("Enter username: ")
         password = input("Enter password: ")
@@ -24,14 +21,11 @@ class TestAuthenticateEndpoint(unittest.TestCase):
         # Sending a POST request to the /authenticate endpoint with user inputs
         client = app.test_client()
         print(app)
-<<<<<<< HEAD
         response = client.post('/authenticate',
                                json={"username": username,
                                      "password": password})
-=======
         response = client.post('/authenticate', json={
             "username": username, "password": password})
->>>>>>> Period-2
         data = response.get_json()
         print("data --> ", data)
 
@@ -50,6 +44,22 @@ class TestAuthenticateEndpoint(unittest.TestCase):
 
         # Asserting the response status code and message
         self.assertEqual(response.status_code, 500)
+
+    @patch('server.request')
+    @patch('server.get_project_by_slug')
+    def test_get_project_id_success(self, mock_get_project_by_slug, mock_request):
+        # Mocking get_project_by_slug function to return a project ID
+        mock_get_project_by_slug.return_value = "mock_project_id"
+
+        # Sending a POST request to the /getProjectId endpoint with a project slug and token
+        client = app.test_client()
+        response = client.post('/getProjectId', json={"projectSlug": "mock_project_slug"}, headers={"Authorization": "Bearer mocked_token"})
+        data = response.get_json()
+
+        # Asserting the response status code and project ID
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'success')
+        self.assertEqual(data['projectId'], 'mock_project_id')
 
     @patch('server.get_closed_tasks')
     @patch('server.authenticate')
@@ -76,7 +86,6 @@ class TestAuthenticateEndpoint(unittest.TestCase):
         ]
         mock_get_closed_tasks.return_value = mock_closed_tasks
 
-<<<<<<< HEAD
         # Sending a POST request to the /leadTime endpoint with a
         # project ID and token
         client = app.test_client()
@@ -84,21 +93,18 @@ class TestAuthenticateEndpoint(unittest.TestCase):
             '/leadTime',
             json={"projectId": "mock_project_id"},
             headers={"Authorization": "Bearer mocked_token"})
-=======
         # Sending a POST request to the /leadTime endpoint
         # with a project ID and token
         client = app.test_client()
         response = client.post('/leadTime', json={
             "projectId": "mock_project_id"}, headers={
                 "Authorization": "Bearer mocked_token"})
->>>>>>> Period-2
         data = response.get_json()
 
         # Asserting the response status code and lead time calculation
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(data['plotData']), 2)
 
-<<<<<<< HEAD
     @patch('server.get_task_status')
     @patch('server.get_all_sprint_ids')
     def test_work_in_progress_success(self, mock_get_all_sprint_ids,
@@ -135,7 +141,6 @@ class TestAuthenticateEndpoint(unittest.TestCase):
         self.assertIn('Sprint2', data['data'])
         sprint1 = data['data']['Sprint1']
         self.assertEqual(sprint1['New'], 0)
-=======
     @patch('server.get_closed_tasks')
     @patch('server.get_milestone_stats')
     @patch('server.authenticate')
@@ -205,7 +210,6 @@ class TestAuthenticateEndpoint(unittest.TestCase):
         # Asserting the response status code and throughput histogram calculation
         self.assertEqual(response.status_code, 200)
         # self.assertEqual(len(data['plotData']), 2)
->>>>>>> Period-2
 
 
 if __name__ == '__main__':

@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./taigaProject
+    ports:
+      - "105:105"
+    volumes:
+      - ./taigaProject:/app
+    environment:
+      FLASK_APP: server.py
+      FLASK_ENV: development
+
+  frontend:
+    build:
+      context: ./ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ui:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: 'true' # Helps with hot-reloading in Docker
