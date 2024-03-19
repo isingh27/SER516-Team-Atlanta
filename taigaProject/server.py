@@ -207,6 +207,43 @@ def burndown_chart():
 
     return jsonify({"burndown_chart_data": response_data, "status": "success"})
 
+@app.route("/multiSprintBurndownChart", methods=["POST"])
+def multi_sprint_burndown_chart():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    project_id = request.json['projectId']
+
+    sprint_ids = [sprint[1] for sprint in get_all_sprint_ids(project_id, token)]
+    if not sprint_ids:
+        return jsonify({"message": "No sprint IDs found for the project"}), 404
+
+    all_burndown_data = []
+
+    for sprint_id in sprint_ids:
+        milestone_stats = get_milestone_stats(sprint_id, token)
+        if milestone_stats is None:
+            return jsonify({"message": f"Error fetching milestone stats for sprint ID {sprint_id}"}), 500
+
+        for index, day_data in enumerate(milestone_stats["days"], start=1):
+            day_data["id"] = index
+
+        response_data = {
+            "sprint_id": sprint_id,
+            "days": milestone_stats["days"],
+            "name": milestone_stats["name"],
+            "total_points": milestone_stats["total_points"]
+        }
+
+        all_burndown_data.append(response_data)
+
+    return jsonify({"multi_sprint_burndown_data": all_burndown_data, "status": "success"})
+
+
 
 @app.route("/sprintDetails/<id>", methods=["GET"])
 def getSprintDetails(id):
