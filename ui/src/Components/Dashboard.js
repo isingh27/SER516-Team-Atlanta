@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import VisualizeMetric from "./VisualizeMetric";
 import LeadTimeVisualization from "./Visualization/LeadTimeVisualization";
 import CycleTimeArbRange from "./Visualization/CycleTimeArbRange";
+import MultisprintBurnDown from "./Visualization/MultisprintBurnDown";
 
 const Dashboard = () => {
   const navigation = useNavigate();
@@ -587,6 +588,19 @@ const Dashboard = () => {
               sprintOptions={sprints}
             />
           ) : (
+            <Loader />
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center mt" style={{ height: "550px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          {!loadingBD ? 
+          (sprints && (sprints.length > 0) && <MultisprintBurnDown sprintOptions={sprints} />) 
+            : (
             <Loader />
           )}
         </Col>
