@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // TODO: Change the URL to the API Endpoint
-const API_URL = process.env.REACT_APP_BACKEND_URI || "http://127.0.0.1:105/";
+const API_URL = process.env.REACT_APP_BACKEND_URI || "http://127.0.0.1:5001/";
 
 class TaigaService {
   taigaAuthenticate(username, password) {
