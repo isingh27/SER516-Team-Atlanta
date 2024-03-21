@@ -20,6 +20,8 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 import os
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 # Load environment variables from .env file
 load_dotenv()
@@ -27,6 +29,13 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+client = MongoClient(os.getenv('MONGO_URL'), server_api=ServerApi('1'))
+
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
 
 @app.route("/")
 def sampleRoute():
@@ -125,33 +134,40 @@ def lead_time():
 
 @app.route("/cycleTimesPerTask", methods=["POST"])
 def cycle_time_per_task():
-    auth_header = request.headers.get('Authorization')
-    token = ''
-    if auth_header and auth_header.startswith('Bearer '):
-        token = auth_header.split(" ")[1]
-    else:
-        return jsonify({"message": "Token is missing or invalid"}), 401
-
+    
+    db = client.taiga
     project_id = request.json['projectId']
-    closed_tasks = get_closed_tasks(project_id, token)
+    project = db.projects.find_one({"projectId": project_id})
+    if project:
+        return jsonify({"data": project["cycleTimesPerTask"], "status": "success"})
+    else:
+        auth_header = request.headers.get('Authorization')
+        token = ''
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(" ")[1]
+        else:
+            return jsonify({"message": "Token is missing or invalid"}), 401
 
-    if not closed_tasks:  # Check if the list of closed tasks is empty
-        return jsonify({"message": "No closed tasks found"}), 404
-    cycle_times = []
-    with ThreadPoolExecutor(max_workers=20) as executor:
-        cycle_times = executor.submit(get_task_cycle_times, closed_tasks, token).result()
-    # cycle_times = get_task_cycle_times(closed_tasks, token)
+        closed_tasks = get_closed_tasks(project_id, token)
 
-    response_data = []
-    for cycle_time, start_date, end_date, ref in cycle_times:
-        response_data.append({
-            "cycle_time": cycle_time,
-            "start_date": start_date,
-            "end_date": end_date,
-            "refId": ref   # refId is the task id
-        })
+        if not closed_tasks:
+            return jsonify({"message": "No closed tasks found"}), 404
+        cycle_times = []
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            cycle_times = executor.submit(get_task_cycle_times, closed_tasks, token).result()
 
-    return jsonify({"data": response_data, "status": "success"})
+        response_data = []
+        for cycle_time, start_date, end_date, ref in cycle_times:
+            response_data.append({
+                "cycle_time": cycle_time,
+                "start_date": start_date,
+                "end_date": end_date,
+                "refId": ref   # refId is the task id
+            })
+
+        # Store the data in the database
+        db.projects.insert_one({"projectId": project_id, "cycleTimesPerTask": response_data, "created_at": datetime.now()})
+        return jsonify({"data": response_data, "status": "success"})
 
 
 @app.route("/cycleTimesPerUserStory", methods=["POST"])
