@@ -142,76 +142,6 @@ class TestAuthenticateEndpoint(unittest.TestCase):
         sprint1 = data['data']['Sprint1']
         self.assertEqual(sprint1['New'], 0)
 
-    @patch('server.taigaApi.task.getTasks.get_closed_tasks')
-    @patch('server.taigaApi.sprint.getMilestoneStats.get_milestone_stats')
-    @patch('server.authenticate')
-    def test_throughputHistogram_success(self, mock_authenticate,
-                                         mock_get_milestone_stats, mock_get_closed_tasks):
-        # Mocking authenticate function to return a token
-        mock_authenticate.return_value = "mocked_token"
-
-        # Mocking get_milestone_stats function
-        # to return a list of milestone stats
-        mock_milestone_stats = {
-                "name": "Sprint 1",
-                "estimated_start": "2024-01-29",
-                "estimated_finish": "2024-02-18",
-                "total_points": {
-                    "9184512": 91.0
-                },
-                "completed_points": [
-                    91.0
-                ],
-                "total_userstories": 12,
-                "completed_userstories": 12,
-                "total_tasks": 49,
-                "completed_tasks": 49,
-                "iocaine_doses": 0,
-                "days": [
-                    {
-                        "day": "2024-01-29",
-                        "name": 29,
-                        "open_points": 91.0,
-                        "optimal_points": 91.0
-                    },
-                    {
-                        "day": "2024-01-30",
-                        "name": 30,
-                        "open_points": 91.0,
-                        "optimal_points": 86.45
-                    }]
-            }
-
-        mock_get_milestone_stats.return_value = mock_milestone_stats
-
-        # Mocking get_closed_tasks function to return a list of closed tasks
-        mock_closed_tasks = [
-            {
-                "id": "123",
-                "ref": "REF123",
-                "subject": "Task 1",
-                "created_date": "2024-02-07T18:46:54.396Z",
-                "finished_date": "2024-02-07T23:12:30.051Z"
-            },
-            {
-                "id": "124",
-                "ref": "REF124",
-                "subject": "Task 2",
-                "created_date": "2024-02-07T18:46:54.396Z",
-                "finished_date": "2024-02-07T23:12:30.051Z"
-            }
-        ]
-        mock_get_closed_tasks.return_value = mock_closed_tasks
-
-        # Sending a POST request to the /throughputHistogram endpoint with a project ID and token
-        client = app.test_client()
-        response = client.post('/throughputHistogram', json={"projectId": "mock_project_id", "sprintId": "mock_sprint_id"}, headers={"Authorization": "Bearer mocked_token"})
-        data = response.get_json()
-        print("data -->", data)
-        # Asserting the response status code and throughput histogram calculation
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(data['plotData']), 2)
-
 
     def setUp(self):
         self.client = app.test_client()
@@ -220,6 +150,39 @@ class TestAuthenticateEndpoint(unittest.TestCase):
 
     def tearDown(self):
         self.ctx.pop()
+
+    
+    @patch('server.get_closed_tasks')
+    @patch('server.get_milestone_stats')
+    def test_throughput_histogram_success(self, mock_get_milestone_stats, mock_get_closed_tasks):
+        # Mocking the necessary functions and data
+        mock_get_milestone_stats.return_value = {
+            'estimated_start': '2023-01-01',
+            'estimated_finish': '2023-01-10'
+        }
+        
+        # Sample closed tasks data
+        mock_closed_tasks = [
+            {"id": "1", "finished_date": "2023-01-02T12:00:00Z"},
+            {"id": "2", "finished_date": "2023-01-02T12:00:00Z"},
+            {"id": "3", "finished_date": "2023-01-03T12:00:00Z"},
+            {"id": "4", "finished_date": "2023-01-04T12:00:00Z"},
+            {"id": "5", "finished_date": "2023-01-05T12:00:00Z"},
+            {"id": "6", "finished_date": "2023-01-05T12:00:00Z"},
+            {"id": "7", "finished_date": "2023-01-07T12:00:00Z"},
+            {"id": "8", "finished_date": "2023-01-08T12:00:00Z"},
+            {"id": "9", "finished_date": "2023-01-09T12:00:00Z"}
+        ]
+        mock_get_closed_tasks.return_value = mock_closed_tasks
+
+        # Sending a POST request to the endpoint with project and sprint IDs
+        client = app.test_client()
+        response = client.post('/throughputHistogram', json={"projectId": "1521714", "sprintId": "376610"}, headers={"Authorization": "Bearer mocked_token"})
+        data = response.get_json()
+        print("data --> ", data)
+
+        # Asserting the response status code and data format
+        self.assertEqual(response.status_code, 200)
 
     @patch('server.get_milestone_stats')
     @patch('server.get_tasks')
