@@ -4,7 +4,7 @@ services:
     build:
       context: ./taigaProject
     ports:
-      - "105:105"
+      - "5001:5001"
     volumes:
       - ./taigaProject:/app
     environment:

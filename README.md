@@ -36,7 +36,7 @@ Before spinning up the docker containers, make sure you have the following insta
 
 3. Accesing the applications
 * The React frontend app will be accessible at http://localhost:3000.
-* The Flask backend APIs will be accessible at http://localhost:105.
+* The Flask backend APIs will be accessible at http://localhost:5001.
 
 
 ## Setup (manually)
