@@ -18,9 +18,9 @@ Before running the script, make sure you have the following installed:
 - Taiga project slug
 
 ## Various setup Methods
-- [Setup using docker](#setup-using-docker)
+- [Setup using docker](#setup-using-docker) (Recommended)
 - [Setup using shell script](#setup-using-shell-script)
-- [Setup manually](#setup-manually)
+- [Setup manually](#setup-manually) (Recommended)
 
 
 
