@@ -48,7 +48,7 @@ export default function CycleTimeArbRange({ metricData, cycleTimeData }) {
             };
   return (
         <>
-          <b>Cycle Time with Arbritary Range</b>
+          <b>Cycle Time by Task with Arbritrary Range</b>
           <div className="date-picker">
             <div>
               <span>From:</span>

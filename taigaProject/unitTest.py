@@ -185,13 +185,39 @@ class TestAuthenticateEndpoint(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     @patch('server.get_milestone_stats')
-    def test_cumulative_flow_diagram_success(self, mock_get_milestone_stats):
-        # Mocking get_milestone_stats function to return a milestone statistics
+    @patch('server.get_tasks')
+    @patch('server.authenticate')
+    def test_cumulative_flow_diagram_success(self, mock_authenticate, mock_get_milestone_stats,mock_get_tasks):
+
+        mock_authenticate.return_value = "mocked_token"
+
         mock_get_milestone_stats.return_value = {
-            'estimated_start': '2023-01-01',
-            'estimated_finish': '2023-01-10'
+            'name': 'Sprint1', 
+            'estimated_start': '2024-01-29', 
+            'estimated_finish': '2024-02-18', 
+            'days': [
+                {'day': '2024-01-29', 'name': 29, 'open_points': 91.0, 'optimal_points': 91.0}, 
+                {'day': '2024-01-30', 'name': 30, 'open_points': 91.0, 'optimal_points': 86.45},
+            ]
         }
-        
+
+        mock_get_tasks.return_value = {
+            "data": [
+                {
+                    "assigned_to": 619063,
+                    "assigned_to_extra_info": {
+                        "big_photo": None,
+                        "full_name_display": "John doe",
+                        "gravatar_id": "abcde",
+                        "id": 619063,
+                        "is_active": True,
+                        "photo": None,
+                        "username": "userid007"
+                    }
+                }
+            ]
+        }
+
         expected_response = {
             "data": [
                 {
@@ -216,14 +242,55 @@ class TestAuthenticateEndpoint(unittest.TestCase):
         }
 
         # Sending a POST request to the endpoint with project and sprint IDs
-        response = self.client.post('/cumulativeFlowDiagram', json={"projectId": "1521714", "sprintId": "376610"}, headers={"Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEwOTI0Nzk3LCJqdGkiOiJhYWY1ZGZlOGJiNjE0ZjVlYTc3NjJhZmRjOWRiYzU2MCIsInVzZXJfaWQiOjU5ODM3NH0.U1aV01uVEq8z0yHS6w_vGu8eQdSH8cjIm_cpu9E3tvv42a9dv2qTEzFX-Ykq8vxjf1bceEmgAtaqV-ngdmLZEeDQ0PN8N6bBRU_qAyW3IF08k71lO00nQ_TZZdAyU0brAvAaH1_bfELLANsH2u2kzPHfq3-_z9n5BBip8OFJxwjWUJSNtox9RwhDjMrPtuFaouvNQCeM0cZZsdvQn80I6S0puiECqsd2kRn-Ul65lBIMZ3rJUVu4kmiTySMmn6asKNCv_3DBGF4Q2gP349j1oCoo-jOEBlusEgcRrBw_BYjaqbPDjjjAItEiwneuw5wPDv16DQwsATVOxBYDmTvGGA"})
+        response = self.client.post('/cumulativeFlowDiagram', json={"sprintId": "376610", "projectId": "1521714"}, headers={"Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEwOTI0Nzk3LCJqdGkiOiJhYWY1ZGZlOGJiNjE0ZjVlYTc3NjJhZmRjOWRiYzU2MCIsInVzZXJfaWQiOjU5ODM3NH0.U1aV01uVEq8z0yHS6w_vGu8eQdSH8cjIm_cpu9E3tvv42a9dv2qTEzFX-Ykq8vxjf1bceEmgAtaqV-ngdmLZEeDQ0PN8N6bBRU_qAyW3IF08k71lO00nQ_TZZdAyU0brAvAaH1_bfELLANsH2u2kzPHfq3-_z9n5BBip8OFJxwjWUJSNtox9RwhDjMrPtuFaouvNQCeM0cZZsdvQn80I6S0puiECqsd2kRn-Ul65lBIMZ3rJUVu4kmiTySMmn6asKNCv_3DBGF4Q2gP349j1oCoo-jOEBlusEgcRrBw_BYjaqbPDjjjAItEiwneuw5wPDv16DQwsATVOxBYDmTvGGA"})
         data = response.get_json()
-
+        print("data rec: ")
+        print(data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
         self.assertIsInstance(data['data'], list)
         for expected_item, actual_item in zip(expected_response['data'], data['data']):
             self.assertEqual(set(expected_item.keys()), set(actual_item.keys()))
+
+
+    @patch('server.get_milestone_stats')
+    def test_burndown_chart_success(self, mock_get_milestone_stats):
+        # Mocking the get_milestone_stats function to align with the expected API response
+        mock_get_milestone_stats.return_value = {
+            "days": [
+                {"day": "2024-01-29", "id": 1, "name": 29, "open_points": 91.0, "optimal_points": 91.0},
+                {"day": "2024-01-30", "id": 2, "name": 30, "open_points": 91.0, "optimal_points": 86.45}
+            ],
+            "name": "Sprint Name",  # Assuming your real function also returns these, though not in expected response
+            "total_points": 91.0  # Assuming your real function also returns these
+        }
+
+        # Sending a POST request to the endpoint with project and sprint IDs, and Authorization header
+        response = self.client.post('/burndownChart', json={"sprintId": "sprint123"}, headers={"Authorization": "Bearer valid_token"})
+        data = response.get_json()
+
+        # Basic response structure assertions
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'success')
+        self.assertIn('burndown_chart_data', data)
+
+        burndown_chart_data = data['burndown_chart_data']
+        self.assertIn('days', burndown_chart_data)
+        self.assertIsInstance(burndown_chart_data['days'], list)
+        self.assertEqual(len(burndown_chart_data['days']), 2)
+
+        # Detailed assertions for each day
+        expected_days = [
+            {"day": "2024-01-29", "id": 1, "name": 29, "open_points": 91.0, "optimal_points": 91.0},
+            {"day": "2024-01-30", "id": 2, "name": 30, "open_points": 91.0, "optimal_points": 86.45}
+        ]
+
+        for expected_day, actual_day in zip(expected_days, burndown_chart_data['days']):
+            self.assertEqual(expected_day['day'], actual_day['day'])
+            self.assertEqual(expected_day['id'], actual_day['id'])
+            self.assertEqual(expected_day['name'], actual_day['name'])
+            self.assertEqual(expected_day['open_points'], actual_day['open_points'])
+            self.assertEqual(expected_day['optimal_points'], actual_day['optimal_points'])
 
 if __name__ == '__main__':
     unittest.main()

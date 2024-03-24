@@ -17,9 +17,16 @@ Before running the script, make sure you have the following installed:
 - Taiga account with API access
 - Taiga project slug
 
+## Various setup Methods
+- [Setup using docker](#setup-using-docker)
+- [Setup using shell script](#setup-using-shell-script)
+- [Setup manually](#setup-manually)
+
+
+
 ## Setup (using docker)
 
-### Prerequisites
+#### Prerequisites
 
 Before spinning up the docker containers, make sure you have the following installed:
 
@@ -37,6 +44,57 @@ Before spinning up the docker containers, make sure you have the following insta
 3. Accesing the applications
 * The React frontend app will be accessible at http://localhost:3000.
 * The Flask backend APIs will be accessible at http://localhost:5001.
+
+## Setup (using shell script)
+
+1. Make the script executable
+```bash
+chmod +x setup.sh
+```
+2. Run the script (you'll be asked to enter your system's logged in user's  password)
+```bash 
+./setup.sh
+```
+
+3. Open http://localhost:3000 to view the login page in your browser.
+
+### Shutting Down the Servers
+
+When you're finished with using the application and wish to shut down the servers, follow these steps:
+
+#### Stopping the Flask API Server
+
+On macOS, you can find and terminate the Flask server process using the following commands:
+
+1. Find the process ID (PID) listening on port 5001 (used by the Flask server):
+
+    ```bash
+    lsof -i -P -n | grep :5001
+    ```
+
+    This command lists all processes using port 5001. Look for the PID in the output.
+
+2. Kill the process using its PID:
+
+    ```bash
+    kill <PID>
+    ```
+
+    Replace `<PID>` with the actual process ID you found.
+
+#### Stopping the React App
+
+Since the React app is managed by PM2, stopping it requires a PM2 command:
+
+1. To stop the React app run by PM2, execute:
+
+    ```bash
+    pm2 stop ui
+    ```
+
+    This command tells PM2 to stop managing the React app named "ui". 
+
+These steps ensure both the React and Flask servers are properly shut down.
 
 
 ## Setup (manually)

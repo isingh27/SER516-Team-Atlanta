@@ -40,6 +40,7 @@ const Dashboard = () => {
   const [sprintInputTP, setSprintInputTP] = useState("");
   let projectId = localStorage.getItem("projectId");
   const [cycleTimeData, setCycleTimeData] = useState([]);
+  const [errorIncycleTimeUS, setErrorIncycleTimeUS] = useState(false);
 
   const handleChangeDropDown = (e) => {
     console.log(e.target.value);
@@ -176,6 +177,14 @@ const Dashboard = () => {
           return [`US #${task.refId}`, task.cycle_time];
         });
         console.log(cycleTimeDataUS);
+        if (cycleTimeDataUS.length === 0) {
+
+          // cycleTimeDataUS.push(["No data", 0]);
+          setErrorIncycleTimeUS(true);
+          setLoadingCTUS(false);
+          return
+
+        }
         cycleTimeDataUS.unshift(["# User Story", "Cycle Time"]);
         setCycleTimeByUS(cycleTimeDataUS);
         setLoadingCTUS(false);
@@ -197,13 +206,16 @@ const Dashboard = () => {
     callWipData();
   }, []);
   useEffect(() => {
-    if (sprintInput === "") fetchSprints();
-    callBDData();
-    // callWipData();
-    callCFDData();
-    callThroughputDaily();
-    callBDBVData();
-    callBDTotalData();
+    if (sprintInput === "") {
+      fetchSprints();
+    }else{
+      callBDData();
+      callCFDData();
+      callThroughputDaily();
+      callBDBVData();
+      callBDTotalData();
+    }
+    
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
 
   useEffect(() => {
@@ -233,7 +245,7 @@ const Dashboard = () => {
   }, [loadingBD, burndownData, burndownBVData, burndownTotalData]);
 
   
-  const callThroughputDaily = () => {580
+  const callThroughputDaily = () => {
     taigaService
       .taigaProjectThroughputDaily(
         localStorage.getItem("taigaToken"),
@@ -468,7 +480,7 @@ const Dashboard = () => {
         </Col>
       </Row>
       <Row
-        className="justify-content-md-center mt-2 mb-3"
+        className="justify-content-md-center mt-3 mb-3"
         style={{ height: "400px" }}
       >
         <div className="card-wrapper">
@@ -479,13 +491,16 @@ const Dashboard = () => {
           >
             <Card className="custom-card">
               <Card.Body>
-                {!loadingCTUS ? (
+                {(!loadingCTUS && !errorIncycleTimeUS) ? (
                   <VisualizeMetric
                     metricInput={"cycleTimeUS"}
                           metricData={cycleTimeByUS}
                   />
-                ) : (
+                ) : loadingCTUS ? (
                   <Loader />
+                ) : 
+                (
+                  <h3>No data available for Cycle Time by User Story</h3>
                 )}
               </Card.Body>
             </Card>

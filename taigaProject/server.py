@@ -29,7 +29,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-client = MongoClient(os.getenv('MONGO_URL'), server_api=ServerApi('1'))
+client = MongoClient(os.getenv('MONGO_URL'), server_api=ServerApi('1'),tls=True, tlsAllowInvalidCertificates=True)
 
 try:
     client.admin.command('ping')
@@ -172,6 +172,12 @@ def cycle_time_per_task():
 
 @app.route("/cycleTimesPerUserStory", methods=["POST"])
 def cycle_time_per_user_story():
+    db = client.taiga
+    project_id = request.json['projectId']
+    project = db.user_stories.find_one({"projectId": project_id})
+    if project and 'cycleTimesPerUserStory' in project:
+        return jsonify({"data": project['cycleTimesPerUserStory'], "status": "success"})
+
     auth_header = request.headers.get('Authorization')
     token = ''
     if auth_header and auth_header.startswith('Bearer '):
@@ -179,7 +185,6 @@ def cycle_time_per_user_story():
     else:
         return jsonify({"message": "Token is missing or invalid"}), 401
 
-    project_id = request.json['projectId']
     closed_user_stories = get_closed_user_stories(project_id, token)
 
     if not closed_user_stories:
@@ -196,6 +201,8 @@ def cycle_time_per_user_story():
             "refId": ref
         })
 
+    db.user_stories.insert_one({"projectId": project_id, "cycleTimesPerUserStory": response_data, "created_at": datetime.now()})
+    
     return jsonify({"data": response_data, "status": "success"})
 
 
