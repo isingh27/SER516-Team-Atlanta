@@ -29,7 +29,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-client = MongoClient(os.getenv('MONGO_URL'), server_api=ServerApi('1'))
+client = MongoClient(os.getenv('MONGO_URL'), server_api=ServerApi('1'),tls=True, tlsAllowInvalidCertificates=True)
 
 try:
     client.admin.command('ping')

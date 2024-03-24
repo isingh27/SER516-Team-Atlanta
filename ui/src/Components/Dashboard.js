@@ -197,13 +197,16 @@ const Dashboard = () => {
     callWipData();
   }, []);
   useEffect(() => {
-    if (sprintInput === "") fetchSprints();
-    callBDData();
-    // callWipData();
-    callCFDData();
-    callThroughputDaily();
-    callBDBVData();
-    callBDTotalData();
+    if (sprintInput === "") {
+      fetchSprints();
+    }else{
+      callBDData();
+      callCFDData();
+      callThroughputDaily();
+      callBDBVData();
+      callBDTotalData();
+    }
+    
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
 
   useEffect(() => {
@@ -233,7 +236,7 @@ const Dashboard = () => {
   }, [loadingBD, burndownData, burndownBVData, burndownTotalData]);
 
   
-  const callThroughputDaily = () => {580
+  const callThroughputDaily = () => {
     taigaService
       .taigaProjectThroughputDaily(
         localStorage.getItem("taigaToken"),
