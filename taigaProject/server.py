@@ -11,6 +11,7 @@ from taigaApi.task.getTaskHistory import (
 from taigaApi.task.getTasks import get_closed_tasks, get_closed_user_stories, get_tasks
 from taigaApi.task.getTaskStatus import get_task_status, get_task_status_count_by_date
 from taigaApi.sprint.getMilestoneStats import get_milestone_stats
+
 from taigaApi.sprint.getAllSprintIDs import get_all_sprint_ids
 from taigaApi.userStory.getUserStory import get_burndown_chart_metric_detail, get_user_story_custom_attrib
 from taigaApi.sprint.getUserStoriesForSprint import get_user_stories_for_sprint
