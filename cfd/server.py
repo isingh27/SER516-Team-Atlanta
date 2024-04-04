@@ -4,7 +4,6 @@ from taigaApi.getTasks import get_tasks
 from taigaApi.getTaskStatus import get_task_status_count_by_date
 from flask_cors import CORS
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 import os
 
