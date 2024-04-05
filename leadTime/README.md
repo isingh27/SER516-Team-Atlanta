@@ -4,21 +4,22 @@ This microservice is responsible for calculating the lead time of a task in a pr
 
 ## Setup (using docker)
 
-1.  Make sure you are in the leadtime directory. This should have the Dockerfile file.
+1. Make sure you are in the `leadtime` directory. This should have the `Dockerfile` file.
 
-2.  Build the docker container
-
-        bash
+2. Build the docker container
+    
+        ```bash
         docker build -t leadtime .
+        ```
+3. Run the Docker Container
 
-3.  Run the Docker Container
-
-        bash
+        ```bash
         docker run -p 5003:5003 leadtime
-
-4.  Accessing the applications
-
+        ```
+4. Accessing the applications
+    
         * The Flask backend APIs will be accessible at http://127.0.0.1:5003.
+
 
 ## Endpoints
 
@@ -26,52 +27,55 @@ This microservice is responsible for calculating the lead time of a task in a pr
 
 This endpoint returns the status of the microservice in the following format:
 
-json
+```json
 {
-"message": "Lead Time micro-service is up and running!"
+    "message": "Lead Time micro-service is up and running!"
 }
+```
 
 ### POST /leadTime
 
 This endpoint receives a JSON object with the following structure:
 
-json
+```json
 {
-"project_id": "project_id",
+    "project_id": "project_id",
 }
-
-and
+```
+and 
 
 Auth: Bearer Token
 
 It returns the lead time of the project in the following format:
 
-json
+```json
 {
-"plotData": [
-{
-"finished_date": "Sun, 11 Feb 2024 22:27:40 GMT",
-"lead_time": 10,
-"refId": 36,
-"task": {
-"created_date": "2024-02-01T02:38:23.165Z",
-"finished_date": "2024-02-11T22:27:40.305Z",
-"id": 5331049,
-"ref": 36,
-"subject": "Initialize a React Application"
+  "plotData": [
+    {
+      "finished_date": "Sun, 11 Feb 2024 22:27:40 GMT",
+      "lead_time": 10,
+      "refId": 36,
+      "task": {
+        "created_date": "2024-02-01T02:38:23.165Z",
+        "finished_date": "2024-02-11T22:27:40.305Z",
+        "id": 5331049,
+        "ref": 36,
+        "subject": "Initialize a React Application"
+      }
+    },
+  ]
 }
-},
-]
-}
+```
 
 ### POST /leadTimeByRange
 
 This endpoint receives a JSON object with the following structure:
 
-json
+```json
 {
-"project_id": "project_id",
+    "project_id": "project_id",
 }
+```
 
 and
 
@@ -79,20 +83,21 @@ Auth: Bearer Token
 
 It returns the lead time of each task in the project in the following format:
 
-json
+```json
 {
-"plotData": [
-{
-"finished_date": "Sun, 11 Feb 2024 22:27:40 GMT",
-"lead_time": 10,
-"refId": 36,
-"task": {
-"created_date": "2024-02-01T02:38:23.165Z",
-"finished_date": "2024-02-11T22:27:40.305Z",
-"id": 5331049,
-"ref": 36,
-"subject": "Initialize a React Application"
+  "plotData": [
+    {
+      "finished_date": "Sun, 11 Feb 2024 22:27:40 GMT",
+      "lead_time": 10,
+      "refId": 36,
+      "task": {
+        "created_date": "2024-02-01T02:38:23.165Z",
+        "finished_date": "2024-02-11T22:27:40.305Z",
+        "id": 5331049,
+        "ref": 36,
+        "subject": "Initialize a React Application"
+      }
+    },
+  ]
 }
-},
-]
-}
+```
