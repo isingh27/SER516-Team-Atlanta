@@ -1,17 +1,19 @@
 from flask import Flask, request, jsonify
 import requests
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 
 # Configuration for the microservices
 MICROSERVICES = {
-    'auth': 'http://localhost:5001',
-    'cycleTime': 'http://localhost:5002',
-    'leadTime': 'http://localhost:5003',
-    'throughput': 'http://localhost:5004',
-    'cumulativeFlowDiagram': 'http://localhost:5004',
-    'wip': 'http://localhost:5005',
-    'burndown': 'http://localhost:5006',
+    'auth': os.getenv('AUTH_URL'),
+    'cycleTime': os.getenv('CYCLE_TIME_URL'),
+    'leadTime': os.getenv('LEAD_TIME_URL'),
+    'throughput': os.getenv('THROUGHPUT_URL'),
+    'cumulativeFlowDiagram': os.getenv('CFD_URL'),
+    'wip': os.getenv('WIP_URL'),
+    # 'burndown': os.getenv('BURNDOWN_URL'),
 }
 
 @app.route('/<service_name>/', defaults={'path': ''})
