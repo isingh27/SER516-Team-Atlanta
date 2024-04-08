@@ -5,7 +5,7 @@ const API_URL = process.env.REACT_APP_BACKEND_URI || "http://127.0.0.1:5000/";
 
 class TaigaService {
   taigaAuthenticate(username, password) {
-    return axios.post(API_URL + "authenticate", {
+    return axios.post(API_URL + "auth", {
       username,
       password,
     });

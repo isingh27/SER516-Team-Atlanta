@@ -2,8 +2,13 @@ from flask import Flask, request, jsonify
 import requests
 from dotenv import load_dotenv
 import os
+from flask_cors import CORS
+
+load_dotenv()
 
 app = Flask(__name__)
+
+CORS(app)
 
 # Configuration for the microservices
 MICROSERVICES = {
