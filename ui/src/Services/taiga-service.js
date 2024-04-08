@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // TODO: Change the URL to the API Endpoint
-const API_URL = process.env.REACT_APP_BACKEND_URI || "http://127.0.0.1:5001/";
+const API_URL = process.env.REACT_APP_BACKEND_URI || "http://127.0.0.1:5000/";
 
 class TaigaService {
   taigaAuthenticate(username, password) {
@@ -49,7 +49,7 @@ class TaigaService {
 
   taigaProjectCycleTimesPerTask(token, project_id) {
     return axios.post(
-      API_URL + "cycleTimesPerTask",
+      API_URL + "cycleTime/perTask",
       { projectId: project_id },
       {
         headers: {
@@ -61,7 +61,7 @@ class TaigaService {
 
   taigaProjectCycleTimesPerUserStory(token, project_id) {
     return axios.post(
-      API_URL + "cycleTimesPerUserStory",
+      API_URL + "cycleTime/perUserStory",
       { projectId: project_id },
       {
         headers: {
@@ -129,7 +129,7 @@ class TaigaService {
   }
   taigaProjectThroughputDaily(token, project_id, sprint_id) {
     return axios.post(
-      API_URL + "throughputDaily",
+      API_URL + "throughput/daily",
       { projectId: project_id, sprintId: sprint_id },
       {
         headers: {
@@ -140,7 +140,7 @@ class TaigaService {
   }
   taigaProjectThroughputHistogram(token, project_id, sprint_id) {
     return axios.post(
-      API_URL + "throughputHistogram",
+      API_URL + "throughput/histogram",
       { projectId: project_id, sprintId: sprint_id },
       {
         headers: {
@@ -171,7 +171,7 @@ class TaigaService {
 
   taigaUserProjectsLeadTimeByRange(token, project_id, startDate, endDate) {
     return axios.post(
-      API_URL + "leadTimeByRange",
+      API_URL + "leadTime/byRange",
       { projectId: project_id, startDate: startDate, endDate: endDate },
       {
         headers: {
