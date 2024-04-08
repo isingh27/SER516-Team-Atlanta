@@ -10,15 +10,15 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/")
-def sampleRoute():
-    response = jsonify({
-        "message": "Lead Time micro-service is up and running!"
-    })
-    return response
+# @app.route("/")
+# def sampleRoute():
+#     response = jsonify({
+#         "message": "Lead Time micro-service is up and running!"
+#     })
+#     return response
 
 
-@app.route("/leadTime", methods=["POST"])
+@app.route("/", methods=["POST"])
 def lead_time():
     auth_header = request.headers.get('Authorization')
     token = ''
@@ -39,7 +39,7 @@ def lead_time():
                        "lead_time": lead_time, "refId": task['ref']})
     return jsonify({"plotData": output, "status": "success"})
 
-@app.route("/leadTimeByRange", methods=["POST"])
+@app.route("/byRange", methods=["POST"])
 def lead_time_range():
     auth_header = request.headers.get('Authorization')
     token = ''

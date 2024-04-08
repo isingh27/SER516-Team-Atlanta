@@ -19,7 +19,7 @@ def sampleRoute():
     return response
 
 
-@app.route("/throughputDaily", methods=["POST"])
+@app.route("/daily", methods=["POST"])
 def throughput_daily():
     auth_header = request.headers.get('Authorization')
     token = ''
@@ -63,7 +63,7 @@ def throughput_daily():
     return jsonify({"throughput_data": response_data, "status": "success"})
 
 
-@app.route("/throughputHistogram", methods=["POST"])
+@app.route("/histogram", methods=["POST"])
 def throughput_histogram():
     auth_header = request.headers.get('Authorization')
     token = ''
