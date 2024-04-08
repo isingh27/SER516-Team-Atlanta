@@ -7,7 +7,7 @@ services:
     volumes:
       - ./authentication:/app
     environment:
-      FLASK_APP: app.py
+      FLASK_APP: server.py
       FLASK_ENV: development
       TAIGA_URL: https://api.taiga.io/api/v1
   
@@ -18,7 +18,7 @@ services:
     volumes:
       - ./cfd:/app
     environment:
-      FLASK_APP: app.py
+      FLASK_APP: server.py
       FLASK_ENV: development
       TAIGA_URL: https://api.taiga.io/api/v1
   
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./cycletime:/app
     environment:
-      FLASK_APP: app.py
+      FLASK_APP: server.py
       FLASK_ENV: development
       TAIGA_URL: https://api.taiga.io/api/v1
 
@@ -40,7 +40,7 @@ services:
     volumes:
       - ./leadtime:/app
     environment:
-      FLASK_APP: app.py
+      FLASK_APP: server.py
       FLASK_ENV: development
       TAIGA_URL: https://api.taiga.io/api/v1
 
@@ -51,7 +51,7 @@ services:
     volumes:
       - ./throughput:/app
     environment:
-      FLASK_APP: app.py
+      FLASK_APP: server.py
       FLASK_ENV: development
       TAIGA_URL: https://api.taiga.io/api/v1
 
@@ -62,7 +62,7 @@ services:
     volumes:
       - ./api_gateway:/app
     environment:
-      FLASK_APP: app.py
+      FLASK_APP: server.py
       FLASK_ENV: development
       TAIGA_URL: https://api.taiga.io/api/v1
       AUTH_URL: http://authentication:5001
