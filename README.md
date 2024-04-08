@@ -20,7 +20,6 @@ Before running the script, make sure you have the following installed:
 ## Various setup Methods
 - [Setup using docker](#setup-using-docker) (Recommended)
 - [Setup using shell script](#setup-using-shell-script)
-- [Setup manually](#setup-manually) (Recommended)
 
 
 
@@ -43,7 +42,7 @@ Before spinning up the docker containers, make sure you have the following insta
 
 3. Accesing the applications
 * The React frontend app will be accessible at http://localhost:3000.
-* The Flask backend APIs will be accessible at http://localhost:5001.
+* The API Gateway backend API will be accessible at http://localhost:5000/.
 
 ## Setup (using shell script)
 
@@ -97,55 +96,6 @@ Since the React app is managed by PM2, stopping it requires a PM2 command:
 These steps ensure both the React and Flask servers are properly shut down.
 
 
-## Setup (manually)
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/isingh27/SER516-Team-Atlanta.git
-   cd SER516-Team-Atlanta
-   ```
-
-2. Install dependencies:
-
-	a. NodeJS packages:
-	```bash
-	cd ui
-	npm i
-	```
-
-	b. Python packages:
-	Note:- Make sure you are in the root directory of the project
-
-	```bash
-	cd taigaProject
-	pip install -r requirements.txt
-	```
-
-3. Create a .env file in the **taigaProject** directory and add the following:
-
-   ```bash
-   TAIGA_URL=https://api.taiga.io/api/v1
-   ```
-
-4. Running the project:-
-
-	a. React
-
-	```bash
-	cd ui
-	npm start
-	```
-
-	b. Flask Backend
-	Note:- Make sure you are in the root directory of the project
-
-	```bash
-	cd taigaProject
-	python3 server.py
-	```
-
-   c. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ## Getting Taiga Project Slug
 
