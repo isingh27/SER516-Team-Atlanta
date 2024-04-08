@@ -1,3 +1,4 @@
+# docker compose for starting up fe & be , not Microservices
 version: '3.8'
 services:
   backend:

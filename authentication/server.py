@@ -9,15 +9,15 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/")
-def sampleRoute():
-    response = jsonify({
-        "message": "Authentication micro-service is up and running!"
-    })
-    return response
+# @app.route("/")
+# def sampleRoute():
+#     response = jsonify({
+#         "message": "Authentication micro-service is up and running!"
+#     })
+#     return response
 
 
-@app.route("/authenticate", methods=["POST"])
+@app.route("/", methods=["POST"])
 def auth():
     username = request.json['username']
     password = (request.json['password'])
