@@ -25,14 +25,14 @@ try:
 except Exception as e:
     print(e)
 
-@app.route("/")
-def sampleRoute():
-    response = jsonify({
-        "message": "CycleTime Microservice is up and running!"
-    })
-    return response
+# @app.route("/")
+# def sampleRoute():
+#     response = jsonify({
+#         "message": "CycleTime Microservice is up and running!"
+#     })
+#     return response
 
-@app.route("/cycleTime", methods=["POST"])
+@app.route("/", methods=["POST"])
 def cycle_time():
     auth_header = request.headers.get('Authorization')
     token = ''
@@ -51,7 +51,7 @@ def cycle_time():
     return jsonify({"avg_cycle_time": avg_cycle_time, "status": "success"})
 
 
-@app.route("/cycleTimesPerTask", methods=["POST"])
+@app.route("/perTask", methods=["POST"])
 def cycle_time_per_task():
     
     db = client.taiga
@@ -89,7 +89,7 @@ def cycle_time_per_task():
         return jsonify({"data": response_data, "status": "success"})
 
 
-@app.route("/cycleTimesPerUserStory", methods=["POST"])
+@app.route("/perUserStory", methods=["POST"])
 def cycle_time_per_user_story():
     db = client.taiga
     project_id = request.json['projectId']
