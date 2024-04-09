@@ -38,7 +38,7 @@ services:
     ports:
       - "5003:5003"
     volumes:
-      - ./leadtime:/app
+      - ./leadTime:/app
     environment:
       FLASK_APP: server.py
       FLASK_ENV: development
@@ -62,14 +62,12 @@ services:
     volumes:
       - ./apigateway:/app
     environment:
-      FLASK_APP: server.py
-      FLASK_ENV: development
       TAIGA_URL: https://api.taiga.io/api/v1
-      AUTH_URL: http://authentication:5001
-      CYCLETIME_URL: http://cycletime:5002
-      LEADTIME_URL: http://leadtime:5003
-      THROUGHPUT_URL: http://throughput:5005
-      CFD_URL: http://cfd:5004
+      AUTH_URL: http://authentication:5001/
+      CYCLETIME_URL: http://cycletime:5002/
+      LEADTIME_URL: http://leadtime:5003/
+      THROUGHPUT_URL: http://throughput:5005/
+      CFD_URL: http://cfd:5004/
 
   frontend:
     build:
@@ -80,6 +78,6 @@ services:
       - ./ui:/app
       - /app/node_modules
     environment:
-      REACT_APP_BACKEND_URI: http://localhost:5050/
+      REACT_APP_BACKEND_URI: http://127.0.0.1:5050/
       NODE_ENV: development
       CHOKIDAR_USEPOLLING: 'true' # Helps with hot-reloading in Docker

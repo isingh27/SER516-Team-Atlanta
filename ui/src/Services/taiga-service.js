@@ -13,7 +13,7 @@ class TaigaService {
 
   taigaProjectDetails(token, project_slug) {
     return axios.post(
-      API_URL + "projectDetails",
+      API_URL + "auth/projectDetails",
       { projectSlug: project_slug },
       {
         headers: {
@@ -162,7 +162,7 @@ class TaigaService {
   }
 
   taigaUserProjects(token) {
-    return axios.get(API_URL + "listUserProjects", {
+    return axios.get(API_URL + "auth/listUserProjects", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

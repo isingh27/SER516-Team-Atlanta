@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from taigaApi.getMilestoneStats import get_milestone_stats
 from taigaApi.getUserStory import get_user_story_custom_attrib
 from taigaApi.getUserStory import get_burndown_chart_metric_detail
+from taigaApi.getAllSprintIDs import get_all_sprint_ids
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -82,6 +83,24 @@ def fetchTotalBurndown():
 
 
     return  jsonify({"status": "success", "data":totalBurnDownData})
+
+@app.route("/sprints", methods=["POST"])
+def all_sprints():
+    auth_header = request.headers.get('Authorization')
+    token = ''
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+
+    project_id = request.json['projectId']
+
+    sprint_ids = get_all_sprint_ids(project_id, token)
+
+    if sprint_ids is None:
+        return jsonify({"message": "Error fetching sprint IDs"}), 500
+
+    return jsonify({"sprint_ids": sprint_ids, "status": "success"})
 
 port = os.getenv("PORT")
 if not port:
