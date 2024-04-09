@@ -5,4 +5,4 @@ set -e
 
 # Run Docker Compose
 echo "Starting services with Docker Compose..."
-docker-compose up -d
+docker-compose up

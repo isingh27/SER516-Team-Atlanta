@@ -72,7 +72,7 @@ class TaigaService {
   }
   taigaProjectSprints(token, project_id) {
     return axios.post(
-      API_URL + "sprints",
+      API_URL + "burndown/sprints",
       { projectId: project_id },
       {
         headers: {
@@ -83,7 +83,7 @@ class TaigaService {
   }
   taigaProjectBurnDownChart(token, sprint_id) {
     return axios.post(
-      API_URL + "burndownChart",
+      API_URL + "burndown/chart",
       { sprintId: sprint_id },
       {
         headers: {
@@ -94,7 +94,7 @@ class TaigaService {
   }
   taigaBurnDownBV(token, project_id, sprint_id) {
     return axios.post(
-      API_URL + "BVBurndown",
+      API_URL + "burndown/bv",
       { projectId: project_id, sprintId: sprint_id },
       {
         headers: {
@@ -106,7 +106,7 @@ class TaigaService {
 
   taigaBurndownTotal(token, project_id, sprint_id) {
     return axios.post(
-      API_URL + "totalBurndown",
+      API_URL + "burndown/total",
       { projectId: project_id, sprintId: sprint_id },
       {
         headers: {
@@ -118,7 +118,7 @@ class TaigaService {
 
   taigaProjectWorkInProgress(token, project_id) {
     return axios.post(
-      API_URL + "workInProgress",
+      API_URL + "wip",
       { projectId: project_id },
       {
         headers: {

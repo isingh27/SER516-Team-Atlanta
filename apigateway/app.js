@@ -34,10 +34,14 @@ const services = [
       route: "/cumulativeFlowDiagram",
       target: process.env.CFD_URL,
     },
-    // {
-    //   route: "/wip",
-    //   target: process.env.WIP_URL,
-    // },
+    {
+      route: "/wip",
+      target: process.env.WIP_URL,
+    },
+    {
+      route: "/burndown",
+      target: process.env.BURNDOWN_URL,
+    },
    ];
 
    const app = express();

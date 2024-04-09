@@ -12,14 +12,14 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/")
-def sampleRoute():
-    response = jsonify({
-        "message": "Cumulative Flow Diagram Microservice is up and running!"
-    })
-    return response
+# @app.route("/")
+# def sampleRoute():
+#     response = jsonify({
+#         "message": "Cumulative Flow Diagram Microservice is up and running!"
+#     })
+#     return response
 
-@app.route("/cumulativeFlowDiagram", methods=["POST"])
+@app.route("/", methods=["POST"])
 def cumulative_flow_diagram():
     auth_header = request.headers.get('Authorization')
     token = ''
