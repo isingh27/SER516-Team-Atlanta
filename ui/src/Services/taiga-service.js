@@ -180,6 +180,16 @@ class TaigaService {
       }
     );
   }
+  taigaProjectImpedimentTracker(token, project_id) {
+    return axios.post(
+      API_URL + "impedimentTracker",
+      { projectId: project_id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }  
+)}
 }
 
 export default new TaigaService();
