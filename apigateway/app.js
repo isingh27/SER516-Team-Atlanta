@@ -44,8 +44,12 @@ const services = [
     },
     // {
     //   route: "/impedimentTracker",
-    //   target: process.env.IMPEDIMENT_TRACKER_URL,
-    // }
+    //   target: process.env.IMPEDIMENT_TRACKER
+  
+    {
+      route: "/sbpbcoupling",
+      target: process.env.SBPBCOUPLING_URL
+    }
    ];
 
    const app = express();
