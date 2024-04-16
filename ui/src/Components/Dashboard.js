@@ -7,6 +7,7 @@ import VisualizeMetric from "./VisualizeMetric";
 import LeadTimeVisualization from "./Visualization/LeadTimeVisualization";
 import CycleTimeArbRange from "./Visualization/CycleTimeArbRange";
 import MultisprintBurnDown from "./Visualization/MultisprintBurnDown";
+import ImpedimentTracker from "./Visualization/ImpedimentTracker";
 
 const Dashboard = () => {
   const navigation = useNavigate();
@@ -20,6 +21,7 @@ const Dashboard = () => {
   const [loadingWip, setLoadingWip] = useState(true);
   const [loadingCFD, setLoadingCFD] = useState(true);
   const [loadingTP, setLoadingTP] = useState(true);
+  const [loadingImpediment, setLoadingImpediment] = useState(false); //TODO: FIXME:
   const projectName = localStorage.getItem("projectName");
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
@@ -41,6 +43,7 @@ const Dashboard = () => {
   let projectId = localStorage.getItem("projectId");
   const [cycleTimeData, setCycleTimeData] = useState([]);
   const [errorIncycleTimeUS, setErrorIncycleTimeUS] = useState(false);
+  const [impedimentTrackerData, setImpedimentTrackerData] = useState([]);
 
   const handleChangeDropDown = (e) => {
     console.log(e.target.value);
@@ -214,6 +217,7 @@ const Dashboard = () => {
       callThroughputDaily();
       callBDBVData();
       callBDTotalData();
+      callImpedimentTracker();
     }
     
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
@@ -445,6 +449,27 @@ const Dashboard = () => {
       console.error(error.message);
     }
   };
+
+  const callImpedimentTracker = () => {
+    // setLoadingImpediment(true);
+    // TODO: FIXME:
+    // taigaService
+    //   .taigaProjectImpedimentTracker(localStorage.getItem("taigaToken"), projectId)
+    //   .then((res) => {
+        // console.log("Impediment Tracker", res.data.impediment_tracker);
+        // let impedimentTrackerTempData = res.data.impediment_tracker.map((data) => {
+        //   return [data.date, data.days];
+        // });
+        // impedimentTrackerTempData.unshift(["Date", "Days"]);
+        // setImpedimentTrackerData(impedimentTrackerTempData);
+      // })
+      // .catch((error) => {
+      //   console.error(error.message);
+      // })
+      // .finally(() => {
+      //   setLoadingImpediment(false);
+      // });
+  };
   
   const Loader = () => <Spinner animation="border" role="status" />;
 
@@ -638,6 +663,19 @@ const Dashboard = () => {
             </Card>
           </Col>
         </div>
+      </Row>
+      <Row className="justify-content-md-center mt" style={{ height: "550px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          {!loadingImpediment ? 
+          (<ImpedimentTracker metricData={impedimentTrackerData} />) 
+            : (
+            <Loader />
+          )}
+        </Col>
       </Row>
     </Container>
   );
