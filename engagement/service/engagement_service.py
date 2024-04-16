@@ -4,7 +4,8 @@ import os
 from taigaApi.project.get_membership_list import get_membership_list
 
 def get_engagement(project_id, auth_token):
-    """Returns the Member stat from Taiga
+    """
+    Returns the Member stat from Taiga
     
     Args:
         project_id (string): ID of the project.
@@ -21,7 +22,7 @@ def get_engagement(project_id, auth_token):
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json'
     }
-
+    print("IN THE SERVICE")
     member_names = get_membership_list(project_id, auth_token)
 
 
