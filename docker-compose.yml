@@ -77,6 +77,16 @@ services:
       FLASK_ENV: development
       TAIGA_URL: https://api.taiga.io/api/v1
 
+  sbpbcoupling:
+    build: ./sbpbcoupling
+    ports:
+      - "5008:5008"
+    volumes:
+      - ./sbpbcoupling:/app
+    environment:
+      FASTAPI_APP: main.py
+      TAIGA_URL: https://api.taiga.io/api/v1
+
   apigateway:
     build: ./apigateway
     ports:
@@ -92,6 +102,7 @@ services:
       CFD_URL: http://cfd:5004/
       WIP_URL: http://wip:5006/
       BURNDOWN_URL: http://burndown:5007/
+      SBPBCOUPLING_URL: http://sbpbcoupling:5008/
 
   frontend:
     build:
