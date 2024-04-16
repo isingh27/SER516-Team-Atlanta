@@ -42,6 +42,10 @@ const services = [
       route: "/burndown",
       target: process.env.BURNDOWN_URL,
     },
+    {
+      route: "/sbpbcoupling",
+      target: process.env.SBPBCOUPLING_URL
+    }
    ];
 
    const app = express();
