@@ -90,3 +90,4 @@ services.forEach(({ route, target }) => {
   app.listen(PORT, () => {
     console.log(`Gateway is running on port ${PORT}`);
   });
+  
