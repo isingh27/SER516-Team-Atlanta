@@ -1,0 +1,13 @@
+version: '3'
+services:
+  backend: 
+  
+    build: ./
+    container_name: taskcoupling-api-container
+    environment:
+      - TAIGA_URL=https://api.taiga.io/api/v1
+    ports:
+      - '5010:5010'
+
+    stdin_open: true
+    tty: true

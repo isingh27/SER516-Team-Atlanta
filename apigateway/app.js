@@ -49,6 +49,10 @@ const services = [
     {
       route: "/sbpbcoupling",
       target: process.env.SBPBCOUPLING_URL
+    },
+    {
+      route: "/taskcoupling",
+      target: process.env.TASKCOUPLING_URL
     }
    ];
 
