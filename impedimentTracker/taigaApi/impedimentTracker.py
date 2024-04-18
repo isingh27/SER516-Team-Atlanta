@@ -9,7 +9,7 @@ load_dotenv()
 
 def get_project_impediments(project_id, auth_token):
     taiga_url = os.getenv('TAIGA_URL')
-    impediment_api_url = f"{taiga_url}/issue-statuses?project={project_id}"
+    impediment_api_url = f"{taiga_url}/issues?project={project_id}"
     headers = {
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
