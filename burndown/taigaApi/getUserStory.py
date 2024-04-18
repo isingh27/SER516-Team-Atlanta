@@ -3,9 +3,20 @@ import requests
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
+import redis
+import threading
+import json
+from flask import jsonify
+from fastapi import HTTPException
 
 # Load environment variables from .env file
 load_dotenv()
+r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+class UserStoryFetchingError(Exception):
+    def __init__(self, status_code, reason):
+        self.status_code = status_code
+        self.reason = reason
 
 
 # Function to retrieve user stories for a specific project from the Taiga API
@@ -74,6 +85,42 @@ def get_user_story_custom_attrib(project_id, auth_token):
         # Handle errors during the API request and print an error message
         print(f"Error fetching project by slug: {e}")
         return None
+
+def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
+
+    taiga_url = os.getenv('TAIGA_URL')
+
+    custom_attribute_api_url = f"{taiga_url}/userstory-custom-attributes?project={project_id}"
+
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type': 'application/json',
+    }
+
+    try:
+
+        response = requests.get(custom_attribute_api_url, headers=headers)
+        response.raise_for_status() 
+
+        if response.status_code == 401:
+            raise UserStoryFetchingError(401, "Client Error: Unauthorized")
+
+        for res in response.json():
+            if res["name"] == attribute_name:
+                return str(res["id"])
+
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching UserStory: {e}")
+        raise UserStoryFetchingError(e.response.status_code, e.response.reason)
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching UserStory: {e}")
+        raise UserStoryFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching UserStory:")
+        raise 
+
 
 def get_milestone_stats(sprint_id, auth_token):
 
@@ -243,28 +290,40 @@ def get_tasks_by_story_id(story_id, auth_token):
         print(f"Error fetching tasks by story id: {e}")
         return None
     
-def get_business_value(story_id, attribute, auth_token):
-        print("Getting business value")
-        taiga_url = os.getenv('TAIGA_URL')
-        user_story_api_url = f"{taiga_url}/userstories/custom-attributes-values/{story_id}"
-        headers = {
-            'Authorization': f'Bearer {auth_token}',
-            'Content-Type': 'application/json'
-        }
-        try:
-            print ("Before making request")
-            response = requests.get(user_story_api_url, headers=headers)
-            response.raise_for_status()
-            print ("After making request")
-            custom_attributes = response.json()
-            print ("Custom attributes are: ", custom_attributes)
-            attributes_values = custom_attributes.get("attributes_values", {})
-            business_value = attributes_values.get(str(attribute), 0)
-            print ("Business value is: ", business_value)
-            return business_value   
-        except requests.exceptions.RequestException as e:
-            print(f"Error fetching user story custom attributes: {e}")
-            return 0
+def get_business_value(user_story_id, auth_token):
+    taiga_url = os.getenv('TAIGA_URL')
+
+    custom_attribute_api_url = f"{taiga_url}/userstories/custom-attributes-values/{user_story_id}"
+
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type': 'application/json',
+    }
+
+    try:
+
+        response = requests.get(custom_attribute_api_url, headers=headers)
+        response.raise_for_status() 
+        
+        if response.status_code == 401:
+            raise UserStoryFetchingError(401, "Client Error: Unauthorized")
+
+        custom_attribute = response.json()
+        custom_attribute_data = custom_attribute['attributes_values']
+
+        return custom_attribute_data
+
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching UserStory: {e}")
+        raise UserStoryFetchingError(e.response.status_code, e.response.reason)
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching UserStory: {e}")
+        raise UserStoryFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching UserStory:")
+        raise 
         
 
 def extract_partial_burndown_data(user_story, tasks, days_data):
@@ -367,3 +426,114 @@ def get_burndown_chart_metric_detail(milestone_id, attrib_key, auth_token):
             "total_burndown_data": total_burndown
         }
     }
+
+
+def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, auth_token, custom_attribute_name):
+    """
+    Description
+    -----------
+    Gets the user_story based on the project_id, filters it based on the sprint_id
+    and uses the custom_attribute to get back the custom_attribute_values
+
+    Arguments
+    ---------
+    project_id, print_id, auth_token, custom_attribute_name
+
+    Returns
+    -------
+    A map of date and business value completed.
+    """
+    try:
+        response = {}
+        
+        serialized_cached_data = r_userstory.get(f'userstory_business_value_data:{sprint_id}')
+        if serialized_cached_data:
+
+            background_thread = threading.Thread(target=userstory_custom_attribute_burndown_for_sprint_process, args=(project_id, sprint_id, auth_token, custom_attribute_name))
+            background_thread.start()
+                    
+            response = json.loads(serialized_cached_data)
+
+            return response
+        
+        response = userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id, auth_token, custom_attribute_name)
+        return response
+    except:
+        raise HTTPException(status_code=401, detail="Missing custom attribute")
+    # response = userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id, auth_token, custom_attribute_name)
+    # return response
+
+
+def userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id, auth_token, custom_attribute_name):
+    response = {}
+    formatted_response = []  # This will hold the final list of dictionaries
+
+    sprint_data = get_milestone_stats(sprint_id, auth_token)
+    user_stories = sprint_data['user_stories']
+
+    if not user_stories:
+        return {"bv_burndown": {"bv_burndown_data": []}}
+
+    total_custom_attribute_value = 0
+
+    start_date = datetime.strptime(sprint_data['estimated_start'], "%Y-%m-%d")
+    end_date = datetime.strptime(sprint_data['estimated_finish'], "%Y-%m-%d")
+
+    # Initialize response dictionary for each day
+    for date in range((end_date - start_date).days + 1):
+        current_date = start_date + timedelta(days=date)
+        response[current_date.strftime("%Y-%m-%d")] = 0
+
+    # Populate response with custom attribute values
+    for user_story in user_stories:
+        user_story_id = user_story['id']
+        custom_attribute_data = get_business_value(user_story_id, auth_token)
+        custom_attribute_type_id = get_custom_attribute_type_id(project_id, auth_token, custom_attribute_name)
+
+        if not custom_attribute_type_id:
+            return {"bv_burndown": {"bv_burndown_data": []}}  
+
+        if not custom_attribute_data:
+            custom_attribute_data[custom_attribute_type_id] = '0' 
+
+        total_custom_attribute_value += int(custom_attribute_data[custom_attribute_type_id])
+
+        if user_story['is_closed'] and user_story['finish_date']:
+            current_date = datetime.strptime(user_story['finish_date'], "%Y-%m-%dT%H:%M:%S.%fZ")
+            prepared_current_date = current_date.strftime("%Y-%m-%d")
+
+            if prepared_current_date in response:
+                response[prepared_current_date] += int(custom_attribute_data[custom_attribute_type_id])
+            else:
+                response[prepared_current_date] = int(custom_attribute_data[custom_attribute_type_id])
+
+    # Prepare formatted response from the calculated data
+    for date in sorted(response):
+        if date != "0":  # Exclude the initial '0' key used for total calculation
+            date_obj = datetime.strptime(date, "%Y-%m-%d")
+            formatted_date = date_obj.strftime("Mon, %d %b %Y 00:00:00 GMT")
+            remaining = total_custom_attribute_value - response[date]
+            completed = response[date] if response[date] != 0 else 0
+            formatted_response.append({
+                "date": formatted_date,
+                "remaining": remaining,
+                "completed": completed
+            })
+            total_custom_attribute_value = remaining
+
+    # Wrap the response in the specified format
+    final_output = {
+            "bv_burndown": {
+                "bv_burndown_data": formatted_response
+            }
+    }
+
+    # Store updated data in Redis if changed
+    serialized_response = json.dumps(final_output)
+    serialized_cached_data = r_userstory.get(f'userstory_business_value_data:{sprint_id}')
+
+    if serialized_cached_data != serialized_response:
+        r_userstory.set(f'userstory_business_value_data:{sprint_id}', serialized_response)
+        print("Stored Redis key:", r_userstory.get(f'userstory_business_value_data:{sprint_id}'))
+
+    return final_output
