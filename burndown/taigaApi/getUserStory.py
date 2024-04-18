@@ -490,8 +490,11 @@ def userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id
         custom_attribute_data = get_business_value(user_story_id, auth_token)
         custom_attribute_type_id = get_custom_attribute_type_id(project_id, auth_token, custom_attribute_name)
 
+        if not custom_attribute_type_id:
+            return {"bv_burndown": {"bv_burndown_data": []}}  
+
         if not custom_attribute_data:
-            custom_attribute_data = {'40203': '5'}  # Hardcoded value
+            custom_attribute_data[custom_attribute_type_id] = '0' 
 
         total_custom_attribute_value += int(custom_attribute_data[custom_attribute_type_id])
 
