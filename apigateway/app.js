@@ -51,6 +51,10 @@ const services = [
       target: process.env.SBPBCOUPLING_URL
     },
     {
+      route: "/engagement",
+      target: process.env.ENGAGEMENT_URL
+    },
+    {
       route: "/taskcoupling",
       target: process.env.TASKCOUPLING_URL
     }
@@ -94,3 +98,4 @@ services.forEach(({ route, target }) => {
   app.listen(PORT, () => {
     console.log(`Gateway is running on port ${PORT}`);
   });
+  
