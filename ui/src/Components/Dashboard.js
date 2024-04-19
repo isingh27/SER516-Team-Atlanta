@@ -7,11 +7,8 @@ import VisualizeMetric from "./VisualizeMetric";
 import LeadTimeVisualization from "./Visualization/LeadTimeVisualization";
 import CycleTimeArbRange from "./Visualization/CycleTimeArbRange";
 import MultisprintBurnDown from "./Visualization/MultisprintBurnDown";
-<<<<<<< Updated upstream
 import ImpedimentTracker from "./Visualization/ImpedimentTracker";
-=======
 import SBPBCouplingMetricVisualization from "./Visualization/SBPBCouplingMetricVisualization";
->>>>>>> Stashed changes
 
 const Dashboard = () => {
 
@@ -29,11 +26,7 @@ const Dashboard = () => {
   const [loadingWip, setLoadingWip] = useState(true);
   const [loadingCFD, setLoadingCFD] = useState(true);
   const [loadingTP, setLoadingTP] = useState(true);
-<<<<<<< Updated upstream
   const [loadingImpediment, setLoadingImpediment] = useState(false); //TODO: FIXME:
-  const projectName = localStorage.getItem("projectName");
-=======
->>>>>>> Stashed changes
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
 
@@ -55,10 +48,33 @@ const Dashboard = () => {
   const [sprintInput, setSprintInput] = useState("");
   const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
-  const [sprints, setSprints] = useState([]);
+  const [sprintsData, setSprints] = useState([]);
   const [sprintInputTP, setSprintInputTP] = useState("");
   const [errorIncycleTimeUS, setErrorIncycleTimeUS] = useState(false);
   const [impedimentTrackerData, setImpedimentTrackerData] = useState([]);
+
+    const sprints = [
+    {
+      title: "Sprint 1",
+      name: "Sprint1",
+    },
+    {
+      title: "Sprint 2",
+      name: "Sprint2",
+    },
+    {
+      title: "Sprint 3",
+      name: "Sprint3",
+    },
+    {
+      title: "Sprint 4",
+      name: "Sprint4",
+    },
+    {
+      title: "Sprint 5",
+      name: "Sprint5",
+    },
+  ];
 
   const handleChangeDropDown = (e) => {
     console.log(e.target.value);
@@ -679,32 +695,34 @@ const Dashboard = () => {
           </Col>
         </div>
       </Row>
-<<<<<<< Updated upstream
       <Row className="justify-content-md-center mt" style={{ height: "550px" }}>
-=======
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
->>>>>>> Stashed changes
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
-<<<<<<< Updated upstream
           {!loadingImpediment ? 
           (<ImpedimentTracker metricData={impedimentTrackerData} />) 
             : (
             <Loader />
           )}
-=======
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
           
             <SBPBCouplingMetricVisualization
               sprintData={sprints}
               loader={Loader}
             />
           
->>>>>>> Stashed changes
         </Col>
       </Row>
+
     </Container>
   );
 };

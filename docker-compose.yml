@@ -102,7 +102,6 @@ services:
       CFD_URL: http://cfd:5004/
       WIP_URL: http://wip:5006/
       BURNDOWN_URL: http://burndown:5007/
-<<
       # IMPEDIMENT_TRACKER_URL: http://impedimenttracker:5008/
       SBPBCOUPLING_URL: http://sbpbcoupling:5008/
 

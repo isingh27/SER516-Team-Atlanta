@@ -180,7 +180,6 @@ class TaigaService {
       }
     );
   }
-<<<<<<< Updated upstream
   taigaProjectImpedimentTracker(token, project_id) {
     return axios.post(
       API_URL + "impedimentTracker",
@@ -190,8 +189,8 @@ class TaigaService {
           Authorization: `Bearer ${token}`,
         },
       }  
-)}
-=======
+);
+}
 
   taigaSBCouplingData(url, token) {
     return axios
@@ -210,7 +209,6 @@ class TaigaService {
         }
     });
   }
->>>>>>> Stashed changes
 }
 
 export default new TaigaService();
