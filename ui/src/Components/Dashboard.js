@@ -7,9 +7,17 @@ import VisualizeMetric from "./VisualizeMetric";
 import LeadTimeVisualization from "./Visualization/LeadTimeVisualization";
 import CycleTimeArbRange from "./Visualization/CycleTimeArbRange";
 import MultisprintBurnDown from "./Visualization/MultisprintBurnDown";
+<<<<<<< Updated upstream
 import ImpedimentTracker from "./Visualization/ImpedimentTracker";
+=======
+import SBPBCouplingMetricVisualization from "./Visualization/SBPBCouplingMetricVisualization";
+>>>>>>> Stashed changes
 
 const Dashboard = () => {
+
+  const projectName = localStorage.getItem("projectName");
+  let projectId = localStorage.getItem("projectId");
+
   const navigation = useNavigate();
 
   const [loadingCTTask, setLoadingCTTask] = useState(true);
@@ -21,27 +29,34 @@ const Dashboard = () => {
   const [loadingWip, setLoadingWip] = useState(true);
   const [loadingCFD, setLoadingCFD] = useState(true);
   const [loadingTP, setLoadingTP] = useState(true);
+<<<<<<< Updated upstream
   const [loadingImpediment, setLoadingImpediment] = useState(false); //TODO: FIXME:
   const projectName = localStorage.getItem("projectName");
+=======
+>>>>>>> Stashed changes
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
+
   const [cycleTimeByUS, setCycleTimeByUS] = useState();
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
+  const [cycleTimeData, setCycleTimeData] = useState([]);
+
   const [leadTime, setLeadTime] = useState();
+
   const [burndownData, setBurndownData] = useState([]);
   const [totalBurndownData, setTotalBurndownData] = useState([]);
+  const [burndownBVData, setBurndownBVData] = useState([]);
+  const [burndownTotalData, setBurndownTotalData] = useState([]);
+
   const [throughputDaily, setThroughputDaily] = useState([]);
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
-  const [burndownBVData, setBurndownBVData] = useState([]);
-  const [burndownTotalData, setBurndownTotalData] = useState([])
+
   const [sprintInput, setSprintInput] = useState("");
   const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   const [sprintInputTP, setSprintInputTP] = useState("");
-  let projectId = localStorage.getItem("projectId");
-  const [cycleTimeData, setCycleTimeData] = useState([]);
   const [errorIncycleTimeUS, setErrorIncycleTimeUS] = useState(false);
   const [impedimentTrackerData, setImpedimentTrackerData] = useState([]);
 
@@ -664,17 +679,30 @@ const Dashboard = () => {
           </Col>
         </div>
       </Row>
+<<<<<<< Updated upstream
       <Row className="justify-content-md-center mt" style={{ height: "550px" }}>
+=======
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+>>>>>>> Stashed changes
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
+<<<<<<< Updated upstream
           {!loadingImpediment ? 
           (<ImpedimentTracker metricData={impedimentTrackerData} />) 
             : (
             <Loader />
           )}
+=======
+          
+            <SBPBCouplingMetricVisualization
+              sprintData={sprints}
+              loader={Loader}
+            />
+          
+>>>>>>> Stashed changes
         </Col>
       </Row>
     </Container>
