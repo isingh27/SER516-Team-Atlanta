@@ -9,6 +9,7 @@ import CycleTimeArbRange from "./Visualization/CycleTimeArbRange";
 import MultisprintBurnDown from "./Visualization/MultisprintBurnDown";
 import ImpedimentTracker from "./Visualization/ImpedimentTracker";
 import SBPBCouplingMetricVisualization from "./Visualization/SBPBCouplingMetricVisualization";
+import TaskCouplingMetricVisualization from "./Visualization/TaskCouplingMetricVisualization";
 
 const Dashboard = () => {
 
@@ -769,6 +770,20 @@ const Dashboard = () => {
             <SBPBCouplingMetricVisualization
               sprintData={sprints}
               loader={Loader}
+            />
+          
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "700px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          
+            <TaskCouplingMetricVisualization
+              loader={Loader}
+              sprintData={sprints}
             />
           
         </Col>
