@@ -8,8 +8,13 @@ import LeadTimeVisualization from "./Visualization/LeadTimeVisualization";
 import CycleTimeArbRange from "./Visualization/CycleTimeArbRange";
 import MultisprintBurnDown from "./Visualization/MultisprintBurnDown";
 import ImpedimentTracker from "./Visualization/ImpedimentTracker";
+import SBPBCouplingMetricVisualization from "./Visualization/SBPBCouplingMetricVisualization";
 
 const Dashboard = () => {
+
+  const projectName = localStorage.getItem("projectName");
+  let projectId = localStorage.getItem("projectId");
+
   const navigation = useNavigate();
 
   const [loadingCTTask, setLoadingCTTask] = useState(true);
@@ -22,26 +27,32 @@ const Dashboard = () => {
   const [loadingCFD, setLoadingCFD] = useState(true);
   const [loadingTP, setLoadingTP] = useState(true);
   const [loadingImpediment, setLoadingImpediment] = useState(false); //TODO: FIXME:
-  const projectName = localStorage.getItem("projectName");
 
   const { metricInput, setMetricInput } = useContext(GlobalContext);
+
   const [cycleTimeByUS, setCycleTimeByUS] = useState();
   const [cycleTimeByTask, setCycleTimeByTask] = useState();
+  const [cycleTimeData, setCycleTimeData] = useState([]);
+
   const [leadTime, setLeadTime] = useState();
+
   const [burndownData, setBurndownData] = useState([]);
   const [totalBurndownData, setTotalBurndownData] = useState([]);
+  const [burndownBVData, setBurndownBVData] = useState([]);
+  const [burndownTotalData, setBurndownTotalData] = useState([]);
+
   const [throughputDaily, setThroughputDaily] = useState([]);
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
-  const [burndownBVData, setBurndownBVData] = useState([]);
-  const [burndownTotalData, setBurndownTotalData] = useState([]);
+
+  //const [burndownBVData, setBurndownBVData] = useState([]);
+ // const [burndownTotalData, setBurndownTotalData] = useState([]);
+
   const [sprintInput, setSprintInput] = useState("");
   const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
   const [sprints, setSprints] = useState([]);
   const [sprintInputTP, setSprintInputTP] = useState("");
-  let projectId = localStorage.getItem("projectId");
-  const [cycleTimeData, setCycleTimeData] = useState([]);
   const [errorIncycleTimeUS, setErrorIncycleTimeUS] = useState(false);
   const [impedimentTrackerData, setImpedimentTrackerData] = useState([]);
 
@@ -748,6 +759,21 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
+      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+          
+            <SBPBCouplingMetricVisualization
+              sprintData={sprints}
+              loader={Loader}
+            />
+          
+        </Col>
+      </Row>
+
     </Container>
   );
 };

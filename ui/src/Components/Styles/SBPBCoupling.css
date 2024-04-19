@@ -1,0 +1,156 @@
+body {
+  height: 100%;
+  width: auto;
+  display: flexbox;
+  justify-content: center;
+  align-items: center;
+  font: medium black;
+  font-size: large;
+  margin: 0px;
+  padding: 0px;
+}
+/* 
+.container {
+  overflow: hidden;
+  margin-top: 275px;
+  display: flex table-column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+} */
+
+.teamName {
+  font: bolder;
+  font-size: x-large;
+  font: darkblue;
+}
+
+.heading {
+  font: bold;
+  font-size: larger;
+  font: teal;
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.align-content {
+  display: flex;
+  flex-direction: row;
+}
+
+.height-full {
+  min-height: 100vh;
+  display: flex;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.container-full {
+  min-height: 100vh;
+  min-width: 100vh;
+  width: 100%;
+  align-items: start;
+  display: flex;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.route-container {
+  min-width: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.graph-container {
+  min-width: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spinner-border {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.tabElements {
+  cursor: pointer;
+  border: none;
+  transition: ease;
+  transition-duration: 500ms;
+  background-color: white;
+  /* border-radius: 0.6rem; */
+  transition-property: background-color;
+  /* padding-inline: 0.8rem; */
+  padding-top: 0.4rem;
+  height: auto;
+  /* padding-bottom: 0rem; */
+  /* width: 12rem; */
+  font-size: small;
+  border-bottom: none;
+}
+
+.selectedTabElements {
+  background-color: white;
+  border-bottom: 2px solid #ffd053;
+}
+
+.tabElements:hover {
+  /* box-shadow: 5px 5px 10px lightgrey; */
+  /* transition-property: box-shadow; */
+  transition-property: background-color;
+  background-color: #ffe59f;
+  transition: ease;
+  transition-duration: 500ms;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.vis-network {
+  overflow: visible;
+}
+
+.react-tabs__tab-list {
+  list-style-type: none;
+}
+
+.vis-tooltip {
+  position: absolute;
+  background-color: #ffe59f;
+  padding-inline: 0.6rem;
+  padding-block: 0.4rem;
+  border-radius: 1.5rem;
+}
+
+.calendarElement {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50px;
+  border: 2px solid rgb(249 128 128);
+  z-index: 999;
+}
