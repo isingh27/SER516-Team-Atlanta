@@ -11,7 +11,9 @@ from fastapi import HTTPException
 
 # Load environment variables from .env file
 load_dotenv()
-r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+#redis config for caching
+r_userstory = redis.StrictRedis(host='redis-container-burndown', port=6379, db=0)
 
 class UserStoryFetchingError(Exception):
     def __init__(self, status_code, reason):
