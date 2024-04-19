@@ -1,0 +1,31 @@
+name: Build and publish Docker Image Using Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout the repository
+              uses: actions/checkout@v2
+
+
+            - name: Build the Docker images
+              run: docker compose build
+
+            - name: Push the Docker images
+              run: docker compose push
+              env:
+                  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+                  DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+
+            - name: Tag Docker image
+              run: docker tag ser516-team-atlhou:latest ishtpreet/ser516-team-atlhou:latest
+    
+            - name: Push Docker image to Docker Hub
+              run: docker push ishtpreet/ser516-team-atlhou:latest
+            
