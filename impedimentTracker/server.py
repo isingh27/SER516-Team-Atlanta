@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
-from taigaApi import get_project_impediments
+from taigaApi.impedimentTracker import get_project_impediments
 
 load_dotenv()
 
@@ -19,9 +19,17 @@ def sampleRoute():
 
 @app.route("/", methods=["POST"])
 def impediment():
-    project_id = request.json['project_id']
-    auth_token = request.json['auth_token']
-    impediments = get_project_impediments(project_id, auth_token)
+
+    auth_header = request.headers.get('Authorization')
+    token = ''
+
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"message": "Token is missing or invalid"}), 401
+    project_id = request.json['projectId']
+
+    impediments = get_project_impediments(project_id, token)
     return jsonify(impediments)
 
 port = os.getenv("PORT")

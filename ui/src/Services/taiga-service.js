@@ -188,8 +188,9 @@ class TaigaService {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }  
-)}
+      }
+    );
+  }
 }
 
 export default new TaigaService();
