@@ -57,6 +57,10 @@ const services = [
     {
       route: "/taskcoupling",
       target: process.env.TASKCOUPLING_URL
+    },
+    {
+      route: "/costofdelay",
+      target: process.env.COSTOFDELAY_URL
     }
    ];
 

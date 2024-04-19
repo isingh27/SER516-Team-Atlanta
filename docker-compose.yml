@@ -107,6 +107,16 @@ services:
       FASTAPI_APP: main.py
       TAIGA_URL: https://api.taiga.io/api/v1
 
+  costofdelay:
+    build: ./costofdelay
+    ports:
+      - "5011:5011"
+    volumes:
+      - ./costofdelay:/app
+    environment:
+      FASTAPI_APP: main.py
+      TAIGA_URL: https://api.taiga.io/api/v1
+
   apigateway:
     build: ./apigateway
     ports:
@@ -126,6 +136,7 @@ services:
       SBPBCOUPLING_URL: http://sbpbcoupling:5008/
       ENGAGEMENT_URL: http://engagement:5009/
       TASKCOUPLING_URL: http://taskcoupling:5010/
+      COSTOFDELAY_URL: http://costofdelay:5011/
 
 
   frontend:
