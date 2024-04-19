@@ -45,6 +45,9 @@ const Dashboard = () => {
   const [wipData, setWipData] = useState([]);
   const [cfdData, setCfdData] = useState([]);
 
+  //const [burndownBVData, setBurndownBVData] = useState([]);
+ // const [burndownTotalData, setBurndownTotalData] = useState([]);
+
   const [sprintInput, setSprintInput] = useState("");
   const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
@@ -114,7 +117,7 @@ const Dashboard = () => {
   };
 
   const combineBDData = () => {
-    console.log('we start fun enter')
+    console.log("we start fun enter");
     let tempCombinedBD = [];
     burndownData.forEach((item) => {
       if (item && item[0] !== "Date") {
@@ -139,7 +142,7 @@ const Dashboard = () => {
       }
     });
 
-  tempCombinedBD.unshift([
+    tempCombinedBD.unshift([
       "Date",
       "Partial Points",
       "Total Points",
@@ -148,7 +151,7 @@ const Dashboard = () => {
     ]);
     console.log("tempCombinedBD ", tempCombinedBD);
     setTotalBurndownData(tempCombinedBD);
-    setLoadingBD(false)
+    setLoadingBD(false);
   };
 
   useEffect(() => {
@@ -189,12 +192,10 @@ const Dashboard = () => {
         });
         console.log(cycleTimeDataUS);
         if (cycleTimeDataUS.length === 0) {
-
           // cycleTimeDataUS.push(["No data", 0]);
           setErrorIncycleTimeUS(true);
           setLoadingCTUS(false);
-          return
-
+          return;
         }
         cycleTimeDataUS.unshift(["# User Story", "Cycle Time"]);
         setCycleTimeByUS(cycleTimeDataUS);
@@ -219,7 +220,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (sprintInput === "") {
       fetchSprints();
-    }else{
+    } else {
       callBDData();
       callCFDData();
       callThroughputDaily();
@@ -227,36 +228,30 @@ const Dashboard = () => {
       callBDTotalData();
       callImpedimentTracker();
     }
-    
   }, [sprintInput, cfdSprintInput, sprintInputTP]);
 
   useEffect(() => {
     setLoadingBD(true); // represents all BD-related loading states.
-  
+
     const fetchDataAndUpdate = async () => {
       try {
-        await Promise.all([
-          callBDData(),
-          callBDBVData(),
-          callBDTotalData(),
-        ]);
+        await Promise.all([callBDData(), callBDBVData(), callBDTotalData()]);
       } catch (error) {
         console.error("Error fetching data: ", error);
       } finally {
         setLoadingBD(false); // Now all fetching and state updates should be complete.
       }
     };
-  
+
     fetchDataAndUpdate();
   }, [sprintInputBurnDown]);
-    
+
   useEffect(() => {
     if (!loadingBD) {
       combineBDData();
     }
   }, [loadingBD, burndownData, burndownBVData, burndownTotalData]);
 
-  
   const callThroughputDaily = () => {
     taigaService
       .taigaProjectThroughputDaily(
@@ -320,24 +315,40 @@ const Dashboard = () => {
         console.error(error.message);
       });
   };
-  const callBDData = async () => { //BD for partial storypoints
+  const callBDData = async () => {
+    //BD for partial storypoints
     try {
-      const sprintsRes = await taigaService.taigaProjectSprints(localStorage.getItem("taigaToken"), projectId);
+      const sprintsRes = await taigaService.taigaProjectSprints(
+        localStorage.getItem("taigaToken"),
+        projectId
+      );
       console.log(sprintsRes);
-      if (sprintsRes && sprintsRes.data && sprintsRes.data.sprint_ids && sprintsRes.data.sprint_ids.length > 0) {
-        const selectedSprint = sprintsRes.data.sprint_ids.find(sprint => sprint[1].toString() === sprintInput);
+      if (
+        sprintsRes &&
+        sprintsRes.data &&
+        sprintsRes.data.sprint_ids &&
+        sprintsRes.data.sprint_ids.length > 0
+      ) {
+        const selectedSprint = sprintsRes.data.sprint_ids.find(
+          (sprint) => sprint[1].toString() === sprintInput
+        );
         if (!selectedSprint) {
           throw new Error(`Sprint "${sprintInput}" not found`);
         }
         let sprintId = selectedSprint[1];
         console.log(sprintId);
-  
-        const burndownRes = await taigaService.taigaProjectBurnDownChart(localStorage.getItem("taigaToken"), sprintId);
+
+        const burndownRes = await taigaService.taigaProjectBurnDownChart(
+          localStorage.getItem("taigaToken"),
+          sprintId
+        );
         console.log(burndownRes);
-  
-        const bdTempData = burndownRes.data.burndown_chart_data.days.map(data => {
-          return [data.day, data.open_points, data.optimal_points];
-        });
+
+        const bdTempData = burndownRes.data.burndown_chart_data.days.map(
+          (data) => {
+            return [data.day, data.open_points, data.optimal_points];
+          }
+        );
         bdTempData.sort((a, b) => a[0].localeCompare(b[0]));
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
         setBurndownData(bdTempData);
@@ -347,51 +358,56 @@ const Dashboard = () => {
     } catch (error) {
       console.error(error.message);
     }
-    };
+  };
 
-    const callBDTotalData = async () => {
-      try {
-        const sprintsRes = await taigaService.taigaProjectSprints(localStorage.getItem("taigaToken"), projectId);
-        console.log(sprintsRes);
-    
-        if (
-          sprintsRes &&
-          sprintsRes.data &&
-          sprintsRes.data.sprint_ids &&
-          sprintsRes.data.sprint_ids.length > 0
-        ) {
-          const selectedSprint = sprintsRes.data.sprint_ids.find(
-            sprint => sprint[1].toString() === sprintInput
-          );
-          if (!selectedSprint) {
-            throw new Error(`Sprint "${sprintInput}" not found`);
-          }
-          let sprintId = selectedSprint[1];
-          console.log(sprintId);
-    
-          const burndownRes = await taigaService.taigaBurndownTotal(localStorage.getItem("taigaToken"), projectId, sprintId);
-          console.log("total burndown", burndownRes.data.data);
-    
-          const bdTempData = burndownRes.data.data.total_burndown.total_burndown_data.map(data => {
-            const dateObject = new Date(data.date);
-            const formattedDate = dateObject.toISOString().split("T")[0];
-            return [
-              formattedDate,
-              data.remaining,
-              data.expected_remaining,
-            ];
-          });
-          bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
-          setBurndownTotalData(bdTempData);
-        } else {
-          throw new Error("No sprints found for this project");
+  const callBDTotalData = async () => {
+    try {
+      const sprintsRes = await taigaService.taigaProjectSprints(
+        localStorage.getItem("taigaToken"),
+        projectId
+      );
+      console.log(sprintsRes);
+
+      if (
+        sprintsRes &&
+        sprintsRes.data &&
+        sprintsRes.data.sprint_ids &&
+        sprintsRes.data.sprint_ids.length > 0
+      ) {
+        const selectedSprint = sprintsRes.data.sprint_ids.find(
+          (sprint) => sprint[1].toString() === sprintInput
+        );
+        if (!selectedSprint) {
+          throw new Error(`Sprint "${sprintInput}" not found`);
         }
-      } catch (error) {
-        console.error(error.message);
+        let sprintId = selectedSprint[1];
+        console.log(sprintId);
+
+        const burndownRes = await taigaService.taigaBurndownTotal(
+          localStorage.getItem("taigaToken"),
+          projectId,
+          sprintId
+        );
+        console.log("total burndown", burndownRes.data.data);
+
+        const bdTempData =
+          burndownRes.data.data.total_burndown.total_burndown_data.map(
+            (data) => {
+              const dateObject = new Date(data.date);
+              const formattedDate = dateObject.toISOString().split("T")[0];
+              return [formattedDate, data.remaining, data.expected_remaining];
+            }
+          );
+        bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
+        setBurndownTotalData(bdTempData);
+      } else {
+        throw new Error("No sprints found for this project");
       }
-      
-    };
-      const callWipData = () => {
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+  const callWipData = () => {
     setLoadingWip(true);
     taigaService
       .taigaProjectWorkInProgress(localStorage.getItem("taigaToken"), projectId)
@@ -418,9 +434,12 @@ const Dashboard = () => {
 
   const callBDBVData = async () => {
     try {
-      const sprintsRes = await taigaService.taigaProjectSprints(localStorage.getItem("taigaToken"), projectId);
+      const sprintsRes = await taigaService.taigaProjectSprints(
+        localStorage.getItem("taigaToken"),
+        projectId
+      );
       console.log(sprintsRes);
-  
+
       if (
         sprintsRes &&
         sprintsRes.data &&
@@ -428,26 +447,29 @@ const Dashboard = () => {
         sprintsRes.data.sprint_ids.length > 0
       ) {
         const selectedSprint = sprintsRes.data.sprint_ids.find(
-          sprint => sprint[1].toString() === sprintInput
+          (sprint) => sprint[1].toString() === sprintInput
         );
         if (!selectedSprint) {
           throw new Error(`Sprint "${sprintInput}" not found`);
         }
         let sprintId = selectedSprint[1];
         console.log(sprintId);
-  
-        const burndownRes = await taigaService.taigaBurnDownBV(localStorage.getItem("taigaToken"), projectId, sprintId);
+
+        const burndownRes = await taigaService.taigaBurnDownBV(
+          localStorage.getItem("taigaToken"),
+          projectId,
+          sprintId
+        );
         console.log("BVBurndown", burndownRes.data.data);
-  
-        const bdTempData = burndownRes.data.data.total_burndown.total_burndown_data.map(data => {
-          const dateObject = new Date(data.date);
-          const formattedDate = dateObject.toISOString().split("T")[0];
-          return [
-            formattedDate,
-            data.remaining,
-            data.expected_remaining,
-          ];
-        });
+
+        const bdTempData =
+          burndownRes.data.data.total_burndown.total_burndown_data.map(
+            (data) => {
+              const dateObject = new Date(data.date);
+              const formattedDate = dateObject.toISOString().split("T")[0];
+              return [formattedDate, data.remaining, data.expected_remaining];
+            }
+          );
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
         setBurndownBVData(bdTempData);
       } else {
@@ -458,27 +480,74 @@ const Dashboard = () => {
     }
   };
 
-  const callImpedimentTracker = () => {
-    // setLoadingImpediment(true);
-    // TODO: FIXME:
-    // taigaService
-    //   .taigaProjectImpedimentTracker(localStorage.getItem("taigaToken"), projectId)
-    //   .then((res) => {
-        // console.log("Impediment Tracker", res.data.impediment_tracker);
-        // let impedimentTrackerTempData = res.data.impediment_tracker.map((data) => {
-        //   return [data.date, data.days];
-        // });
-        // impedimentTrackerTempData.unshift(["Date", "Days"]);
-        // setImpedimentTrackerData(impedimentTrackerTempData);
-      // })
-      // .catch((error) => {
-      //   console.error(error.message);
-      // })
-      // .finally(() => {
-      //   setLoadingImpediment(false);
-      // });
+  // const callImpedimentTracker = () => {
+  //   setLoadingImpediment(true);
+  //   // TODO: FIXME:
+  //   taigaService
+  //     .taigaProjectImpedimentTrackerTest(
+  //       localStorage.getItem("taigaToken"),
+  //       projectId
+  //     )
+  //     .then((res) => {
+  //       console.log("Impediment Tracker", res.data.impediment_tracker);
+  //       let impedimentTrackerTempData = res.data.impediment_tracker.map(
+  //         (data) => {
+  //           return [data.date, data.days];
+  //         }
+  //       );
+  //       impedimentTrackerTempData.unshift(["Date", "Days"]);
+  //       setImpedimentTrackerData(impedimentTrackerTempData);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error.message);
+  //     })
+  //     .finally(() => {
+  //       setLoadingImpediment(false);
+  //     });
+  // };
+
+  const callImpedimentTracker = async () => {
+    setLoadingImpediment(true);
+
+    try {
+      const res = await taigaService.taigaProjectImpedimentTracker(
+        localStorage.getItem("taigaToken"),
+        projectId
+      );
+
+      const impedimentData = res.data;
+
+      const impedimentsByDate = {};
+
+      impedimentData.forEach((impediment) => {
+        const createdDate = impediment.created_date.split("T")[0];
+        if (!impedimentsByDate[createdDate]) {
+          impedimentsByDate[createdDate] = {
+            count: 0,
+            ids: [],
+          };
+        }
+        impedimentsByDate[createdDate].count++;
+        impedimentsByDate[createdDate].ids.push(impediment.id);
+      });
+
+      const formattedData = Object.entries(impedimentsByDate).map(
+        ([date, info]) => {
+          return [date, info.count, info.ids.length];
+        }
+      );
+
+      formattedData.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+      formattedData.unshift(["Date", "ImpedimetsOnDay", "TotalImpediments"]);
+
+      setImpedimentTrackerData(formattedData);
+    } catch (error) {
+      console.error("Error fetching impediment data:", error.message);
+    } finally {
+      setLoadingImpediment(false);
+    }
   };
-  
+
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
@@ -506,7 +575,10 @@ const Dashboard = () => {
           style={{ borderBottom: "1px solid black" }}
         >
           {!loadingCTTask ? (
-            <CycleTimeArbRange metricData={cycleTimeByTask} cycleTimeData={cycleTimeData}/>
+            <CycleTimeArbRange
+              metricData={cycleTimeByTask}
+              cycleTimeData={cycleTimeData}
+            />
           ) : (
             <Loader />
           )}
@@ -524,15 +596,14 @@ const Dashboard = () => {
           >
             <Card className="custom-card">
               <Card.Body>
-                {(!loadingCTUS && !errorIncycleTimeUS) ? (
+                {!loadingCTUS && !errorIncycleTimeUS ? (
                   <VisualizeMetric
                     metricInput={"cycleTimeUS"}
-                          metricData={cycleTimeByUS}
+                    metricData={cycleTimeByUS}
                   />
                 ) : loadingCTUS ? (
                   <Loader />
-                ) : 
-                (
+                ) : (
                   <h3>No data available for Cycle Time by User Story</h3>
                 )}
               </Card.Body>
@@ -646,9 +717,12 @@ const Dashboard = () => {
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
-          {!loadingBD ? 
-          (sprints && (sprints.length > 0) && <MultisprintBurnDown sprintOptions={sprints} />) 
-            : (
+          {!loadingBD ? (
+            sprints &&
+            sprints.length > 0 && (
+              <MultisprintBurnDown sprintOptions={sprints} />
+            )
+          ) : (
             <Loader />
           )}
         </Col>
@@ -678,9 +752,9 @@ const Dashboard = () => {
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
         >
-          {!loadingImpediment ? 
-          (<ImpedimentTracker metricData={impedimentTrackerData} />) 
-            : (
+          {!loadingImpediment ? (
+            <ImpedimentTracker metricData={impedimentTrackerData} />
+          ) : (
             <Loader />
           )}
         </Col>

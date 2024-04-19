@@ -200,15 +200,6 @@ class TaigaService {
         }
     });
   }
-
-  taigaPBCouplingData(url, token) {
-    return axios
-      .get(API_URL + url, {
-        headers: {
-          Authorization: token 
-        }
-    });
-  }
 }
 
 export default new TaigaService();
