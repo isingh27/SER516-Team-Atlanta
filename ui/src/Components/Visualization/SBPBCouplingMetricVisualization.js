@@ -203,27 +203,6 @@ export default function SBPBCouplingMetricVisualization(props) {
               {!isSprintDisabled &&
               props.sprintData &&
               props.sprintData.length > 0 ? (
-                // <select
-                //   value={selectedOption}
-                //   onChange={handleDropdownChange}
-                //   className="burndown"
-                //   style={{
-                //     paddingBlock: "0.4rem",
-                //     paddingInline: "0.5rem",
-                //     marginBottom: "2.5rem",
-                //     borderRadius: "0.5rem",
-                //     borderColor: "#f98080",
-                //   }}
-                // >
-                //   <option className="dropdown" value="">
-                //     Select an option
-                //   </option>
-                //   {props.sprintData.map((item) => (
-                //     <option key={item.id} value={item.id} className="dropdown">
-                //       {item.name}
-                //     </option>
-                //   ))}
-                // </select>
                 <Form.Select
                   value={selectedOption}
                   onChange={handleDropdownChange}

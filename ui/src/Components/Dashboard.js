@@ -48,33 +48,10 @@ const Dashboard = () => {
   const [sprintInput, setSprintInput] = useState("");
   const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
   const [cfdSprintInput, setCfdSprintInput] = useState("");
-  const [sprintsData, setSprints] = useState([]);
+  const [sprints, setSprints] = useState([]);
   const [sprintInputTP, setSprintInputTP] = useState("");
   const [errorIncycleTimeUS, setErrorIncycleTimeUS] = useState(false);
   const [impedimentTrackerData, setImpedimentTrackerData] = useState([]);
-
-    const sprints = [
-    {
-      title: "Sprint 1",
-      name: "Sprint1",
-    },
-    {
-      title: "Sprint 2",
-      name: "Sprint2",
-    },
-    {
-      title: "Sprint 3",
-      name: "Sprint3",
-    },
-    {
-      title: "Sprint 4",
-      name: "Sprint4",
-    },
-    {
-      title: "Sprint 5",
-      name: "Sprint5",
-    },
-  ];
 
   const handleChangeDropDown = (e) => {
     console.log(e.target.value);
