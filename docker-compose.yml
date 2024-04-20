@@ -12,13 +12,6 @@ services:
       FLASK_ENV: development
       TAIGA_URL: https://api.taiga.io/api/v1
 
-  redis:
-    image: redis   # Using the official Redis image from Docker Hub
-    container_name: redis-container-burndown
-    ports:
-      - '6370:6379'
-    volumes:
-      - ./redis:/app
   
   cfd:
     image: ishtpreet/ser516_cfd:latest
