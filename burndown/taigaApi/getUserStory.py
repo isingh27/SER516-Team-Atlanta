@@ -587,7 +587,16 @@ def userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id
         total_custom_attribute_value += int(custom_attribute_data[custom_attribute_type_id])
 
         if user_story['is_closed'] and user_story['finish_date']:
-            current_date = datetime.strptime(user_story['finish_date'], "%Y-%m-%dT%H:%M:%S.%fZ")
+            try:
+                # Try parsing with the first format
+                current_date = datetime.strptime(user_story['finish_date'], "%Y-%m-%dT%H:%M:%SZ")
+            except ValueError:
+                try:
+                    # If parsing fails, try parsing with the second format
+                    current_date = datetime.strptime(user_story['finish_date'], "%Y-%m-%dT%H:%M:%S.%fZ")
+                except ValueError:
+                    # Handle the case where both formats fail to parse the date
+                    print("Error: Unable to parse finish_date with either format")
             prepared_current_date = current_date.strftime("%Y-%m-%d")
 
             if prepared_current_date in response:
