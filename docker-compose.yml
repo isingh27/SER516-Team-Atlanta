@@ -156,11 +156,11 @@ services:
     build:
       context: ./ui
     ports:
-      - "3000:3000"
+      - "${UI_PORT}:3000"
     volumes:
       - ./ui:/app
       - /app/node_modules
     environment:
-      REACT_APP_BACKEND_URI: http://127.0.0.1:5050/
+      REACT_APP_BACKEND_URI: ${API_URL}
       NODE_ENV: development
       CHOKIDAR_USEPOLLING: 'true' # Helps with hot-reloading in Docker

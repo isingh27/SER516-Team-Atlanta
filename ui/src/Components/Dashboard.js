@@ -552,16 +552,16 @@ const Dashboard = () => {
 
   return (
     <Container fluid>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row className="justify-content-md-center" style={{ height: "400px" }} id="cycleTime">
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
-        >
+          >
           {!loadingCTTask ? (
             <VisualizeMetric
-              metricInput={"cycleTime"}
-              metricData={cycleTimeByTask}
+            metricInput={"cycleTime"}
+            metricData={cycleTimeByTask}
             />
           ) : (
             <Loader />
@@ -611,17 +611,17 @@ const Dashboard = () => {
           </Col>
         </div>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row className="justify-content-md-center" style={{ height: "400px" }} id="leadTime">
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
-        >
+          >
           {!loadingLT ? (
             <LeadTimeVisualization
-              metricData={leadTime}
-              loading={loadingLT}
-              setLoading={setLoadingLT}
+            metricData={leadTime}
+            loading={loadingLT}
+            setLoading={setLoadingLT}
             />
           ) : (
             <Loader />
@@ -630,9 +630,9 @@ const Dashboard = () => {
       </Row>
       {/*<Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
+        md={12}
+        className="mb-4"
+        style={{ borderBottom: "1px solid black" }}
         >
           {!loadingBD ? (
             <VisualizeMetric
@@ -648,13 +648,13 @@ const Dashboard = () => {
           )}
         </Col>
       </Row> */}
-      <Row className="justify-content-md-center mt-4">
+      <Row className="justify-content-md-center mt-4" id="burndown">
         <div className="card-wrapper">
           <Col
             md={12}
             className="mb-4"
             style={{ borderBottom: "1px solid black" }}
-          >
+            >
             <Card className="custom-card">
               <Card.Body>
                 {!loadingBD && totalBurndownData.length > 1 ? (
@@ -665,7 +665,7 @@ const Dashboard = () => {
                     metricData={totalBurndownData}
                     handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
                     sprintOptions={sprints}
-                  />
+                    />
                 ) : (
                   <Loader />
                 )}
@@ -675,7 +675,7 @@ const Dashboard = () => {
         </div>
       </Row>
 
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row className="justify-content-md-center" style={{ height: "400px" }} id="wip">
         <Col
           md={12}
           className="mb-4"
@@ -683,28 +683,28 @@ const Dashboard = () => {
         >
           {!loadingWip ? (
             <VisualizeMetric
-              metricInput={"workInProgress"}
-              metricData={wipData}
+            metricInput={"workInProgress"}
+            metricData={wipData}
             />
           ) : (
             <Loader />
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row className="justify-content-md-center" style={{ height: "400px" }} id="throughput">
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
-        >
+          >
           {!loadingTP ? (
             <VisualizeMetric
-              metricInput={"throughputDaily"}
-              sprintInput={sprintInputTP}
-              setSprintInput={setSprintInputTP}
-              metricData={throughputDaily}
-              handleChangeDropDown={handleChangeDropDownTP}
-              sprintOptions={sprints}
+            metricInput={"throughputDaily"}
+            sprintInput={sprintInputTP}
+            setSprintInput={setSprintInputTP}
+            metricData={throughputDaily}
+            handleChangeDropDown={handleChangeDropDownTP}
+            sprintOptions={sprints}
             />
           ) : (
             <Loader />
@@ -727,13 +727,13 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center">
-        <div className="card-wrapper">
+      <Row className="justify-content-md-center" id="cfd">
+        <div className="card-wrapper" >
           <Col
             md={12}
             className="mb-4"
             style={{ borderBottom: "1px solid black" }}
-          >
+            >
             <Card className="custom-card" style={{ height: "900px" }}>
               <Card.Body>
                 {!loadingCFD ? (
@@ -759,17 +759,17 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "700px" }}>
+      <Row className="justify-content-md-center" style={{ height: "400px" }} id="SBPBCoupling">
         <Col
           md={12}
           className="mb-4"
           style={{ borderBottom: "1px solid black" }}
-        >
+          >
           
             <SBPBCouplingMetricVisualization
               sprintData={sprints}
               loader={Loader}
-            />
+              />
           
         </Col>
       </Row>
