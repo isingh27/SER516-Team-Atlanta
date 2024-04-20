@@ -188,8 +188,17 @@ class TaigaService {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
-    );
+      }  
+);
+}
+
+  taigaSBCouplingData(url, token) {
+    return axios
+      .get(API_URL + url, {
+        headers: {
+          Authorization: token 
+        }
+    });
   }
 }
 
