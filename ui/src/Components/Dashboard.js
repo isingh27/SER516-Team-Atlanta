@@ -764,7 +764,7 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      <Row className="justify-content-md-center" style={{ height: "700px" }}>
         <Col
           md={12}
           className="mb-4"
