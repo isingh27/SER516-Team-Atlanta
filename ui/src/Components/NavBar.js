@@ -24,7 +24,7 @@ export default function NavBar() {
   const isAuthenticated = !!localStorage.getItem('taigaToken');
 
   return (
-    <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
+    <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark" sticky="top">
       <Container>
         <Navbar.Brand href="/">Team-Atlanta</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -34,6 +34,13 @@ export default function NavBar() {
             <>
             <Nav.Link href="/project-slug">Taiga Project</Nav.Link>
             <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+            <Nav.Link href="#cycleTime">Cycle Time</Nav.Link>
+            <Nav.Link href="#leadTime">Lead Time</Nav.Link>
+            <Nav.Link href="#brundown">BurnDown</Nav.Link>
+            <Nav.Link href="#wip">Work In Progress</Nav.Link>
+            <Nav.Link href="#throughput">Throughput</Nav.Link>
+            <Nav.Link href="#cfd">CFD</Nav.Link>
+            <Nav.Link href="#SBPBCoupling">SBPBCoupling</Nav.Link>
             </>  
           }         
           </Nav>

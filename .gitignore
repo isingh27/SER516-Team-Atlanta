@@ -27,3 +27,6 @@ replay_pid*
 taigaProject/__pycache__/*
 *.pyc
 ui/package-lock.json
+
+.vscode
+.env
