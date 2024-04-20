@@ -127,6 +127,10 @@ const Dashboard = () => {
     // Update with burndownBVData
     burndownBVData.forEach((item, index) => {
       if (item && item[0] !== "Date" && tempCombinedBD[index]) {
+        console.log('bv open item[1]',item[1])
+        if(item[1]  === 0){
+          item[1] =  10
+        }
         tempCombinedBD[index][3] = item[1]; // Update business value
       }
     });
@@ -452,7 +456,7 @@ const Dashboard = () => {
         console.log("BVBurndown", burndownRes.data.data);
 
         const bdTempData =
-          burndownRes.data.data.total_burndown.total_burndown_data.map(
+          burndownRes.data.data.bv_burndown.bv_burndown_data.map(
             (data) => {
               const dateObject = new Date(data.date);
               const formattedDate = dateObject.toISOString().split("T")[0];
@@ -460,6 +464,7 @@ const Dashboard = () => {
             }
           );
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
+        console.log('bdTempData',bdTempData)
         setBurndownBVData(bdTempData);
       } else {
         throw new Error("No sprints found for this project");

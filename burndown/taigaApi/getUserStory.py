@@ -8,7 +8,6 @@ import threading
 import json
 from flask import jsonify
 from fastapi import HTTPException
-
 # Load environment variables from .env file
 load_dotenv()
 r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -346,6 +345,92 @@ def extract_partial_burndown_data(user_story, tasks, days_data):
                     days_data[task["date_closed"]]["expected_remaining"] += task["points"]
 
 
+def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
+    """
+    Description
+    -----------
+    Gets the user_story storypoint burndown based on the sprint_id.
+
+    Arguments
+    ---------
+    sprint_id, auth_token
+
+    Returns
+    -------
+    A map of date and remaining story points value for every day until end of the sprint.
+    """
+    # r_userstory.flushdb()
+
+    response = {}
+    try:
+        print("stored redis key",  r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}'))    
+
+        serialized_cached_data = r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}')
+        if serialized_cached_data:
+
+            background_thread = threading.Thread(target=storypoint_burndown_for_sprint_process, args=(sprint_id, auth_token))
+            background_thread.start()
+                    
+            response = json.loads(serialized_cached_data)
+
+            return response
+        
+        response = storypoint_burndown_for_sprint_process(sprint_id, auth_token)
+        return response
+    except UserStoryFetchingError as e:
+        print(f"Error fetching UserStories: {e}")
+        return None
+         
+    except MilestoneFetchingError as e:
+        print(f"Error fetching Milestones: {e}")
+        return None
+    except Exception as e :
+        print(f"Unexpected error :{e}")
+        return None
+
+def storypoint_burndown_for_sprint_process(sprint_id, auth_token):
+    #get sprint info 
+    sprint_data = get_milestone_by_id(sprint_id, auth_token)
+    user_stories = sprint_data['user_stories']
+    total_story_points = sprint_data['total_points'] 
+
+    start_date = datetime.strptime(sprint_data['estimated_start'],"%Y-%m-%d")
+    end_date =  datetime.strptime(sprint_data['estimated_finish'],"%Y-%m-%d")
+    result={}
+    date_storypoint_map={}
+
+    for user_story in user_stories:
+        if user_story['is_closed']:
+                
+            if user_story['finish_date']  :
+                    
+                finish_date = datetime.strptime(user_story['finish_date'],"%Y-%m-%dT%H:%M:%S.%fZ")
+                finish_date = finish_date.strftime("%Y-%m-%d")
+
+                user_story['total_points'] = user_story['total_points'] if user_story['total_points'] else 0
+                if(finish_date in date_storypoint_map):
+                    print("check",date_storypoint_map[finish_date], user_story['total_points'])
+                    date_storypoint_map[finish_date] += user_story['total_points']
+                else:
+                    date_storypoint_map[finish_date] = user_story['total_points']
+
+    for date in range((end_date - start_date).days+1):
+       
+        current_date = start_date+timedelta(days = date)
+        if current_date.strftime('%Y-%m-%d') in date_storypoint_map:
+            total_story_points -= date_storypoint_map[current_date.strftime('%Y-%m-%d')]
+        result[current_date.strftime("%Y-%m-%d")] = total_story_points
+
+    serialized_response = json.dumps(result)
+    serialized_cached_data = r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}')
+
+
+    if serialized_cached_data != serialized_response:
+            r_userstory.set(f'userstory_full_storypoint_data:{sprint_id}', serialized_response) 
+            print("stored redis key",  r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}'))    
+
+    return result
+
 
 def extract_bv_burndown_data(user_story, business_value_str, days_bv_data):
     try:
@@ -495,7 +580,8 @@ def userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id
 
         if not custom_attribute_data:
             custom_attribute_data[custom_attribute_type_id] = '0' 
-
+        if custom_attribute_data[custom_attribute_type_id] == '':
+            custom_attribute_data[custom_attribute_type_id] = '0'
         total_custom_attribute_value += int(custom_attribute_data[custom_attribute_type_id])
 
         if user_story['is_closed'] and user_story['finish_date']:
@@ -537,3 +623,48 @@ def userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id
         print("Stored Redis key:", r_userstory.get(f'userstory_business_value_data:{sprint_id}'))
 
     return final_output
+
+
+
+
+class MilestoneFetchingError(Exception):
+    def __init__(self, status_code, reason):
+        self.status_code = status_code
+        self.reason = reason
+
+def get_milestone_by_id(milestone_id, auth_token):
+
+
+    taiga_url = os.getenv('TAIGA_URL')
+    taiga_api_url = f"{taiga_url}/milestones/{milestone_id}"
+
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type' : 'application/json'
+    }
+
+    try:
+        response = requests.get(taiga_api_url, headers= headers)
+        response.raise_for_status()
+        print("response status code---------------",response.status_code)
+        if response.status_code == 401:
+            raise MilestoneFetchingError(401, "Client Error: Unauthorized")
+
+        milestone_info = response.json()
+        return milestone_info
+    
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching milestone: {e}")
+        raise MilestoneFetchingError(e.response.status_code, e.response.reason)
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching milestone: {e}")
+        raise MilestoneFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching milestone:")
+        raise 
+
+    except requests.exceptions.RequestException as e:
+        print(f'error fetching milestones:{e}')
+        return None

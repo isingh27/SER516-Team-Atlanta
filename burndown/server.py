@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from taigaApi.getMilestoneStats import get_milestone_stats
 from taigaApi.getUserStory import get_user_story_custom_attrib
-from taigaApi.getUserStory import get_burndown_chart_metric_detail,get_userstory_custom_attribute_burndown_for_sprint
+from taigaApi.getUserStory import get_burndown_chart_metric_detail,get_userstory_custom_attribute_burndown_for_sprint,get_storypoint_burndown_for_sprint
 from taigaApi.getAllSprintIDs import get_all_sprint_ids
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -79,7 +79,7 @@ def fetchTotalBurndown():
     if BV_id is None:
         return jsonify({"status": "error", "message": "BV not found"})
     
-    totalBurnDownData = get_burndown_chart_metric_detail(sprint_id, BV_id, token)
+    totalBurnDownData = get_storypoint_burndown_for_sprint(sprint_id, token)
 
 
     return  jsonify({"status": "success", "data":totalBurnDownData})
