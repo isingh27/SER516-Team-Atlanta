@@ -31,7 +31,7 @@ export default function NavBar() {
       expand="lg"
       bg="primary"
       variant="dark"
-      sticky="top"
+      fixed="top"
     >
       <Container>
         <Navbar.Brand href="/">Team-Atlanta</Navbar.Brand>
@@ -53,6 +53,9 @@ export default function NavBar() {
                       </Dropdown.Item>
                       <Dropdown.Item href="#leadTime">Lead Time</Dropdown.Item>
                       <Dropdown.Item href="#burndown">BurnDown</Dropdown.Item>
+                      <Dropdown.Item href="#multiSprint">
+                        Multi Sprint BurnDown
+                      </Dropdown.Item>
                       <Dropdown.Item href="#wip">
                         Work In Progress
                       </Dropdown.Item>
@@ -60,8 +63,17 @@ export default function NavBar() {
                         Throughput
                       </Dropdown.Item>
                       <Dropdown.Item href="#cfd">CFD</Dropdown.Item>
+                      <Dropdown.Item href="#impedimentTracker">
+                        Impediment Tracker
+                      </Dropdown.Item>
                       <Dropdown.Item href="#SBPBCoupling">
                         SBPBCoupling
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#taskCoupling">
+                        Task Coupling
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#costOfDelay">
+                        Cost of Delay
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
