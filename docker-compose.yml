@@ -133,7 +133,7 @@ services:
     ports:
       - "5012:5012"
     volumes:
-      - ./impedimenttracker:/app
+      - ./impedimentTracker:/app
     environment:
       FASTAPI_APP: main.py
       TAIGA_URL: https://api.taiga.io/api/v1
