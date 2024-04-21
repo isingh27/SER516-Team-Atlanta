@@ -1,0 +1,21 @@
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    justify-content: center;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+    color: grey;
+    font-size: 15px;
+  }
+  
+  .legend-color-box {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+  }

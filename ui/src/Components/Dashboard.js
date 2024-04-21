@@ -485,32 +485,6 @@ const Dashboard = () => {
     }
   };
 
-  // const callImpedimentTracker = () => {
-  //   setLoadingImpediment(true);
-  //   // TODO: FIXME:
-  //   taigaService
-  //     .taigaProjectImpedimentTrackerTest(
-  //       localStorage.getItem("taigaToken"),
-  //       projectId
-  //     )
-  //     .then((res) => {
-  //       console.log("Impediment Tracker", res.data.impediment_tracker);
-  //       let impedimentTrackerTempData = res.data.impediment_tracker.map(
-  //         (data) => {
-  //           return [data.date, data.days];
-  //         }
-  //       );
-  //       impedimentTrackerTempData.unshift(["Date", "Days"]);
-  //       setImpedimentTrackerData(impedimentTrackerTempData);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error.message);
-  //     })
-  //     .finally(() => {
-  //       setLoadingImpediment(false);
-  //     });
-  // };
-
   const callImpedimentTracker = async () => {
     setLoadingImpediment(true);
 
@@ -543,7 +517,7 @@ const Dashboard = () => {
       );
 
       formattedData.sort((a, b) => new Date(a[0]) - new Date(b[0]));
-      formattedData.unshift(["Date", "ImpedimetsOnDay", "TotalImpediments"]);
+      formattedData.unshift(["Date", "Impediments this day", "Total project impediments"]);
 
       setImpedimentTrackerData(formattedData);
     } catch (error) {
@@ -751,7 +725,7 @@ const Dashboard = () => {
           </Col>
         </div>
       </Row>
-      <Row className="justify-content-md-center mt" style={{ height: "550px" }}>
+      <Row className="justify-content-md-center mt" style={{ height: "100%" }}>
         <Col
           md={12}
           className="mb-4"

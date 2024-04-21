@@ -6,7 +6,7 @@ WebApp built using React that uses Flask as backend for interacting with the Tai
 
 ![Netlify Status](https://api.netlify.com/api/v1/badges/bab3a11e-263b-4e5e-bf02-2bd272aeac3e/deploy-status)
 
-Live Preview: [Here](https://team-atlanta.netlify.app)
+Live Preview: [Here](http://34.125.18.223/)
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ Before spinning up the docker containers, make sure you have the following insta
 
 3. Accesing the applications
 * The React frontend app will be accessible at http://localhost:3000.
-* The API Gateway backend API will be accessible at http://localhost:5000/.
+* The API Gateway backend API will be accessible at http://localhost:5050/.
 
 ## Setup (using shell script)
 

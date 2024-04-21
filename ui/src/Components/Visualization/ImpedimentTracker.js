@@ -1,38 +1,46 @@
 import React from "react";
 import { Container } from "react-bootstrap";
 import { Chart } from "react-google-charts";
-
+import "../Styles/ImpedimentTracker.css";
 export default function ImpedimentTracker({ metricData }) {
-  const dummyMetricData = [
-    ["Date", "ImpedimetsOnDay", "TotalImpediments"],
-    ["2021-01-01", 1, 1],
-    ["2021-01-02", 1, 2],
-    ["2021-01-03", 1, 3],
-    ["2021-01-04", 1, 4],
-    ["2021-01-05", 10, 14],
-    ["2021-01-06", 1, 16],
-  ];
+
 
   const optionsImpedimentTracker = {
-    chart: {
-      title: "Impediment Tracker",
-      subtitle: "in days",
-    },
+    vAxis: { title: "Date" },
+    hAxis: { title: "Impediments" },
+    legend: { position: "right" },
+
   };
 
   return (
     <Container fluid>
       <div>
-        <b>ImpedimentTracker</b>
+        <b>Impediment Tracker</b>
         <Chart
           width="100%"
-          height="300px"
-          chartType="Bar"
+          height="100%"
+          chartType="BarChart"
           loader={<div>Loading Chart</div>}
           data={metricData}
           options={optionsImpedimentTracker}
         />
-      </div>
+      </div><br />
+      {/* <ChartLegend metricData={metricData} /> */}
     </Container>
   );
 }
+
+const ChartLegend = () => {
+  return (
+    <div className="chart-legend">
+      <div className="legend-item">
+        <span className="legend-color-box" style={{ backgroundColor: 'rgb(66, 133, 244)' }}></span>
+        Impediments This Day
+      </div>
+      <div className="legend-item">
+        <span className="legend-color-box" style={{ backgroundColor: 'rgb(219, 68, 55)' }}></span>
+        Total Project Impediments
+      </div>
+    </div>
+  );
+};

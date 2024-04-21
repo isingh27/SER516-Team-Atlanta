@@ -128,6 +128,16 @@ services:
       FASTAPI_APP: main.py
       TAIGA_URL: https://api.taiga.io/api/v1
 
+  impedimenttracker:
+    build: ./impedimentTracker
+    ports:
+      - "5012:5012"
+    volumes:
+      - ./impedimenttracker:/app
+    environment:
+      FASTAPI_APP: main.py
+      TAIGA_URL: https://api.taiga.io/api/v1
+
   apigateway:
     image: ishtpreet/ser516_apigateway:latest
     build: ./apigateway
@@ -144,11 +154,11 @@ services:
       CFD_URL: http://cfd:5004/
       WIP_URL: http://wip:5006/
       BURNDOWN_URL: http://burndown:5007/
-      # IMPEDIMENT_TRACKER_URL: http://impedimenttracker:5008/
       SBPBCOUPLING_URL: http://sbpbcoupling:5008/
       ENGAGEMENT_URL: http://engagement:5009/
       TASKCOUPLING_URL: http://taskcoupling:5010/
       COSTOFDELAY_URL: http://costofdelay:5011/
+      IMPEDIMENT_TRACKER_URL: http://impedimenttracker:5012/
 
 
   frontend:
