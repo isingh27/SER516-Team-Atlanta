@@ -498,30 +498,8 @@ const Dashboard = () => {
 
       const impedimentData = res.data;
 
-      const impedimentsByDate = {};
-
-      impedimentData.forEach((impediment) => {
-        const createdDate = impediment.created_date.split("T")[0];
-        if (!impedimentsByDate[createdDate]) {
-          impedimentsByDate[createdDate] = {
-            count: 0,
-            ids: [],
-          };
-        }
-        impedimentsByDate[createdDate].count++;
-        impedimentsByDate[createdDate].ids.push(impediment.id);
-      });
-
-      const formattedData = Object.entries(impedimentsByDate).map(
-        ([date, info]) => {
-          return [date, info.count, info.ids.length];
-        }
-      );
-
-      formattedData.sort((a, b) => new Date(a[0]) - new Date(b[0]));
-      formattedData.unshift(["Date", "Impediments this day", "Total project impediments"]);
-
-      setImpedimentTrackerData(formattedData);
+      console.log("it formattedData", impedimentData);
+      setImpedimentTrackerData(impedimentData);
     } catch (error) {
       console.error("Error fetching impediment data:", error.message);
     } finally {
@@ -749,7 +727,7 @@ const Dashboard = () => {
           
             <SBPBCouplingMetricVisualization
               sprintData={sprints}
-              loader={Loader}
+              // loader={Loader}
               />
           
         </Col>
@@ -762,7 +740,7 @@ const Dashboard = () => {
         >
           
             <TaskCouplingMetricVisualization
-              loader={Loader}
+              // loader={Loader}
               sprintData={sprints}
             />
           

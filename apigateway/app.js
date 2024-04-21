@@ -43,7 +43,7 @@ const services = [
       target: process.env.BURNDOWN_URL,
     },
     {
-      route: "/impedimentTracker",
+      route: "/impedimenttracker",
       target: process.env.IMPEDIMENT_TRACKER_URL
     }, 
     {

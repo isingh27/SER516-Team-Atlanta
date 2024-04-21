@@ -182,7 +182,7 @@ class TaigaService {
   }
   taigaProjectImpedimentTracker(token, project_id) {
     return axios.post(
-      API_URL + "impedimentTracker",
+      API_URL + "impedimenttracker",
       { projectId: project_id },
       {
         headers: {
