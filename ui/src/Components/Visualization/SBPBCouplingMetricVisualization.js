@@ -31,15 +31,6 @@ export default function SBPBCouplingMetricVisualization(props) {
 
   const [tab, setTab] = useState(0);
 
-  const clearData = () => {
-    setSprintData([]);
-    setSprintId(null);
-    setPbCouplingData(null);
-    setSbCouplingData(null);
-    setSelectedOption("");
-    setIsSprintDisabled(true);
-  };
-
   const handleDropdownChange = (e) => {
     setSelectedOption(e.target.value);
     setSprintId(e.target.value);
@@ -47,9 +38,9 @@ export default function SBPBCouplingMetricVisualization(props) {
   };
 
   function apiCall(url, updateCall, scenario, authToken) {
-    taigaService.taigaSBCouplingData(url, authToken).then((res) => {
+    taigaService.taigaCouplingData(url, authToken).then((res) => {
       console.log("res", res.data);
-      if (res.data.nodes && res.data.edges) {
+      if (res.data && res.data.nodes && res.data.edges) {
         updateCall(res.data);
       }
       setShowLoader(false);
@@ -103,9 +94,6 @@ export default function SBPBCouplingMetricVisualization(props) {
           paddingLeft: "2rem",
         }}
       >
-        {showLoader ? (
-          <Spinner animation="border" role="status" />        
-          ) : (
           <Tabs
             style={{
               fontFamily: "Poppins",
@@ -241,7 +229,6 @@ export default function SBPBCouplingMetricVisualization(props) {
               />
             </TabPanel>
           </Tabs>
-        )}
       </div>
     </div>
   );
