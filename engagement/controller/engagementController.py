@@ -8,7 +8,6 @@ engagement_router = APIRouter()
 def get_user_engagement(request:Request, project_id):
     access_token = request.headers.get('Authorization')
     if(access_token):
-        print("IN THE CONTROLLER")
         return get_engagement(project_id, access_token)
     else:
         raise HTTPException(status_code = 401, detail = "Missing or invalid access token")
