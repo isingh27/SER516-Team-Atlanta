@@ -10,6 +10,7 @@ import MultisprintBurnDown from "./Visualization/MultisprintBurnDown";
 import ImpedimentTracker from "./Visualization/ImpedimentTracker";
 import SBPBCouplingMetricVisualization from "./Visualization/SBPBCouplingMetricVisualization";
 import TaskCouplingMetricVisualization from "./Visualization/TaskCouplingMetricVisualization";
+import EngagementVisualization from "./Visualization/EngagementVisualization";
 import CostOfDelayMetricVisualization from "./Visualization/CostOfDelayMetricVisualization";
 
 const Dashboard = () => {
