@@ -719,7 +719,7 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "700px" }} id="SBPBCoupling">
+      <Row className="justify-content-md-center" style={{ height: "100%" }} id="SBPBCoupling">
         <Col
           md={12}
           className="mb-4"
@@ -733,7 +733,7 @@ const Dashboard = () => {
           
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "700px" }}>
+      <Row className="justify-content-md-center" style={{ height: "100%" }}>
         <Col
           md={12}
           className="mb-4"
@@ -747,7 +747,7 @@ const Dashboard = () => {
           
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "700px" }}>
+      <Row className="justify-content-md-center" style={{ height: "100%" }}>
         <Col
           md={12}
           className="mb-4"
@@ -758,6 +758,16 @@ const Dashboard = () => {
               loader={Loader}
               sprintData={sprints}
             />
+          
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "75%" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+            <EngagementVisualization/>
           
         </Col>
       </Row>
