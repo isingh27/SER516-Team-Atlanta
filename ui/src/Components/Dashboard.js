@@ -510,13 +510,15 @@ const Dashboard = () => {
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
-    <Container fluid>
-      <Row className="justify-content-md-center" style={{ height: "400px" }} id="cycleTime">
+    <div className="p-4">
+      <Container fluid>
+      <Row xs={1} md={2} lg={3} className="g-4" id="cycleTime">
         <Col
           md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
+          // style={{ borderBottom: "1px solid black" }}
           >
+          <Card className="w-100 shadow">
+          <Card.Body>
           {!loadingCTTask ? (
             <VisualizeMetric
             metricInput={"cycleTime"}
@@ -525,14 +527,19 @@ const Dashboard = () => {
           ) : (
             <Loader />
           )}
+          </Card.Body>
+        </Card>
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
+      </Container>
+      <Container>
+      <Row xs={1} md={2} lg={3} className="g-4">
         <Col
           md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
+          // style={{ borderBottom: "1px solid black" }}
         >
+          <Card className="h-100 w-100 shadow">
+          <Card.Body>
           {!loadingCTTask ? (
             <CycleTimeArbRange
               metricData={cycleTimeByTask}
@@ -541,24 +548,24 @@ const Dashboard = () => {
           ) : (
             <Loader />
           )}
+          </Card.Body>
+        </Card>
         </Col>
       </Row>
-      <Row
-        className="justify-content-md-center mt-3 mb-3"
-        style={{ height: "400px" }}
-      >
-        <div className="card-wrapper">
+      </Container>
+      <Container>
+      <Row xs={1} md={2} lg={3} className="g-4">
           <Col
             md={12}
-            className="mb-4"
-            style={{ borderBottom: "1px solid black" }}
-          >
-            <Card className="custom-card">
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+            >
+            <Card className="h-100 w-100 shadow">
               <Card.Body>
                 {!loadingCTUS && !errorIncycleTimeUS ? (
                   <VisualizeMetric
-                    metricInput={"cycleTimeUS"}
-                    metricData={cycleTimeByUS}
+                  metricInput={"cycleTimeUS"}
+                  metricData={cycleTimeByUS}
                   />
                 ) : loadingCTUS ? (
                   <Loader />
@@ -568,14 +575,17 @@ const Dashboard = () => {
               </Card.Body>
             </Card>
           </Col>
-        </div>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }} id="leadTime">
+      </Container>
+      <Container>
+      <Row xs={1} md={2} lg={3} className="g-4" id="leadTime">
         <Col
           md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
+          // className="mb-4"
+          // style={{ borderBottom: "1px solid black" }}
           >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
           {!loadingLT ? (
             <LeadTimeVisualization
             metricData={leadTime}
@@ -585,8 +595,11 @@ const Dashboard = () => {
           ) : (
             <Loader />
           )}
+          </Card.Body>
+        </Card>
         </Col>
       </Row>
+      </Container>
       {/*<Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
         md={12}
@@ -761,7 +774,7 @@ const Dashboard = () => {
         </Col>
       </Row>
 
-    </Container>
+    </div>
   );
 };
 
