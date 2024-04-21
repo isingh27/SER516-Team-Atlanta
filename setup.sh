@@ -6,6 +6,11 @@ set -e
 touch .env & 
 cat .env.example > .env
 
+cd ./ui
+touch .env & 
+cat .env.example > .env
+
+
 # Run Docker Compose
 echo "Starting services with Docker Compose..."
 docker-compose up --build
