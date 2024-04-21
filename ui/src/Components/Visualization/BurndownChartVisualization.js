@@ -23,29 +23,23 @@ function BurndownChartVisualization({ metricData }) {
   ];
 
   return (
-    <Container>
-      <Row>
-        <Col md={12}>
-          <Chart
-            width={"100%"}
-            height={"400px"}
-            chartType="LineChart"
-            loader={<div>Loading Chart...</div>}
-            data={chartDataArray}
-            options={{
-              title: "Burndown Chart",
-              curveType: "function",
-              legend: { position: "bottom" },
-              hAxis: {
-                title: "Day",
-              },
-              tooltip: { isHtml: true },
-            }}
-            rootProps={{ "data-testid": "1" }}
-          />
-        </Col>
-      </Row>
-    </Container>
+    <Chart
+      width={"100%"}
+      height={"400px"}
+      chartType="LineChart"
+      loader={<div>Loading Chart...</div>}
+      data={chartDataArray}
+      options={{
+        title: "Burndown Chart",
+        curveType: "function",
+        legend: { position: "bottom" },
+        hAxis: {
+          title: "Day",
+        },
+        tooltip: { isHtml: true },
+      }}
+      rootProps={{ "data-testid": "1" }}
+    />
   );
 }
 

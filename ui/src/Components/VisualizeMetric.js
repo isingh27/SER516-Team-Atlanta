@@ -185,7 +185,7 @@ function VisualizeMetric({
           />
         </>
       )} */}
-     {metricInput === "burndownBV" && (
+      {metricInput === "burndownBV" && (
         <>
           <b>Burndown Charts</b>
           <Form.Select
