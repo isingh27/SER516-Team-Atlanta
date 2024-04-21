@@ -10,6 +10,7 @@ import MultisprintBurnDown from "./Visualization/MultisprintBurnDown";
 import ImpedimentTracker from "./Visualization/ImpedimentTracker";
 import SBPBCouplingMetricVisualization from "./Visualization/SBPBCouplingMetricVisualization";
 import TaskCouplingMetricVisualization from "./Visualization/TaskCouplingMetricVisualization";
+import CostOfDelayMetricVisualization from "./Visualization/CostOfDelayMetricVisualization";
 
 const Dashboard = () => {
 
@@ -717,7 +718,7 @@ const Dashboard = () => {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }} id="SBPBCoupling">
+      <Row className="justify-content-md-center" style={{ height: "700px" }} id="SBPBCoupling">
         <Col
           md={12}
           className="mb-4"
@@ -740,6 +741,20 @@ const Dashboard = () => {
           
             <TaskCouplingMetricVisualization
               // loader={Loader}
+              sprintData={sprints}
+            />
+          
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center" style={{ height: "700px" }}>
+        <Col
+          md={12}
+          className="mb-4"
+          style={{ borderBottom: "1px solid black" }}
+        >
+
+            <CostOfDelayMetricVisualization
+              loader={Loader}
               sprintData={sprints}
             />
           

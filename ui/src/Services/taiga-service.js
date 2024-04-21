@@ -192,7 +192,7 @@ class TaigaService {
 );
 }
 
-  taigaSBCouplingData(url, token) {
+  taigaCouplingData(url, token) {
     return axios
       .get(API_URL + url, {
         headers: {
@@ -208,6 +208,15 @@ class TaigaService {
           Authorization: token 
         }
     });
+  }
+
+  taigaCostofDelayData(url, token) {
+    return axios
+      .get(API_URL + url, {
+        headers: {
+          Authorization: token 
+        }
+    })
   }
 }
 
