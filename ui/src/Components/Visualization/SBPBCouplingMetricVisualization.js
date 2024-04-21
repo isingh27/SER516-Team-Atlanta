@@ -5,7 +5,7 @@ import "../Styles/SBPBCoupling.css";
 import NetworkChartMaker from "./NetworkChartMaker";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
-import { Form } from "react-bootstrap";
+import { Form,Spinner } from "react-bootstrap";
 
 import taigaService from "../../Services/taiga-service";
 import { prop } from "lodash/fp";
@@ -104,8 +104,8 @@ export default function SBPBCouplingMetricVisualization(props) {
         }}
       >
         {showLoader ? (
-          props.loader
-        ) : (
+          <Spinner animation="border" role="status" />        
+          ) : (
           <Tabs
             style={{
               fontFamily: "Poppins",
