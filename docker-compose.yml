@@ -128,12 +128,12 @@ services:
       FASTAPI_APP: main.py
       TAIGA_URL: https://api.taiga.io/api/v1
 
-  impedimenttracker:
+  impedimentTracker:
     build: ./impedimentTracker
     ports:
       - "5012:5012"
     volumes:
-      - ./impedimenttracker:/app
+      - ./impedimentTracker:/app
     environment:
       FASTAPI_APP: main.py
       TAIGA_URL: https://api.taiga.io/api/v1
@@ -158,7 +158,7 @@ services:
       ENGAGEMENT_URL: http://engagement:5009/
       TASKCOUPLING_URL: http://taskcoupling:5010/
       COSTOFDELAY_URL: http://costofdelay:5011/
-      IMPEDIMENT_TRACKER_URL: http://impedimenttracker:5012/
+      IMPEDIMENT_TRACKER_URL: http://impedimentTracker:5012/
 
 
   frontend:
