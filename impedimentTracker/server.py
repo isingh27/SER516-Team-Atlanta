@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
-from taigaApi.impedimentTracker import get_project_impediments
+from taigaApi.impedimenttracker import get_project_impediments
 
 load_dotenv()
 
