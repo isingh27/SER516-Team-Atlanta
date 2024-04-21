@@ -34,7 +34,7 @@ export default function NavBar() {
       fixed="top"
     >
       <Container>
-        <Navbar.Brand href="/">Team-Atlanta</Navbar.Brand>
+        <Navbar.Brand href="/">Team-Althou</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto" activeKey={location.pathname}>
