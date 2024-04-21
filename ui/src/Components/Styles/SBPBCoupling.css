@@ -154,3 +154,10 @@ body {
   border: 2px solid rgb(249 128 128);
   z-index: 999;
 }
+
+.date-picker{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}

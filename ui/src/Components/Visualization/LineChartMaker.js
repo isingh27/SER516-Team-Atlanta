@@ -9,6 +9,8 @@ import { Container, Row, Col, Spinner} from 'react-bootstrap';
 export default function LineChartMaker(props) {
 
     console.log("props", props);
+    
+    const [data, setData] = useState(null);
 
     const options = {
         chart: {
@@ -16,22 +18,39 @@ export default function LineChartMaker(props) {
             subtitle: "in days",
         },
         hAxis: { title: "Sprint # Day" },
-        vAxis: { title: "points of the type" },
+        vAxis: { title: props && props.type? props.type : "" },
         legend: { position: "right" },
     };
 
+    useEffect(() => {
+      if(props.data) {
+        console.log("props.data in LineChartMaker", props.data);
+        const formattedData = Object.entries(props.data).map(([date, points]) => {
+          const day = parseInt(date.split('-')[2]);
+          return [day, points];
+        });
+
+        formattedData.unshift(["day", props.type]);
+
+        console.log("cost of delay formatted data - ", formattedData);
+        setData(formattedData);
+        console.log("cost of delay data - ", data);
+      }
+
+    }, [props.data])
+
     return (
-        <Container>
-          <Row>
+      <div className="graph-container">
+        <div style={{ margin: "auto" }}>
             {!props.showLoader ? (
               <Col>
-                {props.data && props.data.length > 1 && (
+                {data && data.length > 1 && (
                   <Chart
                     width={'100%'}
                     height={'500px'}
                     chartType="LineChart"
                     loader={<div>Loading Chart</div>}
-                    data={props.data}
+                    data={data}
                     options={options}
                   />
                 )}
@@ -39,7 +58,7 @@ export default function LineChartMaker(props) {
             ) : (
               <Col><Spinner animation="border" role="status" /></Col>
             )}
-          </Row>
-        </Container>
+          </div>
+        </div>
     );
 }

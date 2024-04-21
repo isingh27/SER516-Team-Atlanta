@@ -41,7 +41,7 @@ export default function TaskCoupling(props) {
   function apiCall(url, updateCall, scenario, authToken) {
     taigaService.taigaTaskCouplingData(url, authToken).then((res) => {
       console.log("res", res.data);
-      if (res.data.nodes && res.data.edges) {
+      if (res.data && res.data.nodes && res.data.edges) {
         updateCall(res.data);
       }
       setShowLoader(false);

@@ -103,6 +103,7 @@ function MultisprintBurnDown({ sprintOptions }) {
             // seriesArray.unshift(["Day", "Story Points"]);
             // Update state with the accumulated data
             const chartData = convertDataForChart(newData);
+            console.log("chartData-rahul", chartData);
             setBurnDownData(chartData);
             console.info('Burn Down Data:', chartData);
             setIsLoading(false);

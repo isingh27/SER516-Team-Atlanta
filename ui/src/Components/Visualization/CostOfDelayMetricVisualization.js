@@ -1,19 +1,19 @@
 import React from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Form, Row, Col } from "react-bootstrap";
 import "../Styles/SBPBCoupling.css";
 import LineChartMaker from "./LineChartMaker";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import taigaService from "../../Services/taiga-service";
 
-export default function CostOfDelayMetricVisualization() {
+export default function CostOfDelayMetricVisualization(props) {
   const [storyPointData, setStoryPointData] = useState(null);
   const [businessValueData, setBusinessValueData] = useState(null);
   const [costOfDelayData, setCostOfDelayData] = useState(null);
 
   const [projectSlug, setProjectSlug] = useState(null);
-  const [sprintData, setSprintData] = useState([]);
 
   const [selectedOption, setSelectedOption] = useState("");
 
@@ -40,7 +40,7 @@ export default function CostOfDelayMetricVisualization() {
   }
 
   function createUpdatedData(data, updateCall, scenario) {
-    
+    console.log("data in createUpdatedData", data);
     updateCall(data);
   }
 
@@ -81,6 +81,7 @@ export default function CostOfDelayMetricVisualization() {
   useEffect(() => {
     const callApis = () => {
       const authToken = localStorage.getItem("taigaToken");
+      const projectId = localStorage.getItem("projectId");
 
       if (authToken && projectId && sprintId && businessValueCostFactor) {
         apiCall(
@@ -97,7 +98,19 @@ export default function CostOfDelayMetricVisualization() {
 
   return (
     <div className="container-full bg-white">
-      <div className="flex flex-col min-h-[100%] justify-between w-full py-[1rem] px-[2rem]">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100%",
+          justifyContent: "space-between",
+          width: "100%",
+          paddingTop: "1rem",
+          paddingRight: "2rem",
+          paddingBottom: "1rem",
+          paddingLeft: "2rem",
+        }}
+      >
         <Tabs
           style={{
             fontFamily: "Poppins",
@@ -109,6 +122,25 @@ export default function CostOfDelayMetricVisualization() {
             flexDirection: "column",
           }}
         >
+          <div
+            style={{
+              fontSize: "2rem",
+              width: "auto",
+              borderBottomStyle: "solid",
+              borderBottomWidth: "4px",
+              borderBottomColor: "#ffd053",
+              fontWeight: "bold",
+              backgroundColor: "white",
+              transitionDuration: "300ms",
+              fontFamily: "sans-serif",
+              textAlign: "start",
+              marginTop: "0",
+              paddingBottom: "0.2rem",
+              marginBottom: "1rem",
+            }}
+          >
+            <span>Cost of Delay</span>
+          </div>
           <TabList
             style={{
               display: "flex",
@@ -120,7 +152,18 @@ export default function CostOfDelayMetricVisualization() {
               className={"tabElements"}
               selectedClassName="selectedTabElements"
             >
-              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+              <p
+                style={{
+                  paddingLeft: "0.8rem",
+                  paddingRight: "0.8rem",
+                  paddingBottom: "0.8rem",
+                  marginBottom: "0rem",
+                  textAlign: "center",
+                  borderRightStyle: "solid",
+                  borderRightWidth: "2px",
+                  borderRightColor: "#ef5350",
+                }}
+              >
                 Storypoints Affected
               </p>
             </Tab>
@@ -128,7 +171,15 @@ export default function CostOfDelayMetricVisualization() {
               className={"tabElements"}
               selectedClassName="selectedTabElements"
             >
-              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+              <p
+                style={{
+                  paddingLeft: "0.8rem",
+                  paddingRight: "0.8rem",
+                  paddingBottom: "0.8rem",
+                  marginBottom: "0rem",
+                  textAlign: "center",
+                }}
+              >
                 Business Value Affected
               </p>
             </Tab>
@@ -136,7 +187,15 @@ export default function CostOfDelayMetricVisualization() {
               className={"tabElements"}
               selectedClassName="selectedTabElements"
             >
-              <p className="px-[0.8rem] text-center border-none ">
+              <p
+                style={{
+                  paddingLeft: "0.8rem",
+                  paddingRight: "0.8rem",
+                  paddingBottom: "0.8rem",
+                  marginBottom: "0rem",
+                  textAlign: "center",
+                }}
+              >
                 Cost of Delay
               </p>
             </Tab>
@@ -144,70 +203,92 @@ export default function CostOfDelayMetricVisualization() {
           <div
             style={{
               display: "flex",
-              flexDirection: "row",
-              justifyContent: "start",
-              marginTop: "0.3rem",
-              marginBottom: "0.6rem",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              width: "100%",
+              marginTop: "1rem",
+              // minHeight: "50%"
             }}
+            className="parent"
           >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                width: "30%",
-                // minHeight: "50%"
-              }}
-              className="parent ml-[2rem]"
-            >
-              <div className="flex flex-col">
-                <span className="text-[1rem] font-bold font-sans">
-                  BV Cost Factor:
-                </span>
-                <div
+            <div>
+              {props.sprintData && props.sprintData.length > 0 ? (
+                <Form.Select
+                  value={selectedOption}
+                  onChange={handleDropdownChange}
+                  required
                   style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginTop: "0.3rem",
-                    marginBottom: "0.6rem",
+                    width: "20%",
+                    marginBottom: "1.5rem",
+                    fontSize: "1rem",
                   }}
                 >
-                  <input
-                    className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[80%] text-[1rem] font-sans"
-                    type="number"
-                    value={businessValueCostFactorInput}
-                    onChange={onChangeBusinessValueCostFactor}
-                    aria-label="username"
-                  />
-                  <button
-                    className="ml-[0.6rem] h-[2.45rem] w-[33%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none"
-                    onClick={() =>
-                      setBusinessValueCostFactor(businessValueCostFactorInput)
-                    }
-                  >
-                    Submit
-                  </button>
-                </div>
+                  <option value="" disabled hidden>
+                    Select Sprint
+                  </option>
+                  {props.sprintData.map((option, index) => (
+                    <option key={index} value={option.name}>
+                      {option.title}
+                    </option>
+                  ))}
+                </Form.Select>
+              ) : null}
+              <div>
+                <Row className="mb-3 align-items-center">
+                  <Col sm={9}>
+                    <Form.Control
+                      type="number"
+                      placeholder="cost factor"
+                      value={businessValueCostFactorInput}
+                      onChange={onChangeBusinessValueCostFactor}
+                      style={{
+                        width: "20%",
+                        marginBottom: "1.5rem",
+                        fontSize: "1rem",
+                      }}
+                    />
+                  </Col>
+                </Row>
+                <button
+                  style={{
+                    marginLeft: "0.6rem",
+                    height: "2.45rem",
+                    width: "33%",
+                    border: 4,
+                    borderColor: "#ffd053",
+                  }}
+                  onClick={() =>
+                    setBusinessValueCostFactor(businessValueCostFactorInput)
+                  }
+                >
+                  Submit
+                </button>
               </div>
             </div>
           </div>
-          <TabPanel>
-            <LineChartMaker 
-              data={storyPointData} 
-              showLoader={showLoader} 
+          <TabPanel
+            style={{
+              margin: "auto",
+            }}
+          >
+            <LineChartMaker
+              data={storyPointData}
+              type={"story points"}
+              showLoader={showLoader}
             />
           </TabPanel>
           <TabPanel>
             <LineChartMaker
               data={businessValueData}
+              type={"business value"}
               showLoader={showLoader}
             />
           </TabPanel>
           <TabPanel>
-            <LineChartMaker 
-              data={costOfDelayData} 
-              showLoader={showLoader} 
+            <LineChartMaker
+              data={costOfDelayData}
+              type={"cost of delay"}
+              showLoader={showLoader}
             />
           </TabPanel>
         </Tabs>
