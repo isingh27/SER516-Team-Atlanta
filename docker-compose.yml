@@ -1,7 +1,7 @@
 services:
 
   authentication:
-    image: ishtpreet/ser516_auth:latest
+    # image: ishtpreet/ser516_auth:latest
     build: ./authentication
     ports:
       - "5001:5001"
@@ -14,7 +14,7 @@ services:
 
   
   cfd:
-    image: ishtpreet/ser516_cfd:latest
+    # image: ishtpreet/ser516_cfd:latest
     build: ./cfd
     ports:
       - "5004:5004"
@@ -26,7 +26,7 @@ services:
       TAIGA_URL: https://api.taiga.io/api/v1
   
   cycletime:
-    image: ishtpreet/ser516_cycletime:latest
+    # image: ishtpreet/ser516_cycletime:latest
     build: ./cycletime
     ports:
       - "5002:5002"
@@ -38,7 +38,7 @@ services:
       TAIGA_URL: https://api.taiga.io/api/v1
 
   leadtime:
-    image: ishtpreet/ser516_leadtime:latest
+    # image: ishtpreet/ser516_leadtime:latest
     build: ./leadTime
     ports:
       - "5003:5003"
@@ -50,7 +50,7 @@ services:
       TAIGA_URL: https://api.taiga.io/api/v1
 
   throughput:
-    image: ishtpreet/ser516_throughput:latest
+    # image: ishtpreet/ser516_throughput:latest
     build: ./throughput
     ports:
       - "5005:5005"
@@ -62,7 +62,7 @@ services:
       TAIGA_URL: https://api.taiga.io/api/v1
 
   wip:
-    image: ishtpreet/ser516_wip:latest
+    # image: ishtpreet/ser516_wip:latest
     build: ./wip
     ports:
       - "5006:5006"
@@ -74,7 +74,7 @@ services:
       TAIGA_URL: https://api.taiga.io/api/v1
 
   burndown:
-    image: ishtpreet/ser516_burndown:latest
+    # image: ishtpreet/ser516_burndown:latest
     build: ./burndown
     ports:
       - "5007:5007"
@@ -86,7 +86,7 @@ services:
       TAIGA_URL: https://api.taiga.io/api/v1
 
   sbpbcoupling:
-    image: ishtpreet/ser516_sbpbcoupling:latest
+    # image: ishtpreet/ser516_sbpbcoupling:latest
     build: ./sbpbcoupling
     ports:
       - "5008:5008"
@@ -97,7 +97,7 @@ services:
       TAIGA_URL: https://api.taiga.io/api/v1
 
   engagement:
-    image: ishtpreet/ser516_engagement:latest
+    # image: ishtpreet/ser516_engagement:latest
     build: ./engagement
     ports:
       - "5009:5009"
@@ -108,7 +108,7 @@ services:
       TAIGA_URL: https://api.taiga.io/api/v1
 
   taskcoupling:
-    image: ishtpreet/ser516_taskcoupling:latest
+    # image: ishtpreet/ser516_taskcoupling:latest
     build: ./taskcoupling
     ports:
       - "5010:5010"
@@ -128,7 +128,7 @@ services:
       FASTAPI_APP: main.py
       TAIGA_URL: https://api.taiga.io/api/v1
 
-  impedimentracker:
+  impedimenttracker:
     build: ./impedimenttracker
     ports:
       - "5012:5012"
@@ -139,7 +139,7 @@ services:
       TAIGA_URL: https://api.taiga.io/api/v1
 
   apigateway:
-    image: ishtpreet/ser516_apigateway:latest
+    # image: ishtpreet/ser516_apigateway:latest
     build: ./apigateway
     ports:
      - "5050:5050"
@@ -162,7 +162,7 @@ services:
 
 
   frontend:
-    image: ishtpreet/ser516_frontend:latest
+    # image: ishtpreet/ser516_frontend:latest
     build:
       context: ./ui
     ports:

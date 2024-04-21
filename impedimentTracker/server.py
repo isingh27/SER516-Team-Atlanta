@@ -12,7 +12,7 @@ CORS(app)
 @app.route("/check", methods=["GET"])
 def sampleRoute():
     response = jsonify({
-        "message": "Authentication micro-service is up and running!"
+        "message": "Impediment Tracker micro-service is up and running!"
     })
     return response
 
