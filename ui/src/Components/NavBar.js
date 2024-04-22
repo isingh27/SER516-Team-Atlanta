@@ -198,6 +198,17 @@ export default function NavBar() {
                           Cost Of Delay
                         </Link>
                       </Dropdown.Item>
+                      <Dropdown.Item>
+                        <Link
+                          to="engagement"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          Engagement Visualization
+                        </Link>
+                      </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                 )}
