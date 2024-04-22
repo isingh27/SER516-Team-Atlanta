@@ -508,7 +508,7 @@ const Dashboard = () => {
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
-    <div className="mt-4">
+    <Container className="mt-3">
       <Container fluid>
         <Row xs={12} md={12} lg={12} className="mt-2">
           <Col
@@ -815,16 +815,13 @@ const Dashboard = () => {
           >
             <Card className="h-100 w-100 shadow">
               <Card.Body>
-                <EngagementVisualization
-                  loader={Loader}
-                  sprintData={sprints}
-                />
+                <EngagementVisualization loader={Loader} sprintData={sprints} />
               </Card.Body>
             </Card>
           </Col>
         </Row>
       </Container>
-    </div>
+    </Container>
   );
 };
 
