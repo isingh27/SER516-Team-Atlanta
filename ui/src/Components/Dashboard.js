@@ -10,6 +10,7 @@ import MultisprintBurnDown from "./Visualization/MultisprintBurnDown";
 import ImpedimentTracker from "./Visualization/ImpedimentTracker";
 import SBPBCouplingMetricVisualization from "./Visualization/SBPBCouplingMetricVisualization";
 import TaskCouplingMetricVisualization from "./Visualization/TaskCouplingMetricVisualization";
+import EngagementVisualization from "./Visualization/EngagementVisualization";
 import CostOfDelayMetricVisualization from "./Visualization/CostOfDelayMetricVisualization";
 
 const Dashboard = () => {
@@ -797,6 +798,24 @@ const Dashboard = () => {
             <Card className="h-100 w-100 shadow">
               <Card.Body>
                 <CostOfDelayMetricVisualization
+                  loader={Loader}
+                  sprintData={sprints}
+                />
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="engagement">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                <EngagementVisualization
                   loader={Loader}
                   sprintData={sprints}
                 />

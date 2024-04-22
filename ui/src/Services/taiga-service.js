@@ -216,8 +216,18 @@ class TaigaService {
         headers: {
           Authorization: token 
         }
-    })
+    });
+  }
+
+  taigaEngagementData(url, token) {
+    return axios
+      .get(API_URL + url, {
+        headers: {
+          Authorization: token 
+        }
+    });
   }
 }
+
 
 export default new TaigaService();
