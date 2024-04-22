@@ -50,27 +50,25 @@ function LeadTimeVisualization({ metricData, loading, setLoading }) {
   return (
     <div>
       <b>Lead Time</b>
-      <div className="date-picker">
-        <div>
-          <span>From:</span>
-          <DatePicker
-            className="date-picker-container"
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
-          />
-        </div>
-        <div>
-          <span>To: </span>
-          <DatePicker
-            className="date-picker-container"
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-          />
-        </div>
-      </div>
-      <Button variant="primary" onClick={handleOnSubmit}>
-        Submit
-      </Button>
+      <div className="date-picker" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ marginRight: '0.5rem' }}>
+              <span>From:</span>
+              <DatePicker
+                className="date-picker-container"
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+              />
+            </div>
+            <div style={{ marginLeft: '0.5rem' }}>
+              <span>To: </span>
+              <DatePicker
+                className="date-picker-container"
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+              />
+            </div>
+            </div>
+            <Button variant="primary" style={{ marginTop: '1rem', width: '20%' }} onClick={handleOnSubmit}>Submit</Button>
       <Chart
         width="100%"
         height="300px"

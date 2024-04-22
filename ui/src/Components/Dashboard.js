@@ -510,7 +510,7 @@ const Dashboard = () => {
   return (
     <div className="mt-4">
       <Container fluid>
-        <Row xs={12} md={12} lg={12} className="mt-2" style={{ marginTop: '2rem' }}>
+        <Row xs={12} md={12} lg={12} className="mt-2">
           <Col
             md={12}
             // style={{ borderBottom: "1px solid black" }}

@@ -192,7 +192,7 @@ function VisualizeMetric({
             value={sprintInputBurnDown}
             onChange={handleChangeDropDownBurnDown}
             required
-            style={{ width: "10%" }}
+            style={{ width: "22%", marginInline: "auto", marginTop: "1rem", marginBottom: "0.5rem"}}
           >
             <option value="" disabled hidden>
               Select Sprint
@@ -235,7 +235,7 @@ function VisualizeMetric({
             value={sprintInput}
             onChange={handleChangeDropDown}
             required
-            style={{ width: "10%" }}
+            style={{ width: "22%", marginInline: "auto", marginTop: "1rem", marginBottom: "0.5rem" }}
           >
             <option value="" disabled hidden>
               Select Sprint

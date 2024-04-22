@@ -49,8 +49,8 @@ export default function CycleTimeArbRange({ metricData, cycleTimeData }) {
   return (
         <>
           <b>Cycle Time by Task with Arbritrary Range</b>
-          <div className="date-picker">
-            <div>
+          <div className="date-picker" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ marginRight: '0.5rem' }}>
               <span>From:</span>
               <DatePicker
                 className="date-picker-container"
@@ -58,7 +58,7 @@ export default function CycleTimeArbRange({ metricData, cycleTimeData }) {
                 onChange={(date) => setStartDate(date)}
               />
             </div>
-            <div>
+            <div style={{ marginLeft: '0.5rem' }}>
               <span>To: </span>
               <DatePicker
                 className="date-picker-container"
@@ -67,7 +67,7 @@ export default function CycleTimeArbRange({ metricData, cycleTimeData }) {
               />
             </div>
             </div>
-            <Button variant="primary" onClick={handleOnSubmit}>Submit</Button>
+            <Button variant="primary" style={{ marginTop: '1rem', width: '20%' }} onClick={handleOnSubmit}>Submit</Button>
           <Chart
             width="100%"
             height="300px"

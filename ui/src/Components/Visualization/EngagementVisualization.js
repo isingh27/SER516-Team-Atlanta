@@ -69,8 +69,8 @@ export default function EngagementVisualization() {
         <div className="container-fluid">
             <div className="d-flex flex-column vh-100 justify-content-between w-100 py-3 px-4">
                 <div>
-                    <div className="d-flex flex-column justify-content-between w-50">
-                        <div className="border-bottom border-4 border-warning font-weight-bold bg-white text-start mt-0 pb-1 mb-3">
+                    <div className="d-flex flex-column w-100" style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                        <div className="font-weight-bold bg-white text-center mt-0 pb-1 mb-3" style={{ fontWeight: 'bold', fontSize: '2rem' }}>
                             <span>Engagement</span>
                         </div>
                         {engagementDataLabels.length > 0 ? (
@@ -78,11 +78,8 @@ export default function EngagementVisualization() {
                                 className="form-select text-lg p-2 border-danger"
                                 value={selectedOption}
                                 onChange={handleDropdownChange}
-                                style={{ marginBottom: "2.5rem" }}
+                                style={{ marginBottom: "2.5rem", width: "25%", margin: "auto"}}
                             >
-                                <option className="dropdown" value="">
-                                    Select an option
-                                </option>
                                 {engagementDataLabels.map((item) => (
                                     <option key={item} value={item} className="dropdown">
                                         {formatString(item)}
