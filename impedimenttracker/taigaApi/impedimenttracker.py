@@ -54,14 +54,19 @@ def transform_impediments_data(impediments):
             if is_closed and finished_date:
                 finished_dates.append(finished_date.split('T')[0])
         
-        while finished_dates and date > finished_dates[0]:
-            total_impediments_by_date[finished_dates[0]] -= 1
-            finished_dates.pop(0)
-        
-        if date in total_impediments_by_date:
-            transformed_data[-1][1] = total_impediments_by_date[date]
-            transformed_data[-1][2] = sum(total_impediments_by_date.values())
-    
+        # Process finished dates
+    for f_date in finished_dates:
+        if f_date in total_impediments_by_date and total_impediments_by_date[f_date] > 1:
+            total_impediments_by_date[f_date] -= 1
+
+    # Update transformed data with the final counts
+    for date, total in total_impediments_by_date.items():
+        for row in transformed_data:
+            if row[0] == date:
+                row[1] = total
+                row[2] = sum(total_impediments_by_date.values())
+                break
+
     return transformed_data
 
 

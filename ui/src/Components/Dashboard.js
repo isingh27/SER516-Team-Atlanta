@@ -14,7 +14,6 @@ import EngagementVisualization from "./Visualization/EngagementVisualization";
 import CostOfDelayMetricVisualization from "./Visualization/CostOfDelayMetricVisualization";
 
 const Dashboard = () => {
-
   const projectName = localStorage.getItem("projectName");
   let projectId = localStorage.getItem("projectId");
 
@@ -49,7 +48,7 @@ const Dashboard = () => {
   const [cfdData, setCfdData] = useState([]);
 
   //const [burndownBVData, setBurndownBVData] = useState([]);
- // const [burndownTotalData, setBurndownTotalData] = useState([]);
+  // const [burndownTotalData, setBurndownTotalData] = useState([]);
 
   const [sprintInput, setSprintInput] = useState("");
   const [sprintInputBurnDown, setSprintInputBurnDown] = useState("");
@@ -141,9 +140,9 @@ const Dashboard = () => {
     // Update with burndownBVData
     burndownBVData.forEach((item, index) => {
       if (item && item[0] !== "Date" && tempCombinedBD[index]) {
-        console.log('bv open item[1]',item[1])
-        if(item[1]  === 0){
-          item[1] =  10
+        console.log("bv open item[1]", item[1]);
+        if (item[1] === 0) {
+          item[1] = 10;
         }
         tempCombinedBD[index][3] = item[1]; // Update business value
       }
@@ -470,15 +469,13 @@ const Dashboard = () => {
         console.log("BVBurndown", burndownRes.data.data);
 
         const bdTempData =
-          burndownRes.data.data.bv_burndown.bv_burndown_data.map(
-            (data) => {
-              const dateObject = new Date(data.date);
-              const formattedDate = dateObject.toISOString().split("T")[0];
-              return [formattedDate, data.remaining, data.expected_remaining];
-            }
-          );
+          burndownRes.data.data.bv_burndown.bv_burndown_data.map((data) => {
+            const dateObject = new Date(data.date);
+            const formattedDate = dateObject.toISOString().split("T")[0];
+            return [formattedDate, data.remaining, data.expected_remaining];
+          });
         bdTempData.unshift(["Date", "Open Points", "Optimal Points"]);
-        console.log('bdTempData',bdTempData)
+        console.log("bdTempData", bdTempData);
         setBurndownBVData(bdTempData);
       } else {
         throw new Error("No sprints found for this project");
@@ -511,50 +508,57 @@ const Dashboard = () => {
   const Loader = () => <Spinner animation="border" role="status" />;
 
   return (
-    <Container fluid>
-      <Row className="justify-content-md-center" style={{ height: "400px" }} id="cycleTime">
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-          >
-          {!loadingCTTask ? (
-            <VisualizeMetric
-            metricInput={"cycleTime"}
-            metricData={cycleTimeByTask}
-            />
-          ) : (
-            <Loader />
-          )}
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }}>
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-          {!loadingCTTask ? (
-            <CycleTimeArbRange
-              metricData={cycleTimeByTask}
-              cycleTimeData={cycleTimeData}
-            />
-          ) : (
-            <Loader />
-          )}
-        </Col>
-      </Row>
-      <Row
-        className="justify-content-md-center mt-3 mb-3"
-        style={{ height: "400px" }}
-      >
-        <div className="card-wrapper">
+    <div className="mt-4">
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-2" style={{ marginTop: '2rem' }}>
           <Col
             md={12}
-            className="mb-4"
-            style={{ borderBottom: "1px solid black" }}
+            // style={{ borderBottom: "1px solid black" }}
           >
-            <Card className="custom-card">
+            <Card className="h-100 w-100 shadow" id="cycleTime">
+              <Card.Body>
+                {!loadingCTTask ? (
+                  <VisualizeMetric
+                    metricInput={"cycleTime"}
+                    metricData={cycleTimeByTask}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3">
+          <Col
+            md={12}
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                {!loadingCTTask ? (
+                  <CycleTimeArbRange
+                    metricData={cycleTimeByTask}
+                    cycleTimeData={cycleTimeData}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
               <Card.Body>
                 {!loadingCTUS && !errorIncycleTimeUS ? (
                   <VisualizeMetric
@@ -569,25 +573,31 @@ const Dashboard = () => {
               </Card.Body>
             </Card>
           </Col>
-        </div>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }} id="leadTime">
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="leadTime">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
           >
-          {!loadingLT ? (
-            <LeadTimeVisualization
-            metricData={leadTime}
-            loading={loadingLT}
-            setLoading={setLoadingLT}
-            />
-          ) : (
-            <Loader />
-          )}
-        </Col>
-      </Row>
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                {!loadingLT ? (
+                  <LeadTimeVisualization
+                    metricData={leadTime}
+                    loading={loadingLT}
+                    setLoading={setLoadingLT}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
       {/*<Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
         md={12}
@@ -608,14 +618,14 @@ const Dashboard = () => {
           )}
         </Col>
       </Row> */}
-      <Row className="justify-content-md-center mt-4" id="burndown">
-        <div className="card-wrapper">
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="burndown">
           <Col
-            md={12}
-            className="mb-4"
-            style={{ borderBottom: "1px solid black" }}
-            >
-            <Card className="custom-card">
+          // md={12}
+          // className="mb-4"
+          // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
               <Card.Body>
                 {!loadingBD && totalBurndownData.length > 1 ? (
                   <VisualizeMetric
@@ -625,76 +635,93 @@ const Dashboard = () => {
                     metricData={totalBurndownData}
                     handleChangeDropDownBurnDown={handleChangeDropDownBurnDown}
                     sprintOptions={sprints}
-                    />
+                  />
                 ) : (
                   <Loader />
                 )}
               </Card.Body>
             </Card>
           </Col>
-        </div>
-      </Row>
-
-      <Row className="justify-content-md-center" style={{ height: "400px" }} id="wip">
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-          {!loadingWip ? (
-            <VisualizeMetric
-            metricInput={"workInProgress"}
-            metricData={wipData}
-            />
-          ) : (
-            <Loader />
-          )}
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "400px" }} id="throughput">
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-          >
-          {!loadingTP ? (
-            <VisualizeMetric
-            metricInput={"throughputDaily"}
-            sprintInput={sprintInputTP}
-            setSprintInput={setSprintInputTP}
-            metricData={throughputDaily}
-            handleChangeDropDown={handleChangeDropDownTP}
-            sprintOptions={sprints}
-            />
-          ) : (
-            <Loader />
-          )}
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center mt" style={{ height: "550px" }}>
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-          {!loadingBD ? (
-            sprints &&
-            sprints.length > 0 && (
-              <MultisprintBurnDown sprintOptions={sprints} />
-            )
-          ) : (
-            <Loader />
-          )}
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center" id="cfd">
-        <div className="card-wrapper" >
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="wip">
           <Col
             md={12}
-            className="mb-4"
-            style={{ borderBottom: "1px solid black" }}
-            >
-            <Card className="custom-card" style={{ height: "900px" }}>
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                {!loadingWip ? (
+                  <VisualizeMetric
+                    metricInput={"workInProgress"}
+                    metricData={wipData}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="throughput">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                {!loadingTP ? (
+                  <VisualizeMetric
+                    metricInput={"throughputDaily"}
+                    sprintInput={sprintInputTP}
+                    setSprintInput={setSprintInputTP}
+                    metricData={throughputDaily}
+                    handleChangeDropDown={handleChangeDropDownTP}
+                    sprintOptions={sprints}
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid id="multiSprint">
+        <Row xs={12} md={12} lg={12} className="mt-3">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                {!loadingBD ? (
+                  sprints &&
+                  sprints.length > 0 && (
+                    <MultisprintBurnDown sprintOptions={sprints} />
+                  )
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="cfd">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
               <Card.Body>
                 {!loadingCFD ? (
                   <VisualizeMetric metricInput={"cfd"} metricData={cfdData} />
@@ -704,75 +731,100 @@ const Dashboard = () => {
               </Card.Body>
             </Card>
           </Col>
-        </div>
-      </Row>
-      <Row className="justify-content-md-center mt" style={{ height: "100%" }}>
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-          {!loadingImpediment ? (
-            <ImpedimentTracker metricData={impedimentTrackerData} />
-          ) : (
-            <Loader />
-          )}
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "100%" }} id="SBPBCoupling">
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
+        </Row>
+      </Container>
+      <Container fluid id="impedimentTracker">
+        <Row xs={12} md={12} lg={12} className="mt-3">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
           >
-          
-            <SBPBCouplingMetricVisualization
-              sprintData={sprints}
-              // loader={Loader}
-              />
-          
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "100%" }}>
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-          
-            <TaskCouplingMetricVisualization
-              // loader={Loader}
-              sprintData={sprints}
-            />
-          
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "100%" }}>
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-
-            <CostOfDelayMetricVisualization
-              loader={Loader}
-              sprintData={sprints}
-            />
-          
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center" style={{ height: "75%" }}>
-        <Col
-          md={12}
-          className="mb-4"
-          style={{ borderBottom: "1px solid black" }}
-        >
-            <EngagementVisualization/>
-          
-        </Col>
-      </Row>
-
-    </Container>
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                {!loadingImpediment ? (
+                  <ImpedimentTracker metricData={impedimentTrackerData} />
+                ) : (
+                  <Loader />
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="SBPBCoupling">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                <SBPBCouplingMetricVisualization
+                  sprintData={sprints}
+                  // loader={Loader}
+                />
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="taskCoupling">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                <TaskCouplingMetricVisualization
+                  // loader={Loader}
+                  sprintData={sprints}
+                />
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="costOfDelay">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                <CostOfDelayMetricVisualization
+                  loader={Loader}
+                  sprintData={sprints}
+                />
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid>
+        <Row xs={12} md={12} lg={12} className="mt-3" id="engagement">
+          <Col
+            md={12}
+            // className="mb-4"
+            // style={{ borderBottom: "1px solid black" }}
+          >
+            <Card className="h-100 w-100 shadow">
+              <Card.Body>
+                <EngagementVisualization
+                  loader={Loader}
+                  sprintData={sprints}
+                />
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 

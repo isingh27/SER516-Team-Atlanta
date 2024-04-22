@@ -48,40 +48,38 @@ function LeadTimeVisualization({ metricData, loading, setLoading }) {
     legend: { position: "right" },
   };
   return (
-    <Container fluid>
-      <div>
-        <b>Lead Time</b>
-        <div className="date-picker">
-          <div>
-            <span>From:</span>
-            <DatePicker
-              className="date-picker-container"
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-            />
-          </div>
-          <div>
-            <span>To: </span>
-            <DatePicker
-              className="date-picker-container"
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-            />
-          </div>
+    <div>
+      <b>Lead Time</b>
+      <div className="date-picker">
+        <div>
+          <span>From:</span>
+          <DatePicker
+            className="date-picker-container"
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+          />
         </div>
-        <Button variant="primary" onClick={handleOnSubmit}>
-          Submit
-        </Button>
-        <Chart
-          width="100%"
-          height="300px"
-          chartType="ScatterChart"
-          loader={<div>Loading Chart</div>}
-          data={customData ? leadTimeData : metricData}
-          options={optionsLead}
-        />
+        <div>
+          <span>To: </span>
+          <DatePicker
+            className="date-picker-container"
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+          />
+        </div>
       </div>
-    </Container>
+      <Button variant="primary" onClick={handleOnSubmit}>
+        Submit
+      </Button>
+      <Chart
+        width="100%"
+        height="300px"
+        chartType="ScatterChart"
+        loader={<div>Loading Chart</div>}
+        data={customData ? leadTimeData : metricData}
+        options={optionsLead}
+      />
+    </div>
   );
 }
 
