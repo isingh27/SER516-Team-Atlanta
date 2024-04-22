@@ -44,38 +44,37 @@ export default function CostOfDelayMetricVisualization(props) {
     updateCall(data);
   }
 
-// End -- of Auth
+  // End -- of Auth
 
   function apiCall(url, authToken) {
-    taigaService.taigaCostofDelayData(url, authToken)
-      .then((res) => {
-        console.log("res", res.data);
+    taigaService.taigaCostofDelayData(url, authToken).then((res) => {
+      console.log("res", res.data);
 
-        const data = res.data;
+      const data = res.data;
 
-        // const labels = Object.keys(data["userstory"]);
-        // const storyPointValues = Object.values(data["userstory"]);
-        // const businessValues = Object.values(data["business_value"]);
-        // const costOfDelayValues = Object.values(data["cost_of_delay"]);
+      // const labels = Object.keys(data["userstory"]);
+      // const storyPointValues = Object.values(data["userstory"]);
+      // const businessValues = Object.values(data["business_value"]);
+      // const costOfDelayValues = Object.values(data["cost_of_delay"]);
 
-        setShowLoader(false);
+      setShowLoader(false);
 
-        createUpdatedData(
-          data["userstory"],
-          setStoryPointData,
-          "storypoints graph"
-        );
-        createUpdatedData(
-          data["business_value"],
-          setBusinessValueData,
-          "business value graph"
-        );
-        createUpdatedData(
-          data["cost_of_delay"],
-          setCostOfDelayData,
-          "cost of delay graph"
-        );
-      });
+      createUpdatedData(
+        data["userstory"],
+        setStoryPointData,
+        "storypoints graph"
+      );
+      createUpdatedData(
+        data["business_value"],
+        setBusinessValueData,
+        "business value graph"
+      );
+      createUpdatedData(
+        data["cost_of_delay"],
+        setCostOfDelayData,
+        "cost of delay graph"
+      );
+    });
   }
 
   useEffect(() => {
@@ -175,7 +174,7 @@ export default function CostOfDelayMetricVisualization(props) {
                   paddingBottom: "0.2rem",
                   marginBottom: "0rem",
                   textAlign: "center",
-                  borderRight: '2px solid #007bff',
+                  borderRight: "2px solid #007bff",
                 }}
               >
                 Business Value Affected
@@ -209,54 +208,60 @@ export default function CostOfDelayMetricVisualization(props) {
             }}
             className="parent"
           >
-            <div style={{ width: '100%' }}>
-              <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center' }}>
-
-            <div style={{ width: '30%', marginRight: '0.5rem' }}>
-              {props.sprintData && props.sprintData.length > 0 ? (
-                <Form.Select
-                value={selectedOption}
-                onChange={handleDropdownChange}
-                required
+            <div style={{ width: "100%" }}>
+              <div
                 style={{
-                  marginBottom: "1.5rem",
-                  fontSize: "0.8rem",
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
+                  justifyContent: "center",
                 }}
-                >
-                  <option value="" disabled hidden>
-                    Select Sprint
-                  </option>
-                  {props.sprintData.map((option, index) => (
-                    <option key={index} value={option.name}>
-                      {option.title}
-                    </option>
-                  ))}
-                </Form.Select>
-              ) : null}
-              </div>
-              <div style={{ width: '30%', marginLeft: '0.5rem' }}>
-                    <Form.Control
-                      type="number"
-                      placeholder="cost factor"
-                      value={businessValueCostFactorInput}
-                      onChange={onChangeBusinessValueCostFactor}
+              >
+                <div style={{ width: "30%", marginRight: "0.5rem" }}>
+                  {props.sprintData && props.sprintData.length > 0 ? (
+                    <Form.Select
+                      value={selectedOption}
+                      onChange={handleDropdownChange}
+                      required
                       style={{
                         marginBottom: "1.5rem",
                         fontSize: "0.8rem",
                       }}
-                      />
-                  </div>
+                    >
+                      <option value="" disabled hidden>
+                        Select Sprint
+                      </option>
+                      {props.sprintData.map((option, index) => (
+                        <option key={index} value={option.name}>
+                          {option.title}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  ) : null}
                 </div>
-                <div>  
+                <div style={{ width: "30%", marginLeft: "0.5rem" }}>
+                  <Form.Control
+                    type="number"
+                    placeholder="cost factor"
+                    value={businessValueCostFactorInput}
+                    onChange={onChangeBusinessValueCostFactor}
+                    style={{
+                      marginBottom: "1.5rem",
+                      fontSize: "0.8rem",
+                    }}
+                  />
+                </div>
+              </div>
+              <div>
                 <button
                   style={{
                     marginLeft: "0.6rem",
                     height: "2.45rem",
                     width: "33%",
                     backgroundColor: "#007bff",
-                    border: 'none',
-                    color: 'white',
-                    borderRadius: '6px',
+                    border: "none",
+                    color: "white",
+                    borderRadius: "6px",
                   }}
                   onClick={() =>
                     setBusinessValueCostFactor(businessValueCostFactorInput)
@@ -270,6 +275,7 @@ export default function CostOfDelayMetricVisualization(props) {
           <TabPanel
             style={{
               margin: "auto",
+              width: "100%",
             }}
           >
             <LineChartMaker
