@@ -6,7 +6,7 @@ export default function ImpedimentTracker({ metricData }) {
   const optionsImpedimentTracker = {
     vAxis: { title: "Date" },
     hAxis: { title: "Impediments" },
-    legend: { position: "right" },
+    legend: { position: "top" },
   };
 
   return (
