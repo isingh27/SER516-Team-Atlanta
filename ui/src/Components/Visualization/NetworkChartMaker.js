@@ -75,7 +75,7 @@ export default function NetworkChartMaker(props) {
           height: "auto",
           borderWidth: "2px",
           borderStyle: "solid",
-          borderColor: "#ff0000",
+          borderColor: "#007bff",
           width: "100%",
           borderRadius: "1rem",
         }}

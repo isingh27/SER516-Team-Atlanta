@@ -33,7 +33,7 @@ export default function NavBar() {
       expand="lg"
       bg="primary"
       variant="dark"
-      fixed="top"
+      sticky="top"
     >
       <Container>
         <Navbar.Brand href="/">Team-Althou</Navbar.Brand>
@@ -50,33 +50,6 @@ export default function NavBar() {
                       Metrics
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
-                      {/* <Dropdown.Item href="#cycleTime">
-                        Cycle Time
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#leadTime">Lead Time</Dropdown.Item>
-                      <Dropdown.Item href="#burndown">BurnDown</Dropdown.Item>
-                      <Dropdown.Item href="#multiSprint">
-                        Multi Sprint BurnDown
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#wip">
-                        Work In Progress
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#throughput">
-                        Throughput
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#cfd">CFD</Dropdown.Item>
-                      <Dropdown.Item href="#impedimentTracker">
-                        Impediment Tracker
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#SBPBCoupling">
-                        SBPBCoupling
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#taskCoupling">
-                        Task Coupling
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#costOfDelay">
-                        Cost of Delay
-                      </Dropdown.Item> */}
                       <Dropdown.Item>
                         <Link
                           to="cycleTime"

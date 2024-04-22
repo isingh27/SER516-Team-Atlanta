@@ -126,14 +126,11 @@ export default function CostOfDelayMetricVisualization(props) {
             style={{
               fontSize: "2rem",
               width: "auto",
-              borderBottomStyle: "solid",
-              borderBottomWidth: "4px",
-              borderBottomColor: "#ffd053",
               fontWeight: "bold",
               backgroundColor: "white",
               transitionDuration: "300ms",
               fontFamily: "sans-serif",
-              textAlign: "start",
+              textAlign: "center",
               marginTop: "0",
               paddingBottom: "0.2rem",
               marginBottom: "1rem",
@@ -144,7 +141,7 @@ export default function CostOfDelayMetricVisualization(props) {
           <TabList
             style={{
               display: "flex",
-              justifyContent: "left",
+              justifyContent: "center",
               border: "none",
             }}
           >
@@ -156,12 +153,12 @@ export default function CostOfDelayMetricVisualization(props) {
                 style={{
                   paddingLeft: "0.8rem",
                   paddingRight: "0.8rem",
-                  paddingBottom: "0.8rem",
+                  paddingBottom: "0.2rem",
                   marginBottom: "0rem",
                   textAlign: "center",
                   borderRightStyle: "solid",
                   borderRightWidth: "2px",
-                  borderRightColor: "#ef5350",
+                  borderRightColor: "#007bff",
                 }}
               >
                 Storypoints Affected
@@ -175,9 +172,10 @@ export default function CostOfDelayMetricVisualization(props) {
                 style={{
                   paddingLeft: "0.8rem",
                   paddingRight: "0.8rem",
-                  paddingBottom: "0.8rem",
+                  paddingBottom: "0.2rem",
                   marginBottom: "0rem",
                   textAlign: "center",
+                  borderRight: '2px solid #007bff',
                 }}
               >
                 Business Value Affected
@@ -204,24 +202,26 @@ export default function CostOfDelayMetricVisualization(props) {
             style={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
+              justifyContent: "center",
               width: "100%",
               marginTop: "1rem",
               // minHeight: "50%"
             }}
             className="parent"
           >
-            <div>
+            <div style={{ width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center' }}>
+
+            <div style={{ width: '30%', marginRight: '0.5rem' }}>
               {props.sprintData && props.sprintData.length > 0 ? (
                 <Form.Select
-                  value={selectedOption}
-                  onChange={handleDropdownChange}
-                  required
-                  style={{
-                    width: "20%",
-                    marginBottom: "1.5rem",
-                    fontSize: "1rem",
-                  }}
+                value={selectedOption}
+                onChange={handleDropdownChange}
+                required
+                style={{
+                  marginBottom: "1.5rem",
+                  fontSize: "0.8rem",
+                }}
                 >
                   <option value="" disabled hidden>
                     Select Sprint
@@ -233,29 +233,30 @@ export default function CostOfDelayMetricVisualization(props) {
                   ))}
                 </Form.Select>
               ) : null}
-              <div>
-                <Row className="mb-3 align-items-center">
-                  <Col sm={9}>
+              </div>
+              <div style={{ width: '30%', marginLeft: '0.5rem' }}>
                     <Form.Control
                       type="number"
                       placeholder="cost factor"
                       value={businessValueCostFactorInput}
                       onChange={onChangeBusinessValueCostFactor}
                       style={{
-                        width: "20%",
                         marginBottom: "1.5rem",
-                        fontSize: "1rem",
+                        fontSize: "0.8rem",
                       }}
-                    />
-                  </Col>
-                </Row>
+                      />
+                  </div>
+                </div>
+                <div>  
                 <button
                   style={{
                     marginLeft: "0.6rem",
                     height: "2.45rem",
                     width: "33%",
-                    border: 4,
-                    borderColor: "#ffd053",
+                    backgroundColor: "#007bff",
+                    border: 'none',
+                    color: 'white',
+                    borderRadius: '6px',
                   }}
                   onClick={() =>
                     setBusinessValueCostFactor(businessValueCostFactorInput)

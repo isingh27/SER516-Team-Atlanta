@@ -119,14 +119,11 @@ export default function SBPBCouplingMetricVisualization(props) {
               style={{
                 fontSize: "2rem",
                 width: "auto",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "4px",
-                borderBottomColor: "#ffd053",
                 fontWeight: "bold",
                 backgroundColor: "white",
                 transitionDuration: "300ms",
                 fontFamily: "sans-serif",
-                textAlign: "start",
+                textAlign: "center",
                 marginTop: "0",
                 paddingBottom: "0.2rem",
                 marginBottom: "1rem",
@@ -137,7 +134,7 @@ export default function SBPBCouplingMetricVisualization(props) {
             <TabList
               style={{
                 display: "flex",
-                justifyContent: "left",
+                justifyContent: "center",
                 border: "none",
               }}
             >
@@ -149,12 +146,12 @@ export default function SBPBCouplingMetricVisualization(props) {
                   style={{
                     paddingLeft: "0.8rem",
                     paddingRight: "0.8rem",
-                    paddingBottom: "0.8rem",
+                    paddingBottom: "0.2rem",
                     marginBottom: "0rem",
                     textAlign: "center",
                     borderRightStyle: "solid",
                     borderRightWidth: "2px",
-                    borderRightColor: "#ef5350",
+                    borderRightColor: "#007bff",
                   }}
                 >
                   Product Backlog Coupling
@@ -168,7 +165,7 @@ export default function SBPBCouplingMetricVisualization(props) {
                   style={{
                     paddingLeft: "0.8rem",
                     paddingRight: "0.8rem",
-                    paddingBottom: "0.8rem",
+                    paddingBottom: "0.2rem",
                     marginBottom: "0rem",
                     textAlign: "center",
                   }}
@@ -181,8 +178,9 @@ export default function SBPBCouplingMetricVisualization(props) {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
-                width: "50%",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
                 marginTop: "1rem",
                 // minHeight: "50%"
               }}
@@ -195,7 +193,7 @@ export default function SBPBCouplingMetricVisualization(props) {
                   value={selectedOption}
                   onChange={handleDropdownChange}
                   required
-                  style={{ width: "20%", marginBottom: "1.5rem", fontSize: "1rem"}}
+                  style={{ width: "43%", marginBottom: "1.5rem", fontSize: "1rem"}}
                 >
                   <option value="" disabled hidden>
                     Select Sprint
