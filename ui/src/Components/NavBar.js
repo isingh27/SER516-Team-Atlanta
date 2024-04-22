@@ -4,7 +4,9 @@ import Container from "react-bootstrap/Container";
 import Dropdown from "react-bootstrap/Dropdown";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { Link, animateScroll as scroll } from "react-scroll";
 import { useNavigate, useLocation } from "react-router-dom";
+import "./Styles/NavBar.css";
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -31,7 +33,7 @@ export default function NavBar() {
       expand="lg"
       bg="primary"
       variant="dark"
-      fixed="top"
+      sticky="top"
     >
       <Container>
         <Navbar.Brand href="/">Team-Althou</Navbar.Brand>
@@ -48,32 +50,137 @@ export default function NavBar() {
                       Metrics
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
-                      <Dropdown.Item href="#cycleTime">
-                        Cycle Time
+                      <Dropdown.Item>
+                        <Link
+                          to="cycleTime"
+                          spy={true}
+                          smooth={true}
+                          offset={-100}
+                          duration={500}
+                        >
+                          Cycle Time
+                        </Link>
                       </Dropdown.Item>
-                      <Dropdown.Item href="#leadTime">Lead Time</Dropdown.Item>
-                      <Dropdown.Item href="#burndown">BurnDown</Dropdown.Item>
-                      <Dropdown.Item href="#multiSprint">
-                        Multi Sprint BurnDown
+                      <Dropdown.Item>
+                        <Link
+                          to="leadTime"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          Lead Time
+                        </Link>
                       </Dropdown.Item>
-                      <Dropdown.Item href="#wip">
-                        Work In Progress
+                      <Dropdown.Item>
+                        <Link
+                          to="burndown"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          Burndown Charts
+                        </Link>
                       </Dropdown.Item>
-                      <Dropdown.Item href="#throughput">
-                        Throughput
+                      <Dropdown.Item>
+                        <Link
+                          to="multiSprint"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          Multi Sprint Burndown
+                        </Link>
                       </Dropdown.Item>
-                      <Dropdown.Item href="#cfd">CFD</Dropdown.Item>
-                      <Dropdown.Item href="#impedimentTracker">
+                      <Dropdown.Item>
+                        <Link
+                          to="wip"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          Work In Progress
+                        </Link>
+                      </Dropdown.Item>
+                      <Dropdown.Item>
+                        <Link
+                          to="throughput"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          Throughput
+                        </Link>
+                      </Dropdown.Item>
+                      <Dropdown.Item>
+                        <Link
+                          to="cfd"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                        CFD
+                        </Link>
+                      </Dropdown.Item>
+                      <Dropdown.Item>
+                        <Link
+                          to="impedimentTracker"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
                         Impediment Tracker
+                        </Link>
                       </Dropdown.Item>
-                      <Dropdown.Item href="#SBPBCoupling">
-                        SBPBCoupling
+                      <Dropdown.Item>
+                        <Link
+                          to="SBPBCoupling"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          SBPBCoupling
+                        </Link>
                       </Dropdown.Item>
-                      <Dropdown.Item href="#taskCoupling">
-                        Task Coupling
+                      <Dropdown.Item>
+                        <Link
+                          to="taskCoupling"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          Task Coupling
+                        </Link>
                       </Dropdown.Item>
-                      <Dropdown.Item href="#costOfDelay">
-                        Cost of Delay
+                      <Dropdown.Item>
+                        <Link
+                          to="costOfDelay"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          Cost Of Delay
+                        </Link>
+                      </Dropdown.Item>
+                      <Dropdown.Item>
+                        <Link
+                          to="engagement"
+                          spy={true}
+                          smooth={true}
+                          offset={-50}
+                          duration={500}
+                        >
+                          Engagement Visualization
+                        </Link>
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>

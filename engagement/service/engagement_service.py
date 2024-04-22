@@ -22,7 +22,6 @@ def get_engagement(project_id, auth_token):
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json'
     }
-    print("IN THE SERVICE")
     member_names = get_membership_list(project_id, auth_token)
 
 
