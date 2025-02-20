@@ -509,7 +509,7 @@ const Dashboard = () => {
 
   return (
     <Container className="mt-3">
-      <Container fluid>
+      {/* <Container fluid>
         <Row xs={12} md={12} lg={12} className="mt-2">
           <Col
             md={12}
@@ -597,7 +597,7 @@ const Dashboard = () => {
             </Card>
           </Col>
         </Row>
-      </Container>
+      </Container> */}
       {/*<Row className="justify-content-md-center" style={{ height: "400px" }}>
         <Col
         md={12}
@@ -618,7 +618,7 @@ const Dashboard = () => {
           )}
         </Col>
       </Row> */}
-      <Container fluid>
+      {/* <Container fluid>
         <Row xs={12} md={12} lg={12} className="mt-3" id="burndown">
           <Col
           // md={12}
@@ -713,7 +713,7 @@ const Dashboard = () => {
             </Card>
           </Col>
         </Row>
-      </Container>
+      </Container> */}
       <Container fluid>
         <Row xs={12} md={12} lg={12} className="mt-3" id="cfd">
           <Col
@@ -733,7 +733,7 @@ const Dashboard = () => {
           </Col>
         </Row>
       </Container>
-      <Container fluid id="impedimentTracker">
+      {/* <Container fluid id="impedimentTracker">
         <Row xs={12} md={12} lg={12} className="mt-3">
           <Col
             md={12}
@@ -820,7 +820,7 @@ const Dashboard = () => {
             </Card>
           </Col>
         </Row>
-      </Container>
+      </Container> */}
     </Container>
   );
 };
