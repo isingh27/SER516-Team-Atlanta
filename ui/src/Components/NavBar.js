@@ -4,9 +4,13 @@ import Container from "react-bootstrap/Container";
 import Dropdown from "react-bootstrap/Dropdown";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import Image from "react-bootstrap/Image";
 import { Link, animateScroll as scroll } from "react-scroll";
 import { useNavigate, useLocation } from "react-router-dom";
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 import "./Styles/NavBar.css";
+import logo from "../rtfm.svg";
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -27,6 +31,11 @@ export default function NavBar() {
   const isAuthenticated = !!localStorage.getItem("taigaToken");
   const projectId = !!localStorage.getItem("projectId");
 
+  const renderTooltip = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Made with ❤️ by Team-RTFM: Ishtpreet, Darsh, Karthik
+    </Tooltip>
+  );
   return (
     <Navbar
       collapseOnSelect
@@ -194,6 +203,17 @@ export default function NavBar() {
             ) : (
               <Button onClick={handleLogout}>Logout</Button>
             )}
+          </Nav>
+          <Nav>
+          {isAuthenticated && 
+          <OverlayTrigger
+            placement="right"
+            delay={{ show: 250, hide: 400 }}
+            overlay={renderTooltip}
+    >
+            <Image src={logo} alt="RTFM" height={20} width={20} />
+            </OverlayTrigger>
+}
           </Nav>
         </Navbar.Collapse>
       </Container>
