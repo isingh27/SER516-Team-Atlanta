@@ -261,7 +261,7 @@ function VisualizeMetric({
       {metricInput === "cfd" && (
         <>
           <b>Cumulative Flow Diagram</b>
-          {console.log("CFD", metricData)}
+          {/* {console.log("CFD", metricData)} */}
           <Chart
             width="100%"
             height="800"

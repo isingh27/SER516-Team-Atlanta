@@ -19,10 +19,10 @@ const ProjectSlugInput = () => {
     useEffect(() => {
         setProjectLoading(true);
         TaigaService.taigaUserProjects(localStorage.getItem('taigaToken')).then((response) => {
-            console.log(response.data);
+            // console.log(response.data);
             setProjectLoading(false);
             if(response.data.status === 'success'){
-                console.log('User Projects:', response.data);
+                // console.log('User Projects:', response.data);
                 // localStorage.setItem('projects',JSON.stringify(response.data.data))
                 response.data.data.map((project) => {
                     projects.push({label: project.slug, value: project.id});
@@ -34,12 +34,12 @@ const ProjectSlugInput = () => {
             }
         }).catch((error) => {
             setProjectLoading(false);
-            console.log(error);
+            // console.log(error);
         });
     }, []);
 
     const handleOnChange = (e) => {
-        console.log(e);
+        // console.log(e);
         if(!e)
             return;
         setProjectSlug(e.label);
@@ -56,12 +56,12 @@ const ProjectSlugInput = () => {
         }
         setLoading(true);
         TaigaService.taigaProjectDetails(localStorage.getItem('taigaToken'), projectSlug).then((response) => {
-            console.log(response.data);
+            // console.log(response.data);
             if(response.data.status === 'success'){
                 setLoading(false);
                 setShow(true);
                 setVariant('success');
-                console.log('Project Details:', response.data);
+                // console.log('Project Details:', response.data);
                 setMessage(`Project Details for ${response.data.data.name} Retrieved Successfully`);
                 //TODO: Store the project details in local storage & redirect the user to the project details page
                 localStorage.setItem('projectId',JSON.stringify(response.data.data.id))

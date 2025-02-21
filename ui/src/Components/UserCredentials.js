@@ -24,7 +24,7 @@ const UserCredentials = () => {
             return;
         }
         TaigaService.taigaAuthenticate(email, password).then((response) => {
-            console.log(response.data);
+            // console.log(response.data);
             if(response.data.status === 'success' && !response.data.token){
                 setMessage('Invalid Credentials');
                 setVariant('danger');
@@ -33,7 +33,7 @@ const UserCredentials = () => {
                 return;
             }
             if (response.data.status === 'success') {
-                console.log('Authenticated');
+                // console.log('Authenticated');
                 setMessage('Taiga Authentication Success!');
                 setVariant('success');
                 setShow(true);
@@ -42,7 +42,7 @@ const UserCredentials = () => {
                 navigation('/project-slug');                
             }
         }).catch((error) => {
-            console.log(error);
+            // console.log(error);
             setMessage('Taiga Authentication Failed!');
             setVariant('danger');
             setShow(true);

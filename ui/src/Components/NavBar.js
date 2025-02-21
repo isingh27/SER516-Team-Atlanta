@@ -33,7 +33,7 @@ export default function NavBar() {
 
   const renderTooltip = (props) => (
     <Tooltip id="button-tooltip" {...props}>
-      Made with ❤️ by Team-RTFM: Ishtpreet, Darsh, Karthik
+      Made with ❤️ by Team-RTFM: Karthik, Ishtpreet & Darsh
     </Tooltip>
   );
   return (
